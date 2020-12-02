@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+src/main/resources/application-real.properties
 ### STS ###
 .apt_generated
 .classpath
