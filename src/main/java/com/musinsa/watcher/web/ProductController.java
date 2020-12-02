@@ -18,12 +18,13 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping("/api/v1/product/brand/list")
-  public Page<String> findBrandList() {
-    return productService.findAllbrand(PageRequest.of(0, 50, Sort.by("brand")));
+  public Page<String> findBrandList(@RequestParam(required = false, defaultValue = "0") int page) {
+    return productService.findAllbrand(PageRequest.of(page, 50, Sort.by("brand")));
   }
 
   @GetMapping("/api/v1/product/brand")
-  public Page<ProductResponseDto> findBrandList(@RequestParam String name) {
-    return productService.findByBrand(name, PageRequest.of(0, 50, Sort.by("productName")));
+  public Page<ProductResponseDto> findBrandList(
+      @RequestParam(required = false, defaultValue = "0") int page, String name) {
+    return productService.findByBrand(name, PageRequest.of(page, 50, Sort.by("productName")));
   }
 }
