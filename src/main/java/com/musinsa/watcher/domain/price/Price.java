@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @NoArgsConstructor
 @Getter
@@ -41,6 +42,7 @@ public class Price {
 
   private int ratingCount;
 
-  private LocalDateTime time;
+  @CreatedDate
+  private LocalDateTime createdDate;
 
 }

@@ -15,7 +15,7 @@ public class ProductResponseDto implements Serializable {
   private String productUrl;
   private String brand;
   private String brandUrl;
-  private LocalDateTime time;
+  private LocalDateTime modifiedDate;
   private String category;
 
   @Builder
@@ -26,7 +26,7 @@ public class ProductResponseDto implements Serializable {
     this.productUrl = entity.getProductUrl();
     this.brand = entity.getBrand();
     this.brandUrl = entity.getBrandUrl();
-    this.time = entity.getTime();
+    this.modifiedDate = entity.getModifiedDate();
     this.category = entity.getCategory();
   }
 }

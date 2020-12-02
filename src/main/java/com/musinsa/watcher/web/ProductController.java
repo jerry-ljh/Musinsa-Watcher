@@ -27,4 +27,12 @@ public class ProductController {
       @RequestParam(required = false, defaultValue = "0") int page, String name) {
     return productService.findByBrand(name, PageRequest.of(page, 50, Sort.by("productName")));
   }
+
+  @GetMapping("/api/v1/product/list")
+  public Page<ProductResponseDto> findProductByCategory(
+      @RequestParam(required = false, defaultValue = "0") int page, String category) {
+    return productService
+        .findByCategory(category, PageRequest.of(page, 50, Sort.by("productName")));
+  }
+
 }

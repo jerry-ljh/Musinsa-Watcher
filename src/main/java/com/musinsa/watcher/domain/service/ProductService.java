@@ -27,4 +27,12 @@ public class ProductService {
         .map(ProductResponseDto::new)
         .collect(Collectors.toList()), pageable, page.getTotalElements());
   }
+
+  public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
+    Page<Product> page = productRepository.findByCategory(category, pageable);
+    return new PageImpl<ProductResponseDto>(page.getContent()
+        .stream()
+        .map(ProductResponseDto::new)
+        .collect(Collectors.toList()), pageable, page.getTotalElements());
+  }
 }

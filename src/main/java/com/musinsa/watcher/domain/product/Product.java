@@ -13,11 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @NoArgsConstructor
 @Getter
 @Entity
 public class Product implements Serializable {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -35,10 +38,12 @@ public class Product implements Serializable {
 
   private String brandUrl;
 
-  private LocalDateTime time;
+  @LastModifiedDate
+  private LocalDateTime modifiedDate;
 
   private String category;
 
   @OneToMany(mappedBy = "product")
+  @BatchSize(size = 100)
   Set<Price> prices = new HashSet<>();
 }

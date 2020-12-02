@@ -20,7 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -59,4 +61,22 @@ public class ProductControllerTest {
     verify(mockProductService, only()).findByBrand(eq(brandName), any());
   }
 
+  @Test
+  @DisplayName("카테고리별 상품 리스트 조회")
+  public void 카테고리별_상품_리스트_조회() throws Exception {
+    String category1 = "001";
+    String category2 = "002";
+    Page<ProductResponseDto> mockPage1 = mock(Page.class);
+    Page<ProductResponseDto> mockPage2 = mock(Page.class);
+    when(mockProductService.findByCategory(eq(category1), any())).thenReturn(mockPage1);
+    when(mockProductService.findByCategory(eq(category2), any())).thenReturn(mockPage2);
+    mvc.perform(get(API + "list")
+        .param("category", category1))
+        .andExpect(status().isOk());
+    mvc.perform(get(API + "list")
+        .param("category", category2))
+        .andExpect(status().isOk());
+    verify(mockProductService, times(1)).findByCategory(eq(category1), any());
+    verify(mockProductService, times(1)).findByCategory(eq(category2), any());
+  }
 }
