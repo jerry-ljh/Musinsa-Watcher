@@ -1,0 +1,48 @@
+#page-wrapper {
+  padding-left: 300px;
+}
+
+#sidebar-wrapper {
+  position: absolute;
+  width: 300px;
+  height: 100%;
+  margin-left: -300px;
+  background: #fff;
+  border: #000;
+  border-right: 1px solid #b2b2b260;
+}
+
+#page-content-wrapper {
+  width: 100%;
+  padding: 20px;
+}
+/* 사이드바 스타일 */
+
+.sidebar-nav {
+  width: 300px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-nav li {
+  text-indent: 1.5em;
+  line-height: 2.8em;
+  border-bottom: 1px solid #b2b2b260;
+  margin: 20px;
+}
+
+.sidebar-nav li a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+}
+
+.sidebar-nav li:hover {
+  background: #b2b2b21c;
+}
+
+.sidebar-nav > .sidebar-brand {
+  font-size: 1.3em;
+  line-height: 3em;
+}
