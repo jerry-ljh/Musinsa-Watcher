@@ -1,6 +1,7 @@
 package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.domain.price.Price;
+import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class PriceResponseDto {
   private int coupon;
   private float rating;
   private int ratingCount;
+  private String createdDate;
 
   @Builder
   public PriceResponseDto(Price entity) {
@@ -22,6 +24,8 @@ public class PriceResponseDto {
     this.delPrice = entity.getDelPrice();
     this.rating = entity.getRating();
     this.ratingCount = entity.getRatingCount();
+    this.createdDate = entity.getCreatedDate()
+        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
   }
 
 }
