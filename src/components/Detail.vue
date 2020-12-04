@@ -2,18 +2,18 @@
     <div>
         <b-container class="bv-example-row">
             <h3 style="text-align : left">
-                <strong>네셔널지오그래픽</strong>
+                <strong>{{product.brand}}</strong>
             </h3>
             <div style="text-align : left">
-                <span style="font-size : 20px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
+                <span style="font-size : 20px;">{{product.productName}}</span>
             </div>
             <div style="text-align : left">
-                <small class="text-muted">updated 3 mins ago</small>
+                <small class="text-muted">updated
+                    {{product.modifiedDate}}</small>
             </div>
             <b-row>
                 <b-col>
-                    <img
-                        src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_500.jpg"/></b-col>
+                    <img v-bind:src="product.bigImg"/></b-col>
                 <b-col>
                     <line-chart></line-chart>
                     <bar-chart></bar-chart>
@@ -25,6 +25,7 @@
 <script>
     import LineChart from './LineChart'
     import BarChart from './BarChart'
+    import axios from 'axios'
 
     export default {
         components: {
@@ -32,7 +33,29 @@
             BarChart
         },
         data() {
-            return {}
+            return {product: Object, prices: [], priceChartData: [], rankChartData: [], ratingChartData: []}
+        },
+        methods: {
+            generatePriceData() {
+                this.prices
+            }
+        },
+        created() {
+            let self = this
+            axios
+                .get('http://localhost:8080/api/v1/product', {
+                    params: {
+                        "id": this.$route.params.productId
+                    }
+                })
+                .then(function (response) {
+                    console.log(response.data)
+                    self.prices = response.data.prices
+                    self.product = response.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
     }
 </script>

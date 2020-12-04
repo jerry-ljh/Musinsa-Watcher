@@ -1,123 +1,82 @@
 <template>
     <div>
-        <b-card-group deck="deck" style="margin-bottom : 100px">
+        <b-card-group
+            columns="columns"
+            style="width:1300px; margin-bottom : 100px; margin-right : 50px">
             <b-card
-                @click="goToDetail()"
-                img-src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_125.jpg"
-                img-alt="Image"
-                align="right">
-                <b-card-text >
+                @click="goToDetail(product)"
+                :img-src="product.img"
+                align="right"
+                v-for="product in products"
+                v-bind:key="product.productId">
+                <b-card-text>
                     <h6 style="text-align : center">
-                        <strong>네셔널지오그래픽</strong>
+                        <strong>{{product.brand}}</strong>
                     </h6>
                     <div style="text-align : left">
-                        <span style="font-size : 13px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
+                        <span style="font-size : 13px;">{{truncateProductName(product.productName)}}</span>
                     </div>
-                    <div style="text-align : center">
-                        <small class="text-muted">updated 3 mins ago</small>
-                    </div>
+
                 </b-card-text>
-            </b-card>
-            <b-card
-                @click="goToDetail()"
-                img-src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_125.jpg"
-                img-alt="Image"
-                align="right">
-                <b-card-text >
-                    <h6 style="text-align : center">
-                        <strong>네셔널지오그래픽</strong>
-                    </h6>
-                    <div style="text-align : left">
-                        <span style="font-size : 13px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
-                    </div>
-                    <div style="text-align : center">
-                        <small class="text-muted">updated 3 mins ago</small>
-                    </div>
-                </b-card-text>
-            </b-card>
-            <b-card
-                @click="goToDetail()"
-                img-src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_125.jpg"
-                img-alt="Image"
-                align="right">
-                <b-card-text >
-                    <h6 style="text-align : center">
-                        <strong>네셔널지오그래픽</strong>
-                    </h6>
-                    <div style="text-align : left">
-                        <span style="font-size : 13px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
-                    </div>
-                    <div style="text-align : center">
-                        <small class="text-muted">updated 3 mins ago</small>
-                    </div>
-                </b-card-text>
-            </b-card>
-            <b-card
-                @click="goToDetail()"
-                img-src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_125.jpg"
-                img-alt="Image"
-                align="right">
-                <b-card-text >
-                    <h6 style="text-align : center">
-                        <strong>네셔널지오그래픽</strong>
-                    </h6>
-                    <div style="text-align : left">
-                        <span style="font-size : 13px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
-                    </div>
-                    <div style="text-align : center">
-                        <small class="text-muted">updated 3 mins ago</small>
-                    </div>
-                </b-card-text>
-            </b-card>
-            <b-card
-                @click="goToDetail()"
-                img-src="https://image.msscdn.net/images/goods_img/20200113/1268654/1268654_2_125.jpg"
-                img-alt="Image"
-                align="right">
-                <b-card-text >
-                    <h6 style="text-align : center">
-                        <strong>네셔널지오그래픽</strong>
-                    </h6>
-                    <div style="text-align : left">
-                        <span style="font-size : 13px;">N194UDW890 카이만 3 구스 다운 벤치 롱패딩 점퍼 BLACK</span>
-                    </div>
-                    <div style="text-align : center">
-                        <small class="text-muted">updated 3 mins ago</small>
-                    </div>
-                </b-card-text>
+                <template #footer>
+                    <em>
+                        <small class="text-muted">updated
+                            {{product.modifiedDate}}</small>
+                    </em>
+                </template>
             </b-card>
         </b-card-group>
 
         <div class="mt-3">
             <b-pagination
-                v-model="currentPage"
+                v-model="page"
+                :change="newPage(page)"
                 :total-rows="rows"
                 align="center"
                 :per-page="perpage"
-                :limit="limit"></b-pagination>
+                :limit="limit"
+                style="margin-bottom : 100px"></b-pagination>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         data() {
-            return {rows: 3000, currentPage: 1, perpage: 25, limit: 10}
+            return {limit: 10, page: this.currentPage }
         },
+        props: [
+            'products', 'currentPage', 'perpage', 'rows'
+        ],
         methods: {
-            goToDetail() {
+            goToDetail(product) {
                 this
                     .$router
-                    .push({name: 'Detail'})
+                    .push({name: 'Detail', params: product})
+            },
+            truncateProductName(productName) {
+                return productName.length > 40
+                    ? productName.substr(0, 40) + '...'
+                    : productName;
+
+            },
+            newPage(page) {
+                if (page > 0 && page != null && page != this.currentPage) {
+                    this.$emit('goNewPage', page - 1)
+                    window.scrollTo(0, 0);
+                    console.log(page)
+                }
+
             }
         }
     }
 </script>
 
 <style>
-    .card > img {
-        max-width: 125px;
-        max-height: 125px;
+    .card-img {
+        width: 125px;
+        height: 125px;
         margin: 10px auto 0;
     }
 
@@ -132,5 +91,22 @@
 
     .card:hover {
         background: #b2b2b21c;
+    }
+
+    .text-right {
+        text-align: center !important;
+    }
+    .card-columns {
+        column-count: 5;
+    }
+
+    .card-body {
+        overflow: hidden;
+    }
+
+    .card-footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
     }
 </style>
