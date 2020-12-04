@@ -2,8 +2,8 @@
     <div>
         <b-navbar style="background-color:black ">
             <b-navbar-brand >
-                <a href="/" style="color :#FFFFFF; text-decoration:none !important" >
-                    <h2 style="color :#FFFFFF;" >MUSINSA WATCHER</h2>
+                <a href="/" style="color :#FFFFFF; text-decoration:none !important">
+                    <h2 style="color :#FFFFFF;">MUSINSA WATCHER</h2>
                 </a>
             </b-navbar-brand>
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -35,7 +35,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">상의<small style="color : #b2b2b2">Top</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.top)">상의<small style="color : #b2b2b2">Top</small>
                         </a>
                     </li>
                     <li>
@@ -109,9 +109,21 @@
                     onepiece: '020',
                     socks: '008'
                 },
+                numToCategory: {
+                    '001': 'Top',
+                    '002': 'Outer',
+                    '003': 'Pants',
+                    '004': 'Bag',
+                    '018': 'Sneakers',
+                    '005': 'Shoes',
+                    '007': 'Headwear',
+                    '022': 'Skirt',
+                    '020': 'Onepiece',
+                    '008': 'Socks/Legwear'
+                },
                 products: [],
                 currentPage: 1,
-                curCategory : '',
+                curCategory: '',
                 rows: 0,
                 perpage: 25
             }
@@ -123,7 +135,7 @@
                     .get('http://localhost:8080/api/v1/product/list', {
                         params: {
                             "category": this.curCategory,
-                            "page" : page
+                            "page": page
                         }
                     })
                     .then((response) => {
@@ -146,13 +158,16 @@
                         }
                     })
                     .then((response) => {
-                        console.log(response);
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
                         self.curCategory = category
-                    })
+                        if (this.$route.path !== '/') 
+                            this
+                                .$router
+                                .push({name: 'List'})
+                        })
                     .catch((error) => {
                         console.log(error);
                     });

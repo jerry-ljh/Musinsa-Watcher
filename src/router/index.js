@@ -7,21 +7,20 @@ import VueChartJS from '@/views/VueChartJS'
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'List',
-      component: List
-    },
-    {
-      path: '/detail',
-      name: 'Detail',
-      component: Detail
-    },
-    {
-      path: '/chartjs',
-      name: 'VueChartJS',
-      component: VueChartJS
-    },
-  ]
+    mode: 'history',
+    routes: [
+        {
+            path: '/',
+            name: 'List',
+            component: List
+        }, {
+            path: '/detail',
+            name: 'Detail',
+            component: Detail
+        }, {
+            path: '/chartjs',
+            name: 'VueChartJS',
+            component: VueChartJS
+        }
+    ]
 })
