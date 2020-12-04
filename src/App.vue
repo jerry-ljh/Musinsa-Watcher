@@ -2,9 +2,9 @@
     <div>
         <b-navbar style="background-color:black ">
             <b-navbar-brand >
-                <router-link to="/" style="color :#FFFFFF">
-                    <h2 style="color :#FFFFFF;">MUSINSA WATCHER</h2>
-                </router-link>
+                <a href="/" style="color :#FFFFFF; text-decoration:none !important" >
+                    <h2 style="color :#FFFFFF;" >MUSINSA WATCHER</h2>
+                </a>
             </b-navbar-brand>
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav="is-nav">
