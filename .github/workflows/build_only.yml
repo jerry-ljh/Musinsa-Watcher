@@ -1,0 +1,17 @@
+name: vue-builder-to
+on:
+  push:
+    branches: [front-dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout source code.
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
