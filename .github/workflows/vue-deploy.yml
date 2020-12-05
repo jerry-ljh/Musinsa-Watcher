@@ -1,0 +1,49 @@
+name: vue deploy
+
+on:
+  push:
+    branches: [front-dev]
+
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout source code.
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+
+      - name: Move deploy script
+        run: cp scripts/*.sh ./frontend/dist/
+
+      - name: Make deploy config file
+        run: cp appspec.yml ./frontend/dist/
+
+      - name: zip dist folder
+        run: cd frontend && zip -r ./dist.zip ./dist/*
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to s3
+        run: |
+          aws s3 cp \
+            --region ap-northeast-2 \
+            ./frontend/dist.zip s3://musinsa-watcher
+
+      - name: Code Deploy
+        run: |
+          aws deploy create-deployment --application-name musinsa --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=dist.zip
