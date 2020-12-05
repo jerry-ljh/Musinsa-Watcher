@@ -1,0 +1,60 @@
+name: spring boot deploy
+
+on:
+  push:
+    branches: [ backend-dev ]
+
+  pull_request:
+    types: [closed]
+    branches: [ master ]
+
+jobs:
+  build:
+    name : Spring Boot Builder
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Make Directory deploy
+        run: mkdir -p deploy
+
+      - name: Move deploy script
+        run: cp scripts/*.sh ./deploy/
+
+      - name: Make deploy config file
+        run: cp appspec.yml ./deploy/
+
+      - name: Copy Jar
+        run: cp build/libs/*.jar ./deploy/
+
+      - name: Make zip file
+        run: zip -r ./deploy.zip ./deploy/*
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: S3 upload
+        run: |
+          aws s3 cp \
+          --region ap-northeast-2 \
+          ./deploy.zip s3://musinsa-watcher/
+
+      - name: Code Deploy
+        run: |
+          aws deploy create-deployment --application-name musinsa --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=deploy.zip
