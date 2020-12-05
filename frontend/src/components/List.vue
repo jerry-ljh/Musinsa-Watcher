@@ -6,7 +6,7 @@
             <b-card
                 @click="goToDetail(product)"
                 :img-src="product.img"
-                align="right"
+                align="center"
                 v-for="product in products"
                 v-bind:key="product.productId">
                 <b-card-text>
@@ -44,7 +44,7 @@
     import axios from 'axios'
     export default {
         data() {
-            return {limit: 10, page: this.currentPage }
+            return {limit: 10, page: this.currentPage}
         },
         props: [
             'products', 'currentPage', 'perpage', 'rows'
@@ -73,40 +73,4 @@
     }
 </script>
 
-<style>
-    .card-img {
-        width: 125px;
-        height: 125px;
-        margin: 10px auto 0;
-    }
-
-    .item-name {
-        text-align: left;
-    }
-
-    .card {
-        width: 125px;
-        height: 300px;
-    }
-
-    .card:hover {
-        background: #b2b2b21c;
-    }
-
-    .text-right {
-        text-align: center !important;
-    }
-    .card-columns {
-        column-count: 5;
-    }
-
-    .card-body {
-        overflow: hidden;
-    }
-
-    .card-footer {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-    }
-</style>
+<style src="../assets/css/itemList.css"></style>

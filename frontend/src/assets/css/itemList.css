@@ -1,0 +1,37 @@
+.card-img {
+  width: 125px !important;
+  height: 125px !important;
+  margin: 10px auto 0;
+}
+
+.item-name {
+  text-align: left;
+}
+
+.text-right:not() {
+  text-align: center;
+}
+
+.card {
+  width: 125px;
+  height: 300px;
+}
+
+.card:hover {
+  background: #b2b2b21c;
+}
+
+.card-columns {
+  column-count: 5 !important;
+}
+
+.card-body {
+  overflow: hidden;
+}
+
+.card-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center !important;
+}

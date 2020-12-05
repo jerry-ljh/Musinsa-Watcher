@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="chromedriver_win32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/chromedriver/lib/chromedriver/chromedriver_win32.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

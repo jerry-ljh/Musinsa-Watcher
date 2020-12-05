@@ -132,7 +132,7 @@
             goNewPage(page) {
                 let self = this
                 axios
-                    .get('http://localhost:8080/api/v1/product/list', {
+                    .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
                         params: {
                             "category": this.curCategory,
                             "page": page
@@ -152,7 +152,7 @@
             goToCategory(category) {
                 let self = this
                 axios
-                    .get('http://localhost:8080/api/v1/product/list', {
+                    .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
                         params: {
                             "category": category
                         }
@@ -177,7 +177,7 @@
             let self = this
             self.curCategory = '001'
             axios
-                .get('http://localhost:8080/api/v1/product/list', {
+                .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
                     params: {
                         "category": self.curCategory
                     }
