@@ -3,6 +3,7 @@ package com.musinsa.watcher.domain.service;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
+import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,13 +11,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
 
   private final ProductRepository productRepository;
 
-  public Page<String> findAllbrand(Pageable pageable) {
+  public Page<String> findAllBrand(Pageable pageable) {
     return productRepository.findAllBrand(pageable);
   }
 
@@ -29,6 +31,7 @@ public class ProductService {
   }
 
   public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
+    productRepository.findByCategory("001", pageable);
     Page<Product> page = productRepository.findByCategory(category, pageable);
     return new PageImpl<ProductResponseDto>(page.getContent()
         .stream()
@@ -36,4 +39,8 @@ public class ProductService {
         .collect(Collectors.toList()), pageable, page.getTotalElements());
   }
 
+  public ProductWithPriceResponseDto findProductWithPrice(int productId) {
+    return new ProductWithPriceResponseDto(productRepository.findProductWithPrice(productId));
+
+  }
 }

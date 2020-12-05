@@ -1,6 +1,5 @@
 package com.musinsa.watcher.web.dto;
 
-import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.product.Product;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -10,8 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductWithPriceResponseDto implements Serializable {
+public class ProductWithPriceResponseDto {
 
+  private int rank;
   private int productId;
   private String bigImg;
   private String productName;
@@ -20,10 +20,11 @@ public class ProductWithPriceResponseDto implements Serializable {
   private String brandUrl;
   private String modifiedDate;
   private String category;
-  private List<Price> prices;
+  private List<PriceResponseDto> prices;
 
   @Builder
   public ProductWithPriceResponseDto(Product entity) {
+    this.rank = entity.getRank();
     this.productId = entity.getProductId();
     this.bigImg = entity.convertToBigImgUrl();
     this.productName = entity.getProductName();
@@ -33,7 +34,8 @@ public class ProductWithPriceResponseDto implements Serializable {
     this.modifiedDate = entity.getModifiedDate()
         .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     this.category = entity.getCategory();
-    this.prices = entity.getPrices().stream().collect(Collectors.toList());
+    this.prices = entity.getPrices().stream().map(PriceResponseDto::new)
+        .collect(Collectors.toList());
   }
 
 }

@@ -1,6 +1,7 @@
 package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.domain.price.Price;
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;

@@ -7,8 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductResponseDto implements Serializable {
+public class ProductResponseDto {
 
+  private int rank;
   private int productId;
   private String img;
   private String productName;
@@ -20,6 +21,7 @@ public class ProductResponseDto implements Serializable {
 
   @Builder
   public ProductResponseDto(Product entity) {
+    this.rank = entity.getRank();
     this.productId = entity.getProductId();
     this.img = entity.getImg();
     this.productName = entity.getProductName();
