@@ -1,4 +1,5 @@
-name: vue-builder-to
+name: vue deploy
+
 on:
   pull_request:
     branches: [master]
@@ -12,9 +13,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: frontend
 
       - name: Build
         run: npm run build
+        working-directory: frontend
 
       - name: Deploy to s3
         env:
@@ -24,4 +27,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            dist s3://musinsa-watcher
+            frontend/dist s3://musinsa-watcher

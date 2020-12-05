@@ -1,4 +1,4 @@
-name: vue-builder-to
+name: vue-builder
 on:
   push:
     branches: [front-dev]
@@ -12,6 +12,8 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: frontend
 
       - name: Build
         run: npm run build
+        working-directory: frontend
