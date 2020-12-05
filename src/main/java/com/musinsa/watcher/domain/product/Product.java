@@ -3,8 +3,9 @@ package com.musinsa.watcher.domain.product;
 import com.musinsa.watcher.domain.price.Price;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,9 @@ public class Product implements Serializable {
   @Column(name = "product_id")
   private int productId;
 
+  @Column(columnDefinition = "SMALLINT")
+  private int rank;
+  
   private String img;
 
   private String productName;
@@ -45,5 +49,11 @@ public class Product implements Serializable {
 
   @OneToMany(mappedBy = "product")
   @BatchSize(size = 100)
-  Set<Price> prices = new HashSet<>();
+  List<Price> prices = new ArrayList<>();
+
+  public String convertToBigImgUrl() {
+    String baseUrl = this.img.split(".jpg")[0];
+    return baseUrl.substring(0, baseUrl.length() - 3).concat("500.jpg");
+  }
+
 }

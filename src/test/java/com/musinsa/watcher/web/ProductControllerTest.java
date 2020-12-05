@@ -1,13 +1,9 @@
 package com.musinsa.watcher.web;
 
-import static org.junit.Assert.*;
-
 import com.musinsa.watcher.domain.service.ProductService;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,10 +38,10 @@ public class ProductControllerTest {
   @DisplayName("브랜드 리스트 조회")
   public void 브랜드_리스트_조회() throws Exception {
     Page<String> mockPage = mock(Page.class);
-    when(mockProductService.findAllbrand(any())).thenReturn(mockPage);
+    when(mockProductService.findAllBrand(any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand/list"))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findAllbrand(any());
+    verify(mockProductService, only()).findAllBrand(any());
   }
 
   @Test
