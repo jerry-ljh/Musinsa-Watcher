@@ -205,7 +205,7 @@
         created() {
             let self = this
             axios
-                .get('http://www.musinsa-watcher.cf/api/v1/product', {
+                .get('http://15.164.229.12:8080/api/v1/product', {
                     params: {
                         "id": this.$route.params.productId
                     }

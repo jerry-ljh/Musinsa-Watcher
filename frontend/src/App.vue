@@ -132,14 +132,13 @@
             goNewPage(page) {
                 let self = this
                 axios
-                    .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
+                    .get('http://15.164.229.12:8080/api/v1/product/list', {
                         params: {
                             "category": this.curCategory,
                             "page": page
                         }
                     })
                     .then((response) => {
-                        console.log(response);
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
@@ -152,7 +151,7 @@
             goToCategory(category) {
                 let self = this
                 axios
-                    .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
+                    .get('http://15.164.229.12:8080/api/v1/product/list', {
                         params: {
                             "category": category
                         }
@@ -177,13 +176,12 @@
             let self = this
             self.curCategory = '001'
             axios
-                .get('http://www.musinsa-watcher.cf/api/v1/product/list', {
+                .get('http://15.164.229.12:8080/api/v1/product/list', {
                     params: {
                         "category": self.curCategory
                     }
                 })
                 .then((response) => {
-                    console.log(response);
                     self.products = response.data.content
                     self.currentPage = response.data.pageable.pageNumber + 1
                     self.rows = response.data.totalElements
