@@ -1,9 +1,6 @@
 name: spring boot deploy
 
 on:
-  push:
-    branches: [ backend-dev ]
-
   pull_request:
     types: [closed]
     branches: [ master ]
