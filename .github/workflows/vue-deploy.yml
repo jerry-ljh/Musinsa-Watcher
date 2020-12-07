@@ -44,4 +44,4 @@ jobs:
 
       - name: Code Deploy
         run: |
-          aws deploy create-deployment --application-name musinsa --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=dist.zip
+          aws deploy create-deployment --application-name musinsa-front --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-front-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=dist.zip
