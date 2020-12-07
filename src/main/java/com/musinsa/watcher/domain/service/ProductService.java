@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -41,6 +41,9 @@ public class ProductService {
 
   public ProductWithPriceResponseDto findProductWithPrice(int productId) {
     return new ProductWithPriceResponseDto(productRepository.findProductWithPrice(productId));
+  }
 
+  public List<String> findBrandByInitial(String initial1, String initial2, String initial3) {
+    return productRepository.findBrandByInitial(initial1, initial2, initial3);
   }
 }

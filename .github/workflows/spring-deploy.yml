@@ -2,12 +2,12 @@ name: spring boot deploy
 
 on:
   pull_request:
-    types: [closed]
-    branches: [ master ]
+    types: [ closed ]
+    branches: [ backend-release ]
 
 jobs:
   build:
-    name : Spring Boot Builder
+    name: Spring Boot Builder
     runs-on: ubuntu-18.04
 
     steps:
