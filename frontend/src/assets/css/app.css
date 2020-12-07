@@ -46,3 +46,16 @@
   font-size: 1.3em;
   line-height: 3em;
 }
+
+.brand {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.brand a {
+  color: #000;
+  text-decoration: none;
+}
+
+.brand:hover {
+  background: #b2b2b21c;
+}
