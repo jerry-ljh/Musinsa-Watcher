@@ -65,7 +65,6 @@
                 if (page > 0 && page != null && page != this.currentPage) {
                     this.$emit('goNewPage', page - 1)
                     window.scrollTo(0, 0);
-                    console.log(page)
                 }
 
             }
