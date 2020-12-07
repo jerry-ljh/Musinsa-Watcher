@@ -23,6 +23,7 @@
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
     "vue-chartkick": "^0.6.1",
+    "vue-head": "^2.2.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

@@ -95,6 +95,17 @@
     import axios from 'axios'
     export default {
         name: 'App',
+        head: {
+            link: [
+                {
+                    rel: 'icon',
+                    href: '/static/favicon.ico'
+                }, {
+                    rel: 'shortcut icon',
+                    href: '/static/favicon.ico'
+                }
+            ]
+        },
         data() {
             return {
                 category: {
