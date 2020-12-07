@@ -10,12 +10,16 @@
             <b-collapse id="nav-collapse" is-nav="is-nav">
                 <b-navbar-nav class="ml-auto">
                     <b-nav-form>
-                        <b-form-input size="md" class="mr-sm-2" placeholder="Search"></b-form-input>
+                        <b-form-input
+                            size="md"
+                            class="mr-sm-2"
+                            placeholder="Search"
+                            v-model="searchText"></b-form-input>
                         <b-button
                             size="sm"
                             class="my-2 my-sm-0"
-                            type="submit"
-                            style="background-color : #000000">
+                            style="background-color : #000000"
+                            v-on:click="search(searchText, 0)">
                             <b-icon icon="search" font-scale="1.5" color="#FFFFFF"></b-icon>
                         </b-button >
                     </b-nav-form>
@@ -73,28 +77,60 @@
                     <b-tab title="브랜드" align="center">
                         <table style="width:250px; text-align:center">
                             <tr >
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(1)">ㄱ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(2)">ㄴ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(3)">ㄷ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(4)">ㄹ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(5)">ㅁ</a></td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(1)">ㄱ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(2)">ㄴ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(3)">ㄷ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(4)">ㄹ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(5)">ㅁ</a>
+                                </td>
                             </tr>
                             <tr >
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(6)">ㅂ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(7)">ㅅ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(8)">ㅇ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(9)">ㅈ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(10)">ㅊ</a></td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(6)">ㅂ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(7)">ㅅ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(8)">ㅇ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(9)">ㅈ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(10)">ㅊ</a>
+                                </td>
                             </tr>
                             <tr >
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(11)">ㅋ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(12)">ㅌ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(13)">ㅍ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(14)">ㅎ</a></td>
-                                <td class="brand"><a href="javascript:void(0)" v-on:click="findBrandList(15)">etc</a></td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(11)">ㅋ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(12)">ㅌ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(13)">ㅍ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(14)">ㅎ</a>
+                                </td>
+                                <td class="brand">
+                                    <a href="javascript:void(0)" v-on:click="findBrandList(15)">etc</a>
+                                </td>
                             </tr>
                         </table>
-                        <ul class="sidebar-nav" style="text-align:left; max-height: 1000px; overflow: auto;">
+                        <ul
+                            class="sidebar-nav"
+                            style="text-align:left; max-height: 1000px; overflow: auto;">
                             <li v-for="brand in brands" v-bind:key="brand">
                                 <a href="javascript:void(0)" v-on:click="goToBrand(brand)">{{brand}}</a>
                             </li>
@@ -102,7 +138,6 @@
                     </b-tab>
                 </b-tabs>
             </div>
-
             <div id="page-content-wrapper">
                 <router-view
                     style="margin-top:30px"
@@ -148,23 +183,27 @@
                     '020': 'Onepiece',
                     '008': 'Socks/Legwear'
                 },
-                currentListTopic : "",
+                currentListTopic: "",
                 products: [],
                 currentPage: 1,
                 curCategory: '',
                 curBrand: '',
+                curSearchTopic: '',
                 rows: 0,
                 perpage: 25,
-                brands : [],
+                brands: [],
+                searchText: ''
             }
         },
         methods: {
             goNewPage(page) {
                 let self = this
-                if(self.currentListTopic == "category"){
+                if (self.currentListTopic == "category") {
                     self.goToCategory(self.curCategory, page)
-                }else if(self.currentListTopic == "brand"){
+                } else if (self.currentListTopic == "brand") {
                     self.goToBrand(self.curBrand, page)
+                } else if (self.currentListTopic == "search") {
+                    self.search(self.curSearchTopic, page)
                 }
             },
             goToCategory(category, page) {
@@ -175,7 +214,7 @@
                     .get('http://15.164.229.12:8080/api/v1/product/list', {
                         params: {
                             "category": category,
-                            "page" : page
+                            "page": page
                         }
                     })
                     .then((response) => {
@@ -199,44 +238,81 @@
                 self.curBrand = name;
                 window.scrollTo(0, 0);
                 axios
-                .get('http://15.164.229.12:8080/api/v1/product/brand', {
-                    params: {
-                        "name": name,
-                        "page" : page
-                    }
-                })
-                .then((response) => {
-                    self.products = response.data.content
-                    self.currentPage = response.data.pageable.pageNumber + 1
-                    self.rows = response.data.totalElements
-                    self.perpage = response.data.pageable.pageSize
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .get('http://15.164.229.12:8080/api/v1/product/brand', {
+                        params: {
+                            "name": name,
+                            "page": page
+                        }
+                    })
+                    .then((response) => {
+                        self.products = response.data.content
+                        self.currentPage = response.data.pageable.pageNumber + 1
+                        self.rows = response.data.totalElements
+                        self.perpage = response.data.pageable.pageSize
+                         if (this.$route.path !== '/') {
+                            this
+                                .$router
+                                .push({name: 'List'})
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+            search(topic, page) {
+                if (topic.trim().length == 0) {
+                    return;
+                }
+                let self = this
+                self.currentListTopic = "search"
+                self.curSearchTopic = topic;
+                window.scrollTo(0, 0);
+                axios
+                    .get('http://localhost:8080/api/v1/search', {
+                        params: {
+                            "topic": topic
+                                .trim()
+                                .replace(" ", ""),
+                            "page": page
+                        }
+                    })
+                    .then((response) => {
+                        self.products = response.data.content
+                        self.currentPage = response.data.pageable.pageNumber + 1
+                        self.rows = response.data.totalElements
+                        self.perpage = response.data.pageable.pageSize
+                        if (this.$route.path !== '/') {
+                            this
+                                .$router
+                                .push({name: 'List'})
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             },
             findBrandList(typeNumber) {
                 let self = this
                 axios
-                .get('http://15.164.229.12:8080/api/v1/search/brands', {
-                    params: {
-                        "type": typeNumber
-                    }
-                })
-                .then((response) => {
-                    self.brands = response.data
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .get('http://15.164.229.12:8080/api/v1/search/brands', {
+                        params: {
+                            "type": typeNumber
+                        }
+                    })
+                    .then((response) => {
+                        self.brands = response.data
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             }
         },
         created() {
             let self = this
             self.currentListTopic = "category"
             self.curCategory = '001'
-            self.goToCategory(self.curCategory, 0) 
-            self.findBrandList(1) 
+            self.goToCategory(self.curCategory, 0)
+            self.findBrandList(1)
         }
     }
 </script>
