@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.Test;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -39,7 +40,7 @@ public class ProductControllerTest {
   public void 브랜드_리스트_조회() throws Exception {
     Page<String> mockPage = mock(Page.class);
     when(mockProductService.findAllBrand(any())).thenReturn(mockPage);
-    mvc.perform(get(API + "brand/list"))
+    mvc.perform(get("/api/v1/search/brands/list"))
         .andExpect(status().isOk());
     verify(mockProductService, only()).findAllBrand(any());
   }
