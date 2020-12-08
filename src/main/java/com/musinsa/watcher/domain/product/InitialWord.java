@@ -23,6 +23,10 @@ public enum InitialWord {
     this.initials = initials;
   }
 
+  public static String getType(String number){
+    return "type".concat(number);
+  }
+
   public String[] getInitials() {
     return initials;
   }
