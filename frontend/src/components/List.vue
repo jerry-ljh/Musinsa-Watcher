@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <b-card-group deck style="width:1300px; margin-bottom : 30px;" v-for="(productDeck, idx) in itemListToCardDeck(products)" v-bind:key="idx">
+    <div style="width:1300px;">
+        <b-card-group deck style="margin-bottom : 30px;" v-for="(productDeck, idx) in itemListToCardDeck(products)" v-bind:key="idx">
             <b-card
                 @click="goToDetail(product)"
                 :img-src="product.img"
@@ -33,7 +33,7 @@
             </b-card>
         </b-card-group>
 
-        <div class="mt-3">
+        <div class="mt-3" style="margin-right:70px;">
             <b-pagination
                 v-model="page"
                 @input="newPage(page)"

@@ -28,7 +28,12 @@
         </b-navbar>
         <div id="page-wrapper">
             <!-- 사이드바 -->
-            <sidebar v-on:goToDiscountList="goToDiscountList" v-on:goToCategory="goToCategory" v-on:goToBrand="goToBrand" :brands="brands"></sidebar>
+            <sidebar
+                v-on:goToDiscountList="goToDiscountList"
+                v-on:goToCategory="goToCategory"
+                v-on:goToBrand="goToBrand"
+                v-on:findBrandList="findBrandList"
+                :brands="brands"></sidebar>
             <div id="page-content-wrapper">
                 <router-view
                     style="margin-top:30px"
@@ -50,7 +55,7 @@
     export default {
         name: 'App',
         components: {
-            sidebar : Sidebar,
+            sidebar: Sidebar
         },
         data() {
             return {
