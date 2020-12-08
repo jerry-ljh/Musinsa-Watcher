@@ -9,20 +9,19 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav="is-nav">
                 <b-navbar-nav class="ml-auto">
-                    <b-nav-form>
-                        <b-form-input
-                            size="md"
-                            class="mr-sm-2"
-                            placeholder="Search"
-                            v-model="searchText"></b-form-input>
-                        <b-button
-                            size="sm"
-                            class="my-2 my-sm-0"
-                            style="background-color : #000000"
-                            v-on:click="search(searchText, 0)">
-                            <b-icon icon="search" font-scale="1.5" color="#FFFFFF"></b-icon>
-                        </b-button >
-                    </b-nav-form>
+                    <b-form-input
+                        size="md"
+                        class="mr-sm-2"
+                        placeholder="Search"
+                        v-on:keyup.enter="search(searchText, 0)"
+                        v-model="searchText"></b-form-input>
+                    <b-button
+                        size="sm"
+                        class="my-2 my-sm-0"
+                        style="background-color : #000000"
+                        v-on:click="search(searchText, 0)">
+                        <b-icon icon="search" font-scale="1.5" color="#FFFFFF"></b-icon>
+                    </b-button >
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
@@ -205,6 +204,7 @@
                         }
                     })
                     .then((response) => {
+                        self.searchText=''
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
