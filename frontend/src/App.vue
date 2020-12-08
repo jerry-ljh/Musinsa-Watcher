@@ -136,6 +136,56 @@
                             </li>
                         </ul>
                     </b-tab>
+                    <b-tab title="오늘 할인 상품">
+                        <ul class="sidebar-nav">
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.top, 0)">상의<small style="color : #b2b2b2">Top</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.outer, 0)">아우터<small style="color : #b2b2b2">Outer</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="javascript:void(0)"
+                                    v-on:click="goToDiscountList(category.onepiece, 0)">원피스<small style="color : #b2b2b2">Onepiece</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.pants, 0)">바지<small style="color : #b2b2b2">Pants</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.skirt, 0)">스커트<small style="color : #b2b2b2">Skirt</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.bag, 0)">가방<small style="color : #b2b2b2">Bag</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="javascript:void(0)"
+                                    v-on:click="goToDiscountList(category.sneakers, 0)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.shoes, 0)">신발<small style="color : #b2b2b2">Shoes</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="javascript:void(0)"
+                                    v-on:click="goToDiscountList(category.headwear, 0)">모자<small style="color : #b2b2b2">HeadWear</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" v-on:click="goToDiscountList(category.socks, 0)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </b-tab>
                 </b-tabs>
             </div>
             <div id="page-content-wrapper">
@@ -204,6 +254,8 @@
                     self.goToBrand(self.curBrand, page)
                 } else if (self.currentListTopic == "search") {
                     self.search(self.curSearchTopic, page)
+                } else if (self.currentListTopic == "discount") {
+                    self.goToDiscountList(self.curCategory, page)
                 }
             },
             goToCategory(category, page) {
@@ -212,6 +264,32 @@
                 window.scrollTo(0, 0);
                 axios
                     .get('http://15.164.229.12:8080/api/v1/product/list', {
+                        params: {
+                            "category": category,
+                            "page": page
+                        }
+                    })
+                    .then((response) => {
+                        self.products = response.data.content
+                        self.currentPage = response.data.pageable.pageNumber + 1
+                        self.rows = response.data.totalElements
+                        self.perpage = response.data.pageable.pageSize
+                        self.curCategory = category
+                        if (this.$route.path !== '/') 
+                            this
+                                .$router
+                                .push({name: 'List'})
+                        })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+            goToDiscountList(category, page) {
+                let self = this
+                self.currentListTopic = "discount"
+                window.scrollTo(0, 0);
+                axios
+                    .get('http://15.164.229.12:8080/api/v1/product/discount', {
                         params: {
                             "category": category,
                             "page": page
