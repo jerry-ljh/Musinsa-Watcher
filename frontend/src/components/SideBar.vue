@@ -188,7 +188,10 @@
                 this.$emit('goToDiscountList', category, page)
             },
             goToBrand(name, page) {
-                this.$emit('goToBrand', category, page)
+                this.$emit('goToBrand', name, page)
+            },
+            findBrandList(type){
+                this.$emit('findBrandList', type);
             }
         }
     }
