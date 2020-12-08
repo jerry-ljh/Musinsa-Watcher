@@ -1,8 +1,6 @@
 <template>
     <div>
-        <b-card-group
-            columns="columns"
-            style="width:1300px; margin-bottom : 100px; margin-right : 50px">
+        <b-card-group columns="columns" style="width:1300px; margin-bottom : 100px;">
             <b-card
                 @click="goToDetail(product)"
                 :img-src="product.img"
@@ -30,7 +28,8 @@
         <div class="mt-3">
             <b-pagination
                 v-model="page"
-                :change="newPage(page)"
+                @input="newPage(page)"
+                :value="refreshPage"
                 :total-rows="rows"
                 align="center"
                 :per-page="perpage"
@@ -49,6 +48,12 @@
         props: [
             'products', 'currentPage', 'perpage', 'rows'
         ],
+        computed: {
+            refreshPage () {
+                this.page = this.currentPage
+                return this.page
+            }
+        },
         methods: {
             goToDetail(product) {
                 this
@@ -62,11 +67,10 @@
 
             },
             newPage(page) {
-                if (page > 0 && page != null && page != this.currentPage) {
-                    this.$emit('goNewPage', page - 1)
+                if (page != this.currentPage) {
+                    this.$emit('goNewPage', this.page - 1)
                     window.scrollTo(0, 0);
                 }
-
             }
         }
     }
