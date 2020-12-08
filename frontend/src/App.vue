@@ -249,7 +249,7 @@
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
-                         if (this.$route.path !== '/') {
+                        if (this.$route.path !== '/') {
                             this
                                 .$router
                                 .push({name: 'List'})
@@ -268,7 +268,7 @@
                 self.curSearchTopic = topic;
                 window.scrollTo(0, 0);
                 axios
-                    .get('http://localhost:8080/api/v1/search', {
+                    .get('http://15.164.229.12:8080/api/v1/search', {
                         params: {
                             "topic": topic
                                 .trim()
