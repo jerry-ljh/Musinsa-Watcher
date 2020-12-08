@@ -19,6 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   Page<Product> findByCategory(String category, Pageable pageable);
 
+  @Query("SELECT p FROM Product p WHERE p.brand LIKE %?1% OR p.productName LIKE %?1%")
+  Page<Product> searchItems(String text, Pageable pageable);
+
   @Query("SELECT distinct p FROM Product p JOIN FETCH p.prices p2 WHERE p.productId =  ?1 ORDER BY p2.createdDate DESC")
   Product findProductWithPrice(int productId);
 }

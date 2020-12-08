@@ -28,14 +28,21 @@ public class ProductController {
 
   @GetMapping("/api/v1/search/brands")
   public List<String> findBrandByInitial(String type) {
-    String[] initial = InitialWord.valueOf("type"+type).getInitials();
+    String[] initial = InitialWord.valueOf("type" + type).getInitials();
     return productService.findBrandByInitial(initial[0], initial[1], initial[2]);
+  }
+
+  @GetMapping("/api/v1/search")
+  public Page<ProductResponseDto> searchItem(@RequestParam(required = false, defaultValue = "0") int page,
+      String topic) {
+    return productService
+        .searchItems(topic, PageRequest.of(page, 25, Sort.by("modifiedDate").descending()));
   }
 
   @GetMapping("/api/v1/product/brand")
   public Page<ProductResponseDto> findProductByBrand(
       @RequestParam(required = false, defaultValue = "0") int page, String name) {
-    return productService.findByBrand(name, PageRequest.of(page, 25, Sort.by("productName")));
+    return productService.findByBrand(name, PageRequest.of(page, 25, Sort.by("modifiedDate").descending()));
   }
 
   @GetMapping("/api/v1/product/list")

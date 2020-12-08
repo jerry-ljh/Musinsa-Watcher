@@ -46,4 +46,12 @@ public class ProductService {
   public List<String> findBrandByInitial(String initial1, String initial2, String initial3) {
     return productRepository.findBrandByInitial(initial1, initial2, initial3);
   }
+
+  public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {
+    Page<Product> page = productRepository.searchItems(text, pageable);
+    return new PageImpl<ProductResponseDto>(page.getContent()
+        .stream()
+        .map(ProductResponseDto::new)
+        .collect(Collectors.toList()), pageable, page.getTotalElements());
+  }
 }
