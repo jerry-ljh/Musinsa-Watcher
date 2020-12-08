@@ -90,9 +90,7 @@
                 var productList = []
                 for(var i=0; i< this.columnCount; i++){
                     productList.push(list.slice(i*this.columnCount, (i+1)*this.columnCount))
-                    
                 }
-                console.log(productList);
                 return productList
             }
         }
