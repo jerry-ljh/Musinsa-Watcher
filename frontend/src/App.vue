@@ -28,116 +28,7 @@
         </b-navbar>
         <div id="page-wrapper">
             <!-- 사이드바 -->
-            <div id="sidebar-wrapper">
-                <b-tabs content-class="mt-3" style="margin-top : 20px;">
-                    <b-tab title="품목" active="active" align="left">
-                        <ul class="sidebar-nav">
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.top, 0)">상의<small style="color : #b2b2b2">Top</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.outer, 0)">아우터<small style="color : #b2b2b2">Outer</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.onepiece, 0)">원피스<small style="color : #b2b2b2">Onepiece</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.pants, 0)">바지<small style="color : #b2b2b2">Pants</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.skirt, 0)">스커트<small style="color : #b2b2b2">Skirt</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.bag, 0)">가방<small style="color : #b2b2b2">Bag</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.sneakers, 0)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.shoes, 0)">신발<small style="color : #b2b2b2">Shoes</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.headwear, 0)">모자<small style="color : #b2b2b2">HeadWear</small>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" v-on:click="goToCategory(category.socks, 0)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
-                                </a>
-                            </li>
-                        </ul>
-                    </b-tab>
-                    <b-tab title="브랜드" align="center">
-                        <table style="width:250px; text-align:center">
-                            <tr >
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(1)">ㄱ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(2)">ㄴ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(3)">ㄷ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(4)">ㄹ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(5)">ㅁ</a>
-                                </td>
-                            </tr>
-                            <tr >
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(6)">ㅂ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(7)">ㅅ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(8)">ㅇ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(9)">ㅈ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(10)">ㅊ</a>
-                                </td>
-                            </tr>
-                            <tr >
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(11)">ㅋ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(12)">ㅌ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(13)">ㅍ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(14)">ㅎ</a>
-                                </td>
-                                <td class="brand">
-                                    <a href="javascript:void(0)" v-on:click="findBrandList(15)">etc</a>
-                                </td>
-                            </tr>
-                        </table>
-                        <ul
-                            class="sidebar-nav"
-                            style="text-align:left; max-height: 1000px; overflow: auto;">
-                            <li v-for="brand in brands" v-bind:key="brand">
-                                <a href="javascript:void(0)" v-on:click="goToBrand(brand)">{{brand}}</a>
-                            </li>
-                        </ul>
-                    </b-tab>
-                </b-tabs>
-            </div>
+            <sidebar v-on:goToDiscountList="goToDiscountList" v-on:goToCategory="goToCategory" v-on:goToBrand="goToBrand" :brands="brands"></sidebar>
             <div id="page-content-wrapper">
                 <router-view
                     style="margin-top:30px"
@@ -155,8 +46,12 @@
 <script>
     import Chart from 'chart.js'
     import axios from 'axios'
+    import Sidebar from './components/SideBar'
     export default {
         name: 'App',
+        components: {
+            sidebar : Sidebar,
+        },
         data() {
             return {
                 category: {
@@ -204,6 +99,8 @@
                     self.goToBrand(self.curBrand, page)
                 } else if (self.currentListTopic == "search") {
                     self.search(self.curSearchTopic, page)
+                } else if (self.currentListTopic == "discount") {
+                    self.goToDiscountList(self.curCategory, page)
                 }
             },
             goToCategory(category, page) {
@@ -212,6 +109,32 @@
                 window.scrollTo(0, 0);
                 axios
                     .get('http://15.164.229.12:8080/api/v1/product/list', {
+                        params: {
+                            "category": category,
+                            "page": page
+                        }
+                    })
+                    .then((response) => {
+                        self.products = response.data.content
+                        self.currentPage = response.data.pageable.pageNumber + 1
+                        self.rows = response.data.totalElements
+                        self.perpage = response.data.pageable.pageSize
+                        self.curCategory = category
+                        if (this.$route.path !== '/') 
+                            this
+                                .$router
+                                .push({name: 'List'})
+                        })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+            goToDiscountList(category, page) {
+                let self = this
+                self.currentListTopic = "discount"
+                window.scrollTo(0, 0);
+                axios
+                    .get('http://15.164.229.12:8080/api/v1/product/discount', {
                         params: {
                             "category": category,
                             "page": page

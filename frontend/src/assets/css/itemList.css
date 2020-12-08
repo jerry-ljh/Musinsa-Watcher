@@ -35,3 +35,7 @@
   width: 100%;
   text-align: center !important;
 }
+
+.card-deck .card {
+  max-width: 17%;
+}
