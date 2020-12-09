@@ -38,7 +38,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       + "on p1.product_id = p2.product_id\n"
       + "where p1.category = ?1 and p2.created_date >=  ?2 - INTERVAL 1 DAY \n"
       + "group by p1.product_id having count(p2.created_date) > 1 and discount > 0\t\n"
-      + "order by percent desc",
+      + "order by percent desc, product_name",
       countQuery = "select count(*) from (SELECT\n"
           + "      CASE WHEN  p2.created_date < ?2 THEN p2.price END - min(p2.price) as discount\n"
           + "      FROM product p1 \n"
