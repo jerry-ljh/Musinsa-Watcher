@@ -1,7 +1,7 @@
 .card-img {
   width: 125px !important;
   height: 125px !important;
-  margin: 10px auto 0;
+  margin: 15px auto 0;
 }
 
 .item-name {
@@ -27,6 +27,9 @@
 
 .card-body {
   overflow: hidden;
+  padding-top: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .card-footer {
