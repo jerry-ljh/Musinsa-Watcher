@@ -1,6 +1,5 @@
 package com.musinsa.watcher.domain.product;
 
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,17 +29,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   @Query("SELECT max(p.modifiedDate) FROM Product p")
   LocalDateTime findLastUpdateDate();
 
-  @Query(value = "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price), p1.img, p1.modified_date, \n"
-      + "(CASE WHEN  p2.created_date <  ?2 THEN p2.price END - min(p2.price)) as discount, \n"
-      + "(CASE WHEN  p2.created_date <  ?2 THEN p2.price END - min(p2.price))/max(p2.price)*100 as percent\n"
-      + "FROM product p1 \n"
-      + "inner join price p2 "
-      + "on p1.product_id = p2.product_id\n"
+  @Query(value = "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price + p2.coupon), p1.img, p1.modified_date, \n"
+      + "(CASE WHEN  p2.created_date <  ?2 THEN p2.price END - min(p2.price + p2.coupon)) as discount, \n"
+      + "(CASE WHEN  p2.created_date <  ?2 THEN p2.price END - min(p2.price + p2.coupon))/max(p2.price)*100 as percent\n"
+      + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
       + "where p1.category = ?1 and p2.created_date >=  ?2 - INTERVAL 1 DAY \n"
       + "group by p1.product_id having count(p2.created_date) > 1 and discount > 0\t\n"
-      + "order by percent desc",
+      + "order by percent desc, product_name",
       countQuery = "select count(*) from (SELECT\n"
-          + "      CASE WHEN  p2.created_date < ?2 THEN p2.price END - min(p2.price) as discount\n"
+          + "      CASE WHEN  p2.created_date < ?2 THEN p2.price END - min(p2.price + p2.coupon) as discount\n"
           + "      FROM product p1 \n"
           + "      inner join price p2 \n"
           + "      on p1.product_id = p2.product_id\n"
@@ -48,4 +45,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           + "      group by p1.product_id having count(p2.created_date) > 1 and discount > 0) t",
       nativeQuery = true)
   Page<Object[]> findDiscountedProduct(String category, LocalDateTime date, Pageable pageable);
+
 }
