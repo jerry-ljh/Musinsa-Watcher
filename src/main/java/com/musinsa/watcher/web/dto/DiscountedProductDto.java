@@ -17,12 +17,12 @@ public class DiscountedProductDto {
   private String brand;
   private String img;
   private String modifiedDate;
-  private int price;
+  private long price;
   private long discount;
   private float percent;
 
   @Builder
-  public DiscountedProductDto(int productId, String productName, String brand, int price,
+  public DiscountedProductDto(int productId, String productName, String brand, long price,
       String img, Timestamp modifiedDate, long discount, float percent) {
     this.productId = productId;
     this.productName = productName;
@@ -41,7 +41,7 @@ public class DiscountedProductDto {
         .productId((int) object[0])
         .productName((String) object[1])
         .brand((String) object[2])
-        .price((int) object[3])
+        .price(((BigInteger) object[3]).longValue())
         .img((String) object[4])
         .modifiedDate((Timestamp) object[5])
         .discount(((BigInteger) object[6]).longValue())
