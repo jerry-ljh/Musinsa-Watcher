@@ -7,9 +7,12 @@
                 align="center"
                 v-for="product in productDeck"
                 v-bind:key="product.productId">
-                <h5
-                    style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px"
-                    v-if="product.discount !=null">-{{Math.ceil(product.percent)}}%</h5>
+                <h6
+                    style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
+                    v-if="product.discount !=null">-{{Math.ceil(product.percent)}}%</h6>
+                <h6 style="position: absolute; top: 0; left: 5px; background-color:#FFF" v-if="product.discount ==null">
+                    {{product.rank}}위
+                </h6>
                 <b-card-text>
                     <h6 style="text-align : center">
                         <strong>{{product.brand}}</strong>
@@ -69,8 +72,8 @@
                     .push({name: 'Detail', params: product})
             },
             truncateProductName(productName) {
-                return productName.length > 40
-                    ? productName.substr(0, 40) + '...'
+                return productName.length > 60
+                    ? productName.substr(0, 60) + '...'
                     : productName;
 
             },
