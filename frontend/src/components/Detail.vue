@@ -52,18 +52,14 @@
                         <b-icon icon="sticky"></b-icon>
                         추가 쿠폰 :
                         {{numberToPrice(lastPrice.coupon)}}원</div>
-                    <span style="color:rgb(234 7 7)">과거 실구매 최저가 :
+                    <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
                         {{numberToPrice(Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1)))}}원</span><br/>
-                    <span style="color:rgb(234 7 7)">과거 실구매 평균가 :
+                    <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
                         {{numberToPrice(computeAvg(this.realPriceList))}}원</span><br/>
-                    <span
-                        style="color:rgb(234 7 7)"
-                        v-if="computeOrder(this.realPriceList)==0">
+                    <span style="color:rgb(234 7 7)" v-if="computeOrder(this.realPriceList)==0">
                         <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
                     </span>
-                    <span
-                        style="color:rgb(234 7 7) "
-                        v-if="computeOrder(this.realPriceList)!=0">오늘은 역대 상위
+                    <span style="color:rgb(234 7 7) " v-if="computeOrder(this.realPriceList)!=0">오늘은 역대 상위
                         {{numberToPrice(computeOrder(this.realPriceList))}}%로 낮은 가격입니다.</span><br/>
                     <div style="vertical-align : middle">
                         <b-form-rating
@@ -109,7 +105,6 @@
                 dateList: [],
                 priceList: [],
                 realPriceList: [],
-                couponList: [],
                 datasets: [
                     {
                         label: '',
@@ -133,9 +128,6 @@
                         this
                             .priceList
                             .push(this.prices[end - 1 - i].price)
-                        this
-                            .couponList
-                            .push(this.prices[end - 1 - i].coupon)
                         this
                             .realPriceList
                             .push(this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
@@ -163,21 +155,13 @@
                             fill: false,
                             data: this.priceList
                         }, {
-                            label: '실 구매가',
+                            label: '가격(쿠폰 포함)',
                             pointBackgroundColor: 'white',
                             borderWidth: 2,
                             borderColor: 'blue',
                             pointBorderColor: 'blue',
                             fill: false,
                             data: this.realPriceList
-                        }, {
-                            label: '쿠폰',
-                            pointBackgroundColor: 'white',
-                            borderWidth: 2,
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            pointBorderColor: 'rgba(255, 159, 64, 1)',
-                            fill: false,
-                            data: this.couponList
                         }
                     ]
                 },
@@ -188,6 +172,12 @@
                             {
                                 gridLines: {
                                     display: true
+                                },
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        return value.toLocaleString() + "원";
+                                    },
+                                    beginAtZero: true
                                 }
                             }
                         ],
@@ -195,6 +185,18 @@
                             {
                                 gridLines: {
                                     display: false
+                                },
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        if (values.length <= 7) {
+                                            return value
+                                        } else {
+                                            var label = index % (parseInt(values.length / 7)) == 0
+                                                ? value
+                                                : ''
+                                            return label
+                                        }
+                                    }
                                 }
                             }
                         ]
@@ -225,7 +227,7 @@
                 for (var i = 0; i < list.length - 1; i++) {
                     sum += parseInt(list[i], 10);
                 }
-                var avg = sum / (list.length-1);
+                var avg = sum / (list.length - 1);
                 return Math.ceil(avg)
             },
             computeOrder(list) {
@@ -235,7 +237,7 @@
                         count += 1
                     }
                 }
-                return Math.ceil(count / (list.length-1) * 100)
+                return Math.ceil(count / (list.length - 1) * 100)
             }
         },
         created() {
