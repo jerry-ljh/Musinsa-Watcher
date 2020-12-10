@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="min-width:1300px;">
         <b-navbar style="background-color:black ">
             <b-navbar-brand >
                 <a href="/" style="color :#FFFFFF; text-decoration:none !important">
@@ -43,7 +43,6 @@
                     v-on:goNewPage="goNewPage"></router-view>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -204,7 +203,7 @@
                         }
                     })
                     .then((response) => {
-                        self.searchText=''
+                        self.searchText = ''
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements

@@ -1,5 +1,5 @@
 <template>
-    <div style="width:1300px;">
+    <div>
         <b-card-group deck style="margin-bottom : 30px;" v-for="(productDeck, idx) in itemListToCardDeck(products)" v-bind:key="idx">
             <b-card
                 @click="goToDetail(product)"
