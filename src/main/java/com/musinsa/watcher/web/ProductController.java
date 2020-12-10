@@ -57,8 +57,7 @@ public class ProductController {
   public Page<ProductResponseDto> findProductByCategory(
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
     return productService
-        .findByCategory(category, PageRequest
-            .of(page, 25, Sort.by("modifiedDate").descending().and(Sort.by("rank"))));
+        .findByCategory(category, PageRequest.of(page, 25));
   }
 
   @GetMapping("/api/v1/product")
