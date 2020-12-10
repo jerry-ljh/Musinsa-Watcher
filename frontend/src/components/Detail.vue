@@ -25,9 +25,10 @@
                     <div style="margin-bottom: 10px">
                         <b-icon icon="trophy"></b-icon>
                         Ranking :
-                        {{lastPrice.rank}}위 
+                        {{lastPrice.rank}}위
                         <small class="text-muted" style="color :#b2b2b2;">
-                              * {{lastPrice.createdDate}}일 기준</small>
+                            *
+                            {{lastPrice.createdDate}}일 기준</small>
                     </div>
                     <div style=" margin-bottom: 10px">
                         <h3 style="text-decoration: line-through; color :#b2b2b2 ">
@@ -41,7 +42,8 @@
                     </div>
                     <div style=" margin-bottom: 10px">
                         <h3>
-                            {{numberToPrice(lastPrice.price)}}원</h3>
+                            {{numberToPrice(lastPrice.price)}}원
+                        </h3>
                     </div>
                     <div v-if="lastPrice.coupon==0" style="color :#b2b2b2;">
                         <b-icon icon="sticky"></b-icon>
@@ -50,6 +52,15 @@
                         <b-icon icon="sticky"></b-icon>
                         추가 쿠폰 :
                         {{numberToPrice(lastPrice.coupon)}}원</div>
+                    <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
+                        {{numberToPrice(Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1)))}}원</span><br/>
+                    <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
+                        {{numberToPrice(computeAvg(this.realPriceList))}}원</span><br/>
+                    <span style="color:rgb(234 7 7)" v-if="computeOrder(this.realPriceList)==0">
+                        <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
+                    </span>
+                    <span style="color:rgb(234 7 7) " v-if="computeOrder(this.realPriceList)!=0">오늘은 역대 상위
+                        {{numberToPrice(computeOrder(this.realPriceList))}}%로 낮은 가격입니다.</span><br/>
                     <div style="vertical-align : middle">
                         <b-form-rating
                             id="rating-inline"
@@ -63,7 +74,7 @@
                     <line-chart ref="chart" :datacollection="datacollection" :options="options"></line-chart>
                     <div style=" margin-top: 10px">
                         <small class="text-muted">
-                            * MUSINSA WATCHER는 카테고리별 1~3,000위 까지의 자료를 수집합니다. 순위 미진입시 데이터가 없을 수 있습니다.
+                            * MUSINSA WATCHER는 카테고리별 상위 9000위의 데이터를 수집합니다. 순위 미진입시 데이터가 없을 수 있습니다.
                         </small>
                     </div>
                 </b-col>
@@ -94,7 +105,6 @@
                 dateList: [],
                 priceList: [],
                 realPriceList: [],
-                couponList: [],
                 datasets: [
                     {
                         label: '',
@@ -111,21 +121,22 @@
         },
         methods: {
             generatePriceData() {
-                for (var i = this.prices.length - 1; i >= 0; i--) {
+                var end = this
+                    .prices
+                    .length
+                    for (var i = 0; i < end; i++) {
+                        this
+                            .priceList
+                            .push(this.prices[end - 1 - i].price)
+                        this
+                            .realPriceList
+                            .push(this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
+                        this
+                            .dateList
+                            .push(this.prices[end - 1 - i].createdDate)
+                    }
                     this
-                        .priceList
-                        .push(this.prices[i].price)
-                    this
-                        .couponList
-                        .push(this.prices[i].coupon)
-                    this
-                        .realPriceList
-                        .push(this.prices[i].price + this.prices[i].coupon)
-                    this
-                        .dateList
-                        .push(this.prices[i].createdDate)
-                }
-                this.chartRender();
+                    .chartRender();
             },
             chartRender() {
                 this
@@ -139,20 +150,12 @@
                             label: '가격',
                             pointBackgroundColor: 'white',
                             borderWidth: 2,
-                            borderColor: '#249EBF',
-                            pointBorderColor: '#249EBF',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            pointBorderColor: 'rgba(255, 99, 132, 1)',
                             fill: false,
                             data: this.priceList
                         }, {
-                            label: '쿠폰',
-                            pointBackgroundColor: 'white',
-                            borderWidth: 2,
-                            borderColor: '#b2b2b2',
-                            pointBorderColor: '#b2b2b2',
-                            fill: false,
-                            data: this.couponList
-                        }, {
-                            label: '실 구매가',
+                            label: '가격(쿠폰 포함)',
                             pointBackgroundColor: 'white',
                             borderWidth: 2,
                             borderColor: 'blue',
@@ -169,6 +172,12 @@
                             {
                                 gridLines: {
                                     display: true
+                                },
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        return value.toLocaleString() + "원";
+                                    },
+                                    beginAtZero: true
                                 }
                             }
                         ],
@@ -176,6 +185,18 @@
                             {
                                 gridLines: {
                                     display: false
+                                },
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        if (values.length <= 7) {
+                                            return value
+                                        } else {
+                                            var label = index % (parseInt(values.length / 7)) == 0
+                                                ? value
+                                                : ''
+                                            return label
+                                        }
+                                    }
                                 }
                             }
                         ]
@@ -200,6 +221,23 @@
                     return number
                 }
                 return number.toLocaleString();
+            },
+            computeAvg(list) {
+                var sum = 0;
+                for (var i = 0; i < list.length - 1; i++) {
+                    sum += parseInt(list[i], 10);
+                }
+                var avg = sum / (list.length - 1);
+                return Math.ceil(avg)
+            },
+            computeOrder(list) {
+                var count = 0;
+                for (var i = 0; i < list.length - 1; i++) {
+                    if (list[list.length - 1] >= list[i]) {
+                        count += 1
+                    }
+                }
+                return Math.ceil(count / (list.length - 1) * 100)
             }
         },
         created() {
