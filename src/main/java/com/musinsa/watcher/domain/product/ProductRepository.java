@@ -18,6 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   Page<Product> findByBrand(String brand, Pageable pageable);
 
+  @Query("SELECT p FROM Product p WHERE p.category = ?1 ORDER BY function('date_format', p.modifiedDate, '%Y, %m, %d') DESC, p.rank")
   Page<Product> findByCategory(String category, Pageable pageable);
 
   @Query("SELECT p FROM Product p WHERE p.brand LIKE %?1% OR p.productName LIKE %?1%")
