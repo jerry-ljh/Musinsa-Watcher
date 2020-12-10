@@ -111,7 +111,7 @@
                 self.currentListTopic = "category"
                 window.scrollTo(0, 0);
                 axios
-                    .get('http://15.164.229.12:8080/api/v1/product/list', {
+                    .get('http://www.musinsa.cf/api/v1/product/list', {
                         params: {
                             "category": category,
                             "page": page
@@ -137,7 +137,7 @@
                 self.currentListTopic = "discount"
                 window.scrollTo(0, 0);
                 axios
-                    .get('http://15.164.229.12:8080/api/v1/product/discount', {
+                    .get('http://www.musinsa.cf/api/v1/product/discount', {
                         params: {
                             "category": category,
                             "page": page
@@ -164,7 +164,7 @@
                 self.curBrand = name;
                 window.scrollTo(0, 0);
                 axios
-                    .get('http://15.164.229.12:8080/api/v1/product/brand', {
+                    .get('http://www.musinsa.cf/api/v1/product/brand', {
                         params: {
                             "name": name,
                             "page": page
@@ -194,7 +194,7 @@
                 self.curSearchTopic = topic;
                 window.scrollTo(0, 0);
                 axios
-                    .get('http://15.164.229.12:8080/api/v1/search', {
+                    .get('http://www.musinsa.cf/api/v1/search', {
                         params: {
                             "topic": topic
                                 .trim()
@@ -221,7 +221,7 @@
             findBrandList(typeNumber) {
                 let self = this
                 axios
-                    .get('http://15.164.229.12:8080/api/v1/search/brands', {
+                    .get('http://www.musinsa.cf/api/v1/search/brands', {
                         params: {
                             "type": typeNumber
                         }
