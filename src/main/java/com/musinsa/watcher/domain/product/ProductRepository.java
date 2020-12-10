@@ -30,18 +30,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   LocalDateTime findLastUpdateDate();
 
   @Query(value = "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price + p2.coupon), p1.img, p1.modified_date, \n"
-      + "(CASE WHEN  p2.created_date <  ?2 THEN  p2.price + p2.coupon END - min(p2.price + p2.coupon)) as discount, \n"
-      + "((CASE WHEN  p2.created_date <  ?2  THEN p2.price + p2.coupon END) - min(p2.price + p2.coupon))/max(p2.price + p2.coupon)*100 as percent\n"
+      + "(CASE WHEN  p2.created_date <  date_format(?2, '%Y-%m-%d') THEN  p2.price + p2.coupon END - min(p2.price + p2.coupon)) as discount, \n"
+      + "((CASE WHEN  p2.created_date <  date_format(?2, '%Y-%m-%d')  THEN p2.price + p2.coupon END) - min(p2.price + p2.coupon))/max(p2.price + p2.coupon)*100 as percent\n"
       + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
-      + "where p1.category = ?1 and p2.created_date >=  ?2 - INTERVAL 1 DAY \n"
+      + "where p1.category = ?1 and p2.created_date >=  date_format(?2, '%Y-%m-%d') - INTERVAL 1 DAY \n"
       + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1\n"
       + "order by percent desc, product_name",
       countQuery = "select count(*) from (SELECT\n"
-          + "      (CASE WHEN  p2.created_date < ?2 THEN p2.price + p2.coupon END - min(p2.price + p2.coupon))/max(p2.price)*100 as percent \n"
+          + "      (CASE WHEN p2.created_date <=  date_format(?2, '%Y-%m-%d') THEN p2.price + p2.coupon END - min(p2.price + p2.coupon))/max(p2.price)*100 as percent \n"
           + "      FROM product p1 \n"
           + "      inner join price p2 \n"
           + "      on p1.product_id = p2.product_id\n"
-          + "      where p1.category = ?1 and p2.created_date >=  ?2 - INTERVAL 1 DAY \n"
+          + "      where p1.category = ?1 and p2.created_date  >=  date_format(?2, '%Y-%m-%d') - INTERVAL 1 DAY \n"
           + "      group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t",
       nativeQuery = true)
   Page<Object[]> findDiscountedProduct(String category, LocalDateTime date, Pageable pageable);
