@@ -1,6 +1,6 @@
 .card-img {
-  width: 125px !important;
-  height: 125px !important;
+  max-width: 125px !important;
+  max-height: 125px !important;
   margin: 15px auto 0;
 }
 
@@ -13,16 +13,12 @@
 }
 
 .card {
-  width: 125px;
-  height: 300px;
+  max-width: 125px !important;
+  max-height: 300px !important;
 }
 
 .card:hover {
   background: #b2b2b21c;
-}
-
-.card-columns {
-  column-count: 5 !important;
 }
 
 .card-body {
@@ -33,12 +29,11 @@
 }
 
 .card-footer {
-  position: absolute;
   bottom: 0;
   width: 100%;
   text-align: center !important;
 }
 
 .card-deck .card {
-  max-width: 17%;
+  max-width: 17% !important;;
 }
