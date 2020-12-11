@@ -1,5 +1,5 @@
-version : 0.0
-os : linux
+version: 0.0
+os: linux
 files:
   - source: /
     destination: /home/ubuntu/musinsa-watcher/backend/deploy/zip
@@ -12,7 +12,17 @@ permissions:
     group: ubuntu
 
 hooks:
+  AfterInstall:
+    - location: stop.sh
+      timeout: 300
+      runas: ubuntu
+
   ApplicationStart:
-    - location: deploy.sh
+    - location: start.sh
+      timeout: 300
+      runas: ubuntu
+
+  ValidateService:
+    - location: health.sh
       timeout: 300
       runas: ubuntu
