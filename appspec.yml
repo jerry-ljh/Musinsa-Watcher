@@ -11,8 +11,3 @@ permissions:
     owner: ubuntu
     group: ubuntu
 
-hooks:
-  ApplicationStart:
-    - location: deploy.sh
-      timeout: 300
-      runas: ubuntu

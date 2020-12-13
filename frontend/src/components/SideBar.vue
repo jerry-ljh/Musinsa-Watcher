@@ -185,6 +185,7 @@
         },
         methods: {
             goToCategory(category, page) {
+                this.$emit('isLoading', true)
                 EventBus.$emit("goToCategory", category, page)
                 this
                     .$router
@@ -198,6 +199,7 @@
                     .catch(() => {})
                 },
             goToDiscountList(category, page) {
+                this.$emit('isLoading', true)
                 EventBus.$emit("goToDiscountList", category, page)
                 this
                     .$router
@@ -212,6 +214,7 @@
                     .catch(() => {})
                 },
             goToBrand(name, page) {
+                this.$emit('isLoading', true)
                 EventBus.$emit("goToBrand", name, page)
                 this
                     .$router
@@ -225,6 +228,7 @@
                     .catch(() => {})
                 },
             findBrandList(typeNumber) {
+                this.$emit('isLoading', true)
                 axios
                     .get('http://localhost:8080/api/v1/search/brands', {
                         params: {

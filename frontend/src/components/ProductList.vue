@@ -54,6 +54,9 @@
                     style="margin-bottom : 100px"></b-pagination>
             </div>
         </div>
+        <div v-if="products.length==0 && $parent.loading == false">
+            <h2 style="text-align:center">일치하는 결과가 없습니다!</h2>
+        </div>
     </div>
 </template>
 
@@ -76,7 +79,7 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                API: 'http://localhost:8080/'
+                API: "http://www.musinsa.cf"
             }
         },
         methods: {
@@ -100,6 +103,7 @@
             newPage(page) {
                 if (this.bufferPage == page || page == null) 
                     return
+                this.$emit('isLoading', true)
                 if (this.currentListTopic == "category") {
                     this.goToCategory(this.curCategory, page)
                 } else if (this.currentListTopic == "brand") {
@@ -109,7 +113,6 @@
                 } else if (this.currentListTopic == "discount") {
                     this.goToDiscountList(this.curCategory, page)
                 }
-                window.scrollTo(0, 0)
                 this.bufferPage = page
             },
             numberToPrice(number) {
@@ -126,10 +129,8 @@
                 return productDeck
             },
             goToCategory(category, page) {
-                 console.log("goToCategory")
                 let self = this
                 self.currentListTopic = "category"
-                window.scrollTo(0, 0);
                 axios
                     .get(this.API + '/api/v1/product/list', {
                         params: {
@@ -152,17 +153,18 @@
                                     "page": page
                                 }
                             })
-                            .catch(() => {})
-                        })
+                            .catch(() => {});
+                        this.$emit('isLoading', false)
+                        window.scrollTo(0, 0)
+                    })
                     .catch((error) => {
+                        this.$emit('isLoading', false)
                         console.log(error);
                     });
             },
             goToDiscountList(category, page) {
-                console.log("goToDiscountList")
                 let self = this
                 self.currentListTopic = "discount"
-                window.scrollTo(0, 0);
                 axios
                     .get(this.API + '/api/v1/product/discount', {
                         params: {
@@ -186,18 +188,20 @@
                                     "type": 'discount'
                                 }
                             })
-                            .catch(() => {})
-                        })
+                            .catch(() => {});
+                        this.$emit('isLoading', false)
+                        window.scrollTo(0, 0);
+
+                    })
                     .catch((error) => {
+                        this.$emit('isLoading', false)
                         console.log(error);
                     });
             },
             goToBrand(name, page) {
-                console.log("goToBrand")
                 let self = this
                 self.currentListTopic = "brand"
                 self.curBrand = name;
-                window.scrollTo(0, 0);
                 axios
                     .get(this.API + '/api/v1/product/brand', {
                         params: {
@@ -222,20 +226,22 @@
                                     "page": page
                                 }
                             })
-                            .catch(() => {})
-                        })
+                            .catch(() => {});
+                        this.$emit('isLoading', false)
+                        window.scrollTo(0, 0);
+
+                    })
                     .catch((error) => {
+                        this.$emit('isLoading', false)
                         console.log(error);
                     });
             },
             goToSearch(topic, page) {
-                 console.log("goToSearch")
                 if (topic.trim().length == 0) {
                     return;
                 }
                 this.currentListTopic = "search"
                 this.curSearchTopic = topic;
-                window.scrollTo(0, 0);
                 axios
                     .get(this.API + '/api/v1/search', {
                         params: {
@@ -260,14 +266,18 @@
                                     "page": page
                                 }
                             })
-                            .catch(() => {})
-                        })
+                            .catch(() => {});
+                        this.$emit('isLoading', false)
+                        window.scrollTo(0, 0);
+                    })
                     .catch((error) => {
+                        this.$emit('isLoading', false)
                         console.log(error);
                     });
             }
         },
         created() {
+            this.$emit('isLoading', true)
             EventBus.$on("goToCategory", (category, page) => {
                 this.goToCategory(category, page)
             })

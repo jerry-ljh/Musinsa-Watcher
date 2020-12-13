@@ -1,10 +1,20 @@
 <template>
     <div style="min-width:1300px;">
-        <navigation></navigation>
+        <div
+            style="display: block;
+                z-index: 1000;
+                position: fixed;
+                width: 100%; height: 100%;
+                left: 0; top: 0;
+                background-color: rgba(0,0,0, 0.4);
+                overflow-x: hidden;"
+                v-if="loading"
+            ></div>
+        <navigation v-on:isLoading="isLoading"></navigation>
         <div id="page-wrapper">
-            <sidebar></sidebar>
+            <sidebar v-on:isLoading="isLoading"></sidebar>
             <div id="page-content-wrapper">
-                <router-view style="margin-top:30px"></router-view>
+                <router-view style="margin-top:30px" v-on:isLoading="isLoading"></router-view>
             </div>
         </div>
     </div>
@@ -23,9 +33,15 @@
             navigation: Navigation
         },
         data() {
-            return {}
+            return {
+                loading: false
+            }
         },
-        methods: {},
+        methods: {
+            isLoading(value){
+                this.loading = value
+            },
+        },
     }
 </script>
 

@@ -6,7 +6,7 @@
             </h3>
             <div style="text-align : left">
                 <span style="font-size : 20px; color :#b2b2b2;">분류 :
-                    {{product.category}}</span>
+                    {{numToCategory[product.category]}}</span>
             </div>
             <div style="text-align : left; margin-bottom : 30px">
                 <span style="font-size : 20px;">{{product.productName}}</span>
@@ -111,7 +111,19 @@
                     }
                 ],
                 datacollection: {},
-                options: {}
+                options: {},
+                numToCategory: {
+                    '001': 'Top',
+                    '002': 'Outer',
+                    '003': 'Pants',
+                    '004': 'Bag',
+                    '018': 'Sneakers',
+                    '005': 'Shoes',
+                    '007': 'Headwear',
+                    '022': 'Skirt',
+                    '020': 'Onepiece',
+                    '008': 'Socks/Legwear'
+                },
             }
         },
         methods: {
@@ -238,7 +250,7 @@
         created() {
             let self = this
             axios
-                .get('http://localhost:8080/api/v1/product', {
+                .get('http://www.musinsa.cf/api/v1/product', {
                     params: {
                         "id": this.$route.query.id
                     }

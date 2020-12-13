@@ -36,6 +36,7 @@
         },
         methods: {
             goToSearch(searchText, page) {
+                this.$emit('isLoading', true)
                 EventBus.$emit("goToSearch", searchText, page)
                 this
                     .$router
