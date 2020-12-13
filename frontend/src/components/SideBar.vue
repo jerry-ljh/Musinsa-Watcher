@@ -228,9 +228,8 @@
                     .catch(() => {})
                 },
             findBrandList(typeNumber) {
-                this.$emit('isLoading', true)
                 axios
-                    .get('http://localhost:8080/api/v1/search/brands', {
+                    .get('http://www.musinsa.cf/api/v1/search/brands', {
                         params: {
                             "type": typeNumber
                         }
