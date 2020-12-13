@@ -4,43 +4,43 @@
             <b-tab title="품목" active="active" align="left">
                 <ul class="sidebar-nav">
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.top, 0)">상의<small style="color : #b2b2b2">Top</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.outer, 0)">아우터<small style="color : #b2b2b2">Outer</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.outer, 1)">아우터<small style="color : #b2b2b2">Outer</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.onepiece, 0)">원피스<small style="color : #b2b2b2">Onepiece</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.onepiece, 1)">원피스<small style="color : #b2b2b2">Onepiece</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.pants, 0)">바지<small style="color : #b2b2b2">Pants</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.pants, 1)">바지<small style="color : #b2b2b2">Pants</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.skirt, 0)">스커트<small style="color : #b2b2b2">Skirt</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.skirt, 1)">스커트<small style="color : #b2b2b2">Skirt</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.bag, 0)">가방<small style="color : #b2b2b2">Bag</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.bag, 1)">가방<small style="color : #b2b2b2">Bag</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.sneakers, 0)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.sneakers, 1)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.shoes, 0)">신발<small style="color : #b2b2b2">Shoes</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.shoes, 1)">신발<small style="color : #b2b2b2">Shoes</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.headwear, 0)">모자<small style="color : #b2b2b2">HeadWear</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.headwear, 1)">모자<small style="color : #b2b2b2">HeadWear</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToCategory(category.socks, 0)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
+                        <a href="javascript:void(0)" v-on:click="goToCategory(category.socks, 1)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
                         </a>
                     </li>
                 </ul>
@@ -103,56 +103,56 @@
                     class="sidebar-nav"
                     style="text-align:left; max-height: 1000px; overflow: auto;">
                     <li v-for="brand in brands" v-bind:key="brand">
-                        <a href="javascript:void(0)" v-on:click="goToBrand(brand)">{{brand}}</a>
+                        <a href="javascript:void(0)" v-on:click="goToBrand(brand, 1)">{{brand}}</a>
                     </li>
                 </ul>
             </b-tab>
             <b-tab title="오늘 할인 상품">
                 <ul class="sidebar-nav">
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.top, 0)">상의<small style="color : #b2b2b2">Top</small>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.outer, 0)">아우터<small style="color : #b2b2b2">Outer</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="javascript:void(0)"
-                            v-on:click="goToDiscountList(category.onepiece, 0)">원피스<small style="color : #b2b2b2">Onepiece</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.pants, 0)">바지<small style="color : #b2b2b2">Pants</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.skirt, 0)">스커트<small style="color : #b2b2b2">Skirt</small>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.bag, 0)">가방<small style="color : #b2b2b2">Bag</small>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.outer, 1)">아우터<small style="color : #b2b2b2">Outer</small>
                         </a>
                     </li>
                     <li>
                         <a
                             href="javascript:void(0)"
-                            v-on:click="goToDiscountList(category.sneakers, 0)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
+                            v-on:click="goToDiscountList(category.onepiece, 1)">원피스<small style="color : #b2b2b2">Onepiece</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.shoes, 0)">신발<small style="color : #b2b2b2">Shoes</small>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.pants, 1)">바지<small style="color : #b2b2b2">Pants</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.skirt, 1)">스커트<small style="color : #b2b2b2">Skirt</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.bag, 1)">가방<small style="color : #b2b2b2">Bag</small>
                         </a>
                     </li>
                     <li>
                         <a
                             href="javascript:void(0)"
-                            v-on:click="goToDiscountList(category.headwear, 0)">모자<small style="color : #b2b2b2">HeadWear</small>
+                            v-on:click="goToDiscountList(category.sneakers, 1)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.socks, 0)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.shoes, 1)">신발<small style="color : #b2b2b2">Shoes</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="javascript:void(0)"
+                            v-on:click="goToDiscountList(category.headwear, 1)">모자<small style="color : #b2b2b2">HeadWear</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToDiscountList(category.socks, 1)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
                         </a>
                     </li>
                 </ul>
@@ -162,8 +162,10 @@
 </template>
 
 <script>
+    import axios from 'axios'
+    import EventBus from "../utils/event-bus"
+
     export default {
-        props: ['brands'],
         data() {
             return {
                 category: {
@@ -177,22 +179,69 @@
                     skirt: '022',
                     onepiece: '020',
                     socks: '008'
-                }
+                },
+                brands: []
             }
         },
         methods: {
             goToCategory(category, page) {
-                this.$emit('goToCategory', category, page)
-            },
+                EventBus.$emit("goToCategory", category, page)
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page
+                        }
+                    })
+                    .catch(() => {})
+                },
             goToDiscountList(category, page) {
-                this.$emit('goToDiscountList', category, page)
-            },
+                EventBus.$emit("goToDiscountList", category, page)
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page,
+                            "type": 'discount'
+                        }
+                    })
+                    .catch(() => {})
+                },
             goToBrand(name, page) {
-                this.$emit('goToBrand', name, page)
-            },
-            findBrandList(type){
-                this.$emit('findBrandList', type);
+                EventBus.$emit("goToBrand", name, page)
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "brand": name,
+                            "page": page
+                        }
+                    })
+                    .catch(() => {})
+                },
+            findBrandList(typeNumber) {
+                axios
+                    .get('http://localhost:8080/api/v1/search/brands', {
+                        params: {
+                            "type": typeNumber
+                        }
+                    })
+                    .then((response) => {
+                        this.brands = response.data
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             }
+        },
+        created() {
+            const brandType = 1
+            this.findBrandList(brandType)
         }
     }
 </script>

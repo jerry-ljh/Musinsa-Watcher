@@ -6,7 +6,7 @@
             </h3>
             <div style="text-align : left">
                 <span style="font-size : 20px; color :#b2b2b2;">분류 :
-                    {{$parent.numToCategory[category]}}</span>
+                    {{product.category}}</span>
             </div>
             <div style="text-align : left; margin-bottom : 30px">
                 <span style="font-size : 20px;">{{product.productName}}</span>
@@ -84,22 +84,17 @@
 </template>
 <script>
     import LineChart from './LineChart'
-    import BarChart from './BarChart'
     import axios from 'axios'
-    import Vue from 'vue'
+    import EventBus from '../utils/event-bus';
 
     export default {
         components: {
-            LineChart,
-            BarChart
+            LineChart
         },
         data() {
             return {
                 product: Object,
                 prices: [],
-                priceChartData: [],
-                rankChartData: [],
-                ratingChartData: [],
                 category: this.$parent.curCategory,
                 lastPrice: Object,
                 dateList: [],
@@ -243,16 +238,20 @@
         created() {
             let self = this
             axios
-                .get('http://www.musinsa.cf/api/v1/product', {
+                .get('http://localhost:8080/api/v1/product', {
                     params: {
-                        "id": this.$route.params.productId
+                        "id": this.$route.query.id
                     }
                 })
                 .then(function (response) {
                     self.prices = response.data.prices
                     self.product = response.data
                     self.lastPrice = self.prices[0]
-                    self.generatePriceData()
+                    self.curCategory = self
+                        .product
+                        .category
+                        self
+                        .generatePriceData()
                 })
                 .catch(function (error) {
                     console.log(error);
