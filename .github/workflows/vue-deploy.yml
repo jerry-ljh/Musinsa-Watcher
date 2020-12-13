@@ -20,9 +20,6 @@ jobs:
         run: npm run build
         working-directory: frontend
 
-      - name: Move deploy script
-        run: cp scripts/*.sh ./frontend/dist/
-
       - name: Make deploy config file
         run: cp appspec.yml ./frontend/dist/
 
