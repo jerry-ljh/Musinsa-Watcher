@@ -3,6 +3,7 @@ package com.musinsa.watcher.web.dto;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ public class DiscountedProductDto {
   private String productName;
   private String brand;
   private String img;
-  private String modifiedDate;
+  private LocalDate modifiedDate;
   private long price;
   private long discount;
   private float percent;
@@ -29,8 +30,7 @@ public class DiscountedProductDto {
     this.price = price;
     this.brand = brand;
     this.img = img;
-    this.modifiedDate = modifiedDate.toLocalDateTime().toLocalDate()
-        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    this.modifiedDate = modifiedDate.toLocalDateTime().toLocalDate();
     this.discount = discount;
     this.percent = percent;
   }

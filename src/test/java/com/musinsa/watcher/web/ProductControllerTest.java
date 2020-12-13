@@ -1,7 +1,7 @@
 package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.domain.product.InitialWord;
-import com.musinsa.watcher.domain.service.ProductService;
+import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;

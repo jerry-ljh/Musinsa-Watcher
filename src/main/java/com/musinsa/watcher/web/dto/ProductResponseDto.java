@@ -2,6 +2,7 @@ package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.domain.product.Product;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class ProductResponseDto {
   private String productUrl;
   private String brand;
   private String brandUrl;
-  private String modifiedDate;
+  private LocalDate modifiedDate;
   private String category;
 
   @Builder
@@ -28,8 +29,7 @@ public class ProductResponseDto {
     this.productUrl = entity.getProductUrl();
     this.brand = entity.getBrand();
     this.brandUrl = entity.getBrandUrl();
-    this.modifiedDate = entity.getModifiedDate()
-        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    this.modifiedDate = entity.getModifiedDate().toLocalDate();
     this.category = entity.getCategory();
   }
 }

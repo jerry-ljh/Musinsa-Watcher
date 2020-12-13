@@ -1,4 +1,4 @@
-package com.musinsa.watcher.domain.service;
+package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.price.PriceRepository;
