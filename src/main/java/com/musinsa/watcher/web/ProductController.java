@@ -5,6 +5,7 @@ import com.musinsa.watcher.domain.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +62,7 @@ public class ProductController {
   }
 
   @GetMapping("/api/v1/product")
-  public ProductWithPriceResponseDto findProductByPrice(@RequestParam int id) {
+  public ProductWithPriceResponseDto findProductWithPrice(@RequestParam int id) {
     return productService.findProductWithPrice(id);
   }
 
