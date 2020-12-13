@@ -2,6 +2,7 @@ package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.domain.product.Product;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class ProductWithPriceResponseDto {
   private String productUrl;
   private String brand;
   private String brandUrl;
-  private String modifiedDate;
+  private LocalDate modifiedDate;
   private String category;
   private List<PriceResponseDto> prices;
 
@@ -31,8 +32,7 @@ public class ProductWithPriceResponseDto {
     this.productUrl = entity.getProductUrl();
     this.brand = entity.getBrand();
     this.brandUrl = entity.getBrandUrl();
-    this.modifiedDate = entity.getModifiedDate()
-        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    this.modifiedDate = entity.getModifiedDate().toLocalDate();
     this.category = entity.getCategory();
     this.prices = entity.getPrices().stream().map(PriceResponseDto::new)
         .collect(Collectors.toList());

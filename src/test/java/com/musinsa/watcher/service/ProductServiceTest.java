@@ -1,6 +1,5 @@
-package com.musinsa.watcher.domain.service;
+package com.musinsa.watcher.service;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import org.junit.AfterClass;
@@ -20,11 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Spy;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import java.util.List;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -51,12 +48,14 @@ public class ProductServiceTest {
   public void 오늘할인() {
     ProductService productService = new ProductService(productRepository);
     LocalDateTime mockLocalDateTime = mock(LocalDateTime.class);
+    LocalDate mockLocalDate = mock(LocalDate.class);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     List<DiscountedProductDto> list = new ArrayList<>();
     String category = "001";
     when(productRepository.findLastUpdateDate()).thenReturn(mockLocalDateTime);
-    when(productRepository.findDiscountedProduct(eq(category), eq(mockLocalDateTime), any()))
+    when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
+    when(productRepository.findDiscountedProduct(eq(category), eq(mockLocalDate), any()))
         .thenReturn(mockPage);
     when(DiscountedProductDto.objectsToDtoList(any())).thenReturn(list);
     when(mockPage.getContent()).thenReturn(list);
@@ -66,6 +65,6 @@ public class ProductServiceTest {
 
     verify(productRepository, times(1)).findLastUpdateDate();
     verify(productRepository, times(1))
-        .findDiscountedProduct(eq(category), eq(mockLocalDateTime), any());
+        .findDiscountedProduct(eq(category), eq(mockLocalDate), any());
   }
 }

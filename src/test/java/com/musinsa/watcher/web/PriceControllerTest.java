@@ -1,8 +1,6 @@
 package com.musinsa.watcher.web;
 
-import static org.junit.Assert.*;
-
-import com.musinsa.watcher.domain.service.PriceService;
+import com.musinsa.watcher.service.PriceService;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;

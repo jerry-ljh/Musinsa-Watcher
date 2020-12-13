@@ -1,13 +1,15 @@
-package com.musinsa.watcher.domain.service;
+package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -34,8 +37,8 @@ public class ProductService {
         .collect(Collectors.toList()), pageable, page.getTotalElements());
   }
 
+  @Cacheable(value="productCache", key="'category'+#category+#pageable.pageNumber", condition="#pageable.pageNumber==0")
   public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
-    productRepository.findByCategory("001", pageable);
     Page<Product> page = productRepository.findByCategory(category, pageable);
     return new PageImpl<ProductResponseDto>(page.getContent()
         .stream()
@@ -59,11 +62,16 @@ public class ProductService {
         .collect(Collectors.toList()), pageable, page.getTotalElements());
   }
 
+  @Cacheable(value="productCache", key="'distcount'+#category+#pageable.pageNumber")
   public Page<DiscountedProductDto> findDiscountedProduct(String category, Pageable pageable) {
-    LocalDateTime lastUpdateDate = productRepository.findLastUpdateDate();
     Page<Object[]> page = productRepository
-        .findDiscountedProduct(category, lastUpdateDate, pageable);
+        .findDiscountedProduct(category, findLastUpdateDate(), pageable);
     return new PageImpl<DiscountedProductDto>(DiscountedProductDto.objectsToDtoList(page.getContent()),
         pageable, page.getTotalElements());
   }
+
+  public LocalDate findLastUpdateDate(){
+    return productRepository.findLastUpdateDate().toLocalDate();
+  }
+
 }

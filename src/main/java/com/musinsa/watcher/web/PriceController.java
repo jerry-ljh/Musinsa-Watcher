@@ -1,6 +1,6 @@
 package com.musinsa.watcher.web;
 
-import com.musinsa.watcher.domain.service.PriceService;
+import com.musinsa.watcher.service.PriceService;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

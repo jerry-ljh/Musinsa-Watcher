@@ -1,7 +1,11 @@
 package com.musinsa.watcher.web;
 
-import com.musinsa.watcher.domain.service.ProductService;
+import com.musinsa.watcher.domain.product.InitialWord;
+import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
+import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
+import java.util.ArrayList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,19 @@ public class ProductControllerTest {
   }
 
   @Test
+  @DisplayName("브랜드 초성 조회")
+  public void 브랜드_초성_조회() throws Exception {
+    String type = "1";
+    List<String> list = new ArrayList<>();
+    String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
+    when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(list);
+    mvc.perform(get( "/api/v1/search/brands")
+        .param("type", type))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]));
+  }
+
+  @Test
   @DisplayName("카테고리별 상품 리스트 조회")
   public void 카테고리별_상품_리스트_조회() throws Exception {
     String category1 = "001";
@@ -74,5 +91,41 @@ public class ProductControllerTest {
         .andExpect(status().isOk());
     verify(mockProductService, times(1)).findByCategory(eq(category1), any());
     verify(mockProductService, times(1)).findByCategory(eq(category2), any());
+  }
+
+  @Test
+  @DisplayName("할인 품목 조회")
+  public void 할인_품목_조회() throws Exception {
+    String category = "001";
+    Page<DiscountedProductDto> mockPage = mock(Page.class);
+    when(mockProductService.findDiscountedProduct(eq(category), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "discount")
+        .param("category", category))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).findDiscountedProduct(eq(category), any());
+  }
+
+  @Test
+  @DisplayName("검색 품목 조회")
+  public void 검색_품목_조회() throws Exception {
+    String topic = "셔츠";
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    when(mockProductService.searchItems(eq(topic), any())).thenReturn(mockPage);
+    mvc.perform(get("/api/v1/search")
+        .param("topic", topic))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).searchItems(eq(topic), any());
+  }
+
+  @Test
+  @DisplayName("품목 상세 정보 조회")
+  public void 품목_상세_정보_조회() throws Exception {
+    int productId = 1;
+    ProductWithPriceResponseDto mockDto = mock(ProductWithPriceResponseDto.class);
+    when(mockProductService.findProductWithPrice(eq(productId))).thenReturn(mockDto);
+    mvc.perform(get(API)
+        .param("id", Integer.toString(productId)))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).findProductWithPrice(eq(productId));
   }
 }
