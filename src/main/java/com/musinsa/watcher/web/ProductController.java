@@ -2,18 +2,16 @@ package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
-import com.musinsa.watcher.web.dto.BrandDto;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
-import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +33,7 @@ public class ProductController {
   }
 
   @GetMapping("/api/v1/search/brands")
-  public List<BrandDto> findBrandByInitial(String type) {
+  public Map<String, Integer> findBrandByInitial(String type) {
     String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     return productService.findBrandByInitial(initial[0], initial[1], initial[2]);
   }
@@ -51,6 +49,11 @@ public class ProductController {
   public Page<DiscountedProductDto> findDiscountedProduct(
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
     return productService.findDiscountedProduct(category, PageRequest.of(page, 25));
+  }
+
+  @GetMapping("/api/v1/product/discount/list")
+  public Map<String, Integer> findDiscountedProduct() {
+    return productService.countDiscountProductEachCategory();
   }
 
   @GetMapping("/api/v1/product/brand")

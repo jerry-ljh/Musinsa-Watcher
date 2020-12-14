@@ -48,4 +48,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       nativeQuery = true)
   Page<Object[]> findDiscountedProduct(String category, LocalDate date, Pageable pageable);
 
+  @Query(value =
+      "select category, count(category) as count from (SELECT category,\n"
+          + "(CASE WHEN p2.created_date <=  ?1 THEN p2.price + p2.coupon END - min(p2.price + p2.coupon))/max(p2.price)*100 as percent \n"
+          + "FROM product p1 \n"
+          + "inner join price p2 \n"
+          + "on p1.product_id = p2.product_id\n"
+          + "where p2.created_date  >=   ?1 - INTERVAL 1 DAY \n"
+          + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t group by category",
+      nativeQuery = true)
+  List<Object[]> countDiscountProductEachCategory(LocalDate date);
 }
