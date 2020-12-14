@@ -104,7 +104,6 @@
                     style="text-align:left; max-height: 1000px; overflow: auto;">
                     <li v-for="brand in Object.keys(brands)" v-bind:key="brand">
                         <a href="javascript:void(0)" v-on:click="goToBrand(brand, 1)">{{brand}}
-                            <span style="color : #b2b2b2">({{keyToValue(brands, brand)}})</span>
                             <span style="color : #b2b2b2">({{brands[brand]}})</span>
                         </a>
                     </li>
