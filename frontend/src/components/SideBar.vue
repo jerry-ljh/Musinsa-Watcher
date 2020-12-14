@@ -102,8 +102,8 @@
                 <ul
                     class="sidebar-nav"
                     style="text-align:left; max-height: 1000px; overflow: auto;">
-                    <li v-for="brand in brands" v-bind:key="brand">
-                        <a href="javascript:void(0)" v-on:click="goToBrand(brand, 1)">{{brand}}</a>
+                    <li v-for="brand in brands" v-bind:key="brand.brand">
+                        <a href="javascript:void(0)" v-on:click="goToBrand(brand, 1)">{{brand.brand}} <span style="color : #b2b2b2">({{brand.count}})</span></a>
                     </li>
                 </ul>
             </b-tab>
