@@ -104,6 +104,7 @@
                     style="text-align:left; max-height: 1000px; overflow: auto;">
                     <li v-for="brand in Object.keys(brands)" v-bind:key="brand">
                         <a href="javascript:void(0)" v-on:click="goToBrand(brand, 1)">{{brand}}
+                            <span style="color : #b2b2b2">({{keyToValue(brands, brand)}})</span>
                             <span style="color : #b2b2b2">({{brands[brand]}})</span>
                         </a>
                     </li>
@@ -184,7 +185,7 @@
                     outer: '002',
                     pants: '003',
                     bag: '004',
-                    sneakers: '0a18',
+                    sneakers: '018',
                     shoes: '005',
                     headwear: '007',
                     skirt: '022',
@@ -284,8 +285,8 @@
         created() {
             const brandType = 1
             this.findBrandList(brandType)
-            this.findDiscountList()
-        },
+            this.findDiscountList();
+        }
     }
 </script>
 
