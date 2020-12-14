@@ -5,7 +5,8 @@ import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.Test;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -65,9 +65,9 @@ public class ProductControllerTest {
   @DisplayName("브랜드 초성 조회")
   public void 브랜드_초성_조회() throws Exception {
     String type = "1";
-    List<String> list = new ArrayList<>();
+    Map<String, Integer> map = new HashMap<>();
     String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
-    when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(list);
+    when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(map);
     mvc.perform(get( "/api/v1/search/brands")
         .param("type", type))
         .andExpect(status().isOk());
