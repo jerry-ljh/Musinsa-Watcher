@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="margin-top:30px">
         <b-container class="bv-example-row">
             <h3 style="text-align : left">
                 <strong>{{product.brand}}</strong>
@@ -91,6 +91,7 @@
         components: {
             LineChart
         },
+        props : ['updatedAt'],
         data() {
             return {
                 product: Object,
@@ -259,10 +260,14 @@
                 return Math.ceil(count / (list.length - 1) * 100)
             },
             isTodayUpdated(){
+                if(this.lastPrice.createdDate == null || this.updatedAt == null){
+                    return false
+                }
                 var lastUpdateArr = this.lastPrice.createdDate.split('-')
                 var lastUpdate = new Date(lastUpdateArr[0], lastUpdateArr[1]-1, lastUpdateArr[2]).toLocaleDateString()
-                var today = new Date().toLocaleDateString()
-                return today == lastUpdate
+                var updatedAtArr = this.updatedAt.split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1]-1, updatedAtArr[2]).toLocaleDateString()
+                return lastUpdate == updatedAt
             }
         },
         created() {

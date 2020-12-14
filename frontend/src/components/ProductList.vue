@@ -79,7 +79,7 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                API: "http://www.musinsa.cf"
+                API: "http://www.musinsa.cf/"
             }
         },
         methods: {
