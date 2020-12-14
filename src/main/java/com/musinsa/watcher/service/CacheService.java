@@ -21,8 +21,8 @@ public class CacheService {
   public LocalDate updateCacheByDate() {
     LocalDateTime localDateTime = productRepository.findLastUpdateDate();
     cacheManager.getCache("productCache").putIfAbsent(DATE_KEY, localDateTime);
-    LocalDateTime cachedLocalDateTime =(LocalDateTime)cacheManager.getCache("productCache").get(DATE_KEY).get();
-    log.info(cacheManager.getCache("productCache").getNativeCache().toString());
+    LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
+        .get(DATE_KEY).get();
     if (localDateTime.isAfter(cachedLocalDateTime)) {
       log.info(localDateTime.toString());
       log.info(cachedLocalDateTime.toString());
@@ -32,4 +32,16 @@ public class CacheService {
     }
     return cachedLocalDateTime.toLocalDate();
   }
+
+  public LocalDate getLastUpdatedByCache() {
+    if (cacheManager.getCache("productCache").get(DATE_KEY) != null) {
+      LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
+          .get(DATE_KEY).get();
+      return cachedLocalDateTime.toLocalDate();
+    }
+    LocalDateTime localDateTime = productRepository.findLastUpdateDate();
+    cacheManager.getCache("productCache").putIfAbsent(DATE_KEY, localDateTime);
+    return localDateTime.toLocalDate();
+  }
+
 }
