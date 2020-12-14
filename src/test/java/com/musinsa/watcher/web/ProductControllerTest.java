@@ -2,6 +2,7 @@ package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.BrandDto;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
@@ -65,7 +66,7 @@ public class ProductControllerTest {
   @DisplayName("브랜드 초성 조회")
   public void 브랜드_초성_조회() throws Exception {
     String type = "1";
-    List<String> list = new ArrayList<>();
+    List<BrandDto> list = new ArrayList<>();
     String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(list);
     mvc.perform(get( "/api/v1/search/brands")

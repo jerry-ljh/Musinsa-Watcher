@@ -2,6 +2,7 @@ package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.web.dto.BrandDto;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
@@ -50,8 +51,10 @@ public class ProductService {
     return new ProductWithPriceResponseDto(productRepository.findProductWithPrice(productId));
   }
 
-  public List<String> findBrandByInitial(String initial1, String initial2, String initial3) {
-    return productRepository.findBrandByInitial(initial1, initial2, initial3);
+  @Cacheable(value="productCache", key="'brand-initial'+#initial1+#initial2+#initial3")
+  public List<BrandDto> findBrandByInitial(String initial1, String initial2, String initial3) {
+    List<Object[]> objectsList = productRepository.findBrandByInitial(initial1, initial2, initial3);
+    return BrandDto.objectsToDtoList(objectsList);
   }
 
   public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {

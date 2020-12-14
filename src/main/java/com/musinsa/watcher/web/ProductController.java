@@ -2,6 +2,7 @@ package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.BrandDto;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
@@ -34,7 +35,7 @@ public class ProductController {
   }
 
   @GetMapping("/api/v1/search/brands")
-  public List<String> findBrandByInitial(String type) {
+  public List<BrandDto> findBrandByInitial(String type) {
     String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     return productService.findBrandByInitial(initial[0], initial[1], initial[2]);
   }
