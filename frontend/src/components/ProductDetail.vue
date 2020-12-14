@@ -53,13 +53,13 @@
                         추가 쿠폰 :
                         {{numberToPrice(lastPrice.coupon)}}원</div>
                     <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
-                        {{numberToPrice(Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1)))}}원</span><br/>
+                        {{numberToPrice(computeMin(this.realPriceList))}}원</span><br/>
                     <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
                         {{numberToPrice(computeAvg(this.realPriceList))}}원</span><br/>
-                    <span style="color:rgb(234 7 7)" v-if="computeOrder(this.realPriceList)==0">
+                    <span style="color:rgb(234 7 7)" v-if="computeOrder(this.realPriceList)==0  && isTodayUpdated()">
                         <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
                     </span>
-                    <span style="color:rgb(234 7 7) " v-if="computeOrder(this.realPriceList)!=0">오늘은 역대 상위
+                    <span style="color:rgb(234 7 7) " v-if="computeOrder(this.realPriceList)!=0 && isTodayUpdated()">오늘은 역대 상위
                         {{numberToPrice(computeOrder(this.realPriceList))}}%로 낮은 가격입니다.</span><br/>
                     <div style="vertical-align : middle">
                         <b-form-rating
@@ -229,7 +229,16 @@
                 }
                 return number.toLocaleString();
             },
+            computeMin(list) {
+                if(list.length == 1){
+                    return list[0]
+                }
+                return Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1))
+            },
             computeAvg(list) {
+                if(list.length == 1){
+                    return list[0]
+                }
                 var sum = 0;
                 for (var i = 0; i < list.length - 1; i++) {
                     sum += parseInt(list[i], 10);
@@ -238,13 +247,22 @@
                 return Math.ceil(avg)
             },
             computeOrder(list) {
+                if(list.length == 1){
+                    return 100
+                }
                 var count = 0;
                 for (var i = 0; i < list.length - 1; i++) {
-                    if (list[list.length - 1] >= list[i]) {
+                    if (list[list.length - 1] > list[i]) {
                         count += 1
                     }
                 }
                 return Math.ceil(count / (list.length - 1) * 100)
+            },
+            isTodayUpdated(){
+                var lastUpdateArr = this.lastPrice.createdDate.split('-')
+                var lastUpdate = new Date(lastUpdateArr[0], lastUpdateArr[1]-1, lastUpdateArr[2]).toLocaleDateString()
+                var today = new Date().toLocaleDateString()
+                return today == lastUpdate
             }
         },
         created() {
