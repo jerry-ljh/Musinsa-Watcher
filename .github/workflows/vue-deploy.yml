@@ -1,9 +1,6 @@
 name: vue deploy
 
 on:
-  push:
-    branches: [front-release]
-
   pull_request:
     types: [closed]
     branches: [front-release]
