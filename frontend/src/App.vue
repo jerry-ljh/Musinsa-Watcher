@@ -8,13 +8,14 @@
                 left: 0; top: 0;
                 background-color: rgba(0,0,0, 0.4);
                 overflow-x: hidden;"
-                v-if="loading"
-            ></div>
+            v-if="loading"></div>
         <navigation v-on:isLoading="isLoading"></navigation>
         <div id="page-wrapper">
             <sidebar v-on:isLoading="isLoading"></sidebar>
             <div id="page-content-wrapper">
-                <router-view style="margin-top:30px" v-on:isLoading="isLoading"></router-view>
+                <router-view
+                    v-on:isLoading="isLoading"
+                    :updatedAt="updatedAt"></router-view>
             </div>
         </div>
     </div>
@@ -33,15 +34,24 @@
             navigation: Navigation
         },
         data() {
-            return {
-                loading: false
-            }
+            return {loading: false, updatedAt: ''}
         },
         methods: {
-            isLoading(value){
+            isLoading(value) {
                 this.loading = value
-            },
+            }
         },
+        created() {
+            let self = this
+            axios
+                .get('http://www.musinsa.cf/api/v1/product/cache/last-modified')
+                .then(function (response) {
+                    self.updatedAt = response.data
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     }
 </script>
 
