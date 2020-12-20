@@ -32,6 +32,9 @@ jobs:
 
       - name: Move deploy script
         run: cp scripts/*.sh ./deploy/
+      
+      - name: Move nginx.conf
+        run: cp nginx.conf ./deploy/
 
       - name: Move docker-compose.yml
         run: cp docker-compose.yml ./deploy/
@@ -68,7 +71,7 @@ jobs:
           port: ${{ secrets.NCP_SERVER1_PORT }}
           script: |
             cd deploy
-            bash deploy.sh
+            sudo bash deploy.sh
 
       - name: action-slack
         uses: 8398a7/action-slack@v3

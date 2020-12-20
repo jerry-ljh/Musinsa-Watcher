@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-docker-compose pull && docker-compose up -d
+ln -s ~/deploy/nginx.conf /etc/nginx/sites-enabled
+bash stop.sh
+bash start.sh
+bash health.sh

@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  server1:
+  real1:
     image: j005580/musinsa-watcher
     ports: 
       - 8081:8081
@@ -11,7 +11,7 @@ services:
       PROPERTIES: application-real1.properties
       PROFILE: real1
 
-  server2:
+  real2:
     image: j005580/musinsa-watcher
     ports: 
       - 8082:8082
