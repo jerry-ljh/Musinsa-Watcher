@@ -33,6 +33,9 @@ jobs:
       - name: Move deploy script
         run: cp scripts/*.sh ./deploy/
 
+      - name: Move docker-compose.yml
+        run: cp docker-compose.yml ./deploy/
+
       - name: Copy Jar
         run: cp build/libs/*.jar ./app.jar
     
@@ -44,6 +47,28 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ secrets.DOCKER_REPOSITORY }}
           tags: latest
+
+      - name: NCP sever1 scp deploy folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.NCP_SERVER1_HOST }}
+          username: ${{ secrets.NCP_SERVER1_USERNAME }}
+          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER1_PORT }}
+          source: "./deploy/*"
+          target: "~/"
+          overwrite: true
+
+      - name: NCP sever1 deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_SERVER1_HOST }}
+          username: ${{ secrets.NCP_SERVER1_USERNAME }}
+          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER1_PORT }}
+          script: |
+            cd deploy
+            bash deploy.sh
 
       - name: action-slack
         uses: 8398a7/action-slack@v3
