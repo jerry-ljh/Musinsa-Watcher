@@ -95,6 +95,12 @@ public class ProductService {
     return MapperUtils.objectToStringAndIntegerMap(objectList);
   }
 
+  @Cacheable(value = "productCache", key = "'minimum price list'")
+  public Map<String, Integer> countMinimumPriceProductEachCategory() {
+    List<Object[]> objectList = productRepository.countMinimumPriceProductEachCategory(findLastUpdateDate());
+    return MapperUtils.objectToStringAndIntegerMap(objectList);
+  }
+
   public LocalDate findLastUpdateDate() {
     return productRepository.findLastUpdateDate().toLocalDate();
   }

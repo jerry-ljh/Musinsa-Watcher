@@ -90,4 +90,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       nativeQuery = true)
   Page<Object[]> findProductByMinimumPrice(String category, LocalDate date, Pageable pageable);
 
+  @Query(value =
+      "select category, count(category) from \n"
+          + "(SELECT p1.product_id, p1.category,\n"
+          + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
+          + "FROM product p1 \n"
+          + "inner join price p2 on p1.product_id = p2.product_id\n"
+          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+          + "inner join \n"
+          + "(SELECT p1.product_id, p1.price as today_price\n"
+          + "FROM price p1 \n"
+          + "where p1.created_date > ?1) p2\n"
+          + "on p1.product_id = p2.product_id\n"
+          + "where min_price = today_price\n"
+          + "group by category",
+      nativeQuery = true)
+  List<Object[]> countMinimumPriceProductEachCategory(LocalDate date);
 }

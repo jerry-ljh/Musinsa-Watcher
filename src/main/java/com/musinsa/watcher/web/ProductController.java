@@ -63,6 +63,11 @@ public class ProductController {
     return productService.countDiscountProductEachCategory();
   }
 
+  @GetMapping("/api/v1/product/minimum/list")
+  public Map<String, Integer> findMinimumPriceProduct() {
+    return productService.countMinimumPriceProductEachCategory();
+  }
+
   @GetMapping("/api/v1/product/brand")
   public Page<ProductResponseDto> findProductByBrand(
       @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String name) {
