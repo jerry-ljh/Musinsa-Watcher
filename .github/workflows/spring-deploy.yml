@@ -29,32 +29,68 @@ jobs:
 
       - name: Move deploy script
         run: cp scripts/*.sh ./deploy/
+      
+      - name: Move nginx.conf
+        run: cp nginx.conf ./deploy/
 
-      - name: Make deploy config file
-        run: cp appspec.yml ./deploy/
+      - name: Move docker-compose.yml
+        run: cp docker-compose.yml ./deploy/
 
       - name: Copy Jar
-        run: cp build/libs/*.jar ./deploy/
-
-      - name: Make zip file
-        run: zip -r ./deploy.zip ./deploy/*
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        run: cp build/libs/*.jar ./app.jar
+    
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          push: true
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_REPOSITORY }}
+          tags: latest
 
-      - name: S3 upload
-        run: |
-          aws s3 cp \
-          --region ap-northeast-2 \
-          ./deploy.zip s3://musinsa-watcher/
+      - name: NCP sever1 scp deploy folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.NCP_SERVER1_HOST }}
+          username: ${{ secrets.NCP_SERVER1_USERNAME }}
+          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER1_PORT }}
+          source: "./deploy/*"
+          target: "~/"
+          overwrite: true
 
-      - name: Code Deploy
-        run: |
-          aws deploy create-deployment --application-name musinsa --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=deploy.zip
+      - name: NCP sever1 deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_SERVER1_HOST }}
+          username: ${{ secrets.NCP_SERVER1_USERNAME }}
+          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER1_PORT }}
+          script: |
+            cd deploy
+            sudo bash deploy.sh 
+
+      - name: AWS sever1 scp deploy folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_SERVER1_HOST }}
+          username: ${{ secrets.AWS_SERVER1_USERNAME }}
+          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER1_PORT }}
+          source: "./deploy/*"
+          target: "~/"
+          overwrite: true
+
+      - name: AWS sever1 deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_SERVER1_HOST   }}
+          username: ${{ secrets.AWS_SERVER1_USERNAME }}
+          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER1_PORT }}
+          script: |
+            cd deploy
+            sudo bash deploy.sh
 
       - name: action-slack
         uses: 8398a7/action-slack@v3
