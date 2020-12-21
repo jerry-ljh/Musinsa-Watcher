@@ -3,6 +3,7 @@ package com.musinsa.watcher.web;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
+import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.Map;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @EnableCaching
-@CrossOrigin("http://www.musinsa.cf/")
+@CrossOrigin({"http://www.musinsa.cf/", })
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
@@ -51,9 +52,20 @@ public class ProductController {
     return productService.findDiscountedProduct(category, PageRequest.of(page, 25));
   }
 
+  @GetMapping("/api/v1/product/minimum")
+  public Page<MinimumPriceProductDto> findMinimumPriceProduct(
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
+    return productService.findMinimumPriceProduct(category, PageRequest.of(page, 25));
+  }
+
   @GetMapping("/api/v1/product/discount/list")
   public Map<String, Integer> findDiscountedProduct() {
     return productService.countDiscountProductEachCategory();
+  }
+
+  @GetMapping("/api/v1/product/minimum/list")
+  public Map<String, Integer> findMinimumPriceProduct() {
+    return productService.countMinimumPriceProductEachCategory();
   }
 
   @GetMapping("/api/v1/product/brand")

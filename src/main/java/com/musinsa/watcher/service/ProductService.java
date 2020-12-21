@@ -4,9 +4,11 @@ import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
+import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,9 +79,25 @@ public class ProductService {
         pageable, page.getTotalElements());
   }
 
+  @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber")
+  public Page<MinimumPriceProductDto> findMinimumPriceProduct(String category, Pageable pageable) {
+    Page<Object[]> page = productRepository
+        .findProductByMinimumPrice(category, findLastUpdateDate(), pageable);
+    log.info(Arrays.toString(page.toList().get(0)));
+    return new PageImpl<MinimumPriceProductDto>(
+        MinimumPriceProductDto.objectsToDtoList(page.getContent()),
+        pageable, page.getTotalElements());
+  }
+
   @Cacheable(value = "productCache", key = "'distcount list'")
   public Map<String, Integer> countDiscountProductEachCategory() {
     List<Object[]> objectList = productRepository.countDiscountProductEachCategory(findLastUpdateDate());
+    return MapperUtils.objectToStringAndIntegerMap(objectList);
+  }
+
+  @Cacheable(value = "productCache", key = "'minimum price list'")
+  public Map<String, Integer> countMinimumPriceProductEachCategory() {
+    List<Object[]> objectList = productRepository.countMinimumPriceProductEachCategory(findLastUpdateDate());
     return MapperUtils.objectToStringAndIntegerMap(objectList);
   }
 

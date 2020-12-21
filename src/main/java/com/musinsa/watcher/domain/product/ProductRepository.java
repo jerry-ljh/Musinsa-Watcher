@@ -58,4 +58,52 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t group by category",
       nativeQuery = true)
   List<Object[]> countDiscountProductEachCategory(LocalDate date);
+
+  @Query(value =
+      "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price, max_price from \n"
+          + "(SELECT p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
+          + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
+          + "FROM product p1 \n"
+          + "inner join price p2 on p1.product_id = p2.product_id\n"
+          + "where p1.category = ?1\n"
+          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+          + "inner join \n"
+          + "(SELECT p1.product_id, p1.price as today_price\n"
+          + "FROM price p1 \n"
+          + "where p1.created_date > ?2) p2\n"
+          + "on p1.product_id = p2.product_id\n"
+          + "where min_price = today_price\n"
+          + "order by (max_price - min_price)/max_price DESC",
+      countQuery ="select count(*) from \n"
+          + "(SELECT p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
+          + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
+          + "FROM product p1 \n"
+          + "inner join price p2 on p1.product_id = p2.product_id\n"
+          + "where p1.category = ?1\n"
+          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+          + "inner join \n"
+          + "(SELECT p1.product_id, p1.price as today_price\n"
+          + "FROM price p1 \n"
+          + "where p1.created_date > ?2) p2\n"
+          + "on p1.product_id = p2.product_id\n"
+          + "where min_price = today_price",
+      nativeQuery = true)
+  Page<Object[]> findProductByMinimumPrice(String category, LocalDate date, Pageable pageable);
+
+  @Query(value =
+      "select category, count(category) from \n"
+          + "(SELECT p1.product_id, p1.category,\n"
+          + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
+          + "FROM product p1 \n"
+          + "inner join price p2 on p1.product_id = p2.product_id\n"
+          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+          + "inner join \n"
+          + "(SELECT p1.product_id, p1.price as today_price\n"
+          + "FROM price p1 \n"
+          + "where p1.created_date > ?1) p2\n"
+          + "on p1.product_id = p2.product_id\n"
+          + "where min_price = today_price\n"
+          + "group by category",
+      nativeQuery = true)
+  List<Object[]> countMinimumPriceProductEachCategory(LocalDate date);
 }
