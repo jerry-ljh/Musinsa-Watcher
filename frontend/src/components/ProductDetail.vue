@@ -74,7 +74,7 @@
                     <line-chart ref="chart" :datacollection="datacollection" :options="options"></line-chart>
                     <div style=" margin-top: 10px">
                         <small class="text-muted">
-                            * MUSINSA WATCHER는 카테고리별 상위 9000위의 데이터를 수집합니다. 순위 미진입시 데이터가 없을 수 있습니다.
+                            * MUSINSA WATCHER는 카테고리별 일간 랭킹 데이터를 수집합니다. 순위 미진입시 데이터가 없을 수 있습니다.
                         </small>
                     </div>
                 </b-col>

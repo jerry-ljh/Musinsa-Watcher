@@ -169,6 +169,66 @@
                     </li>
                 </ul>
             </b-tab>
+            <b-tab title="오늘 역대 최저가 상품">
+                <ul class="sidebar-nav">
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.top)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.outer, 1)">아우터<small style="color : #b2b2b2">Outer</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.outer)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="javascript:void(0)"
+                            v-on:click="goToMinimumList(category.onepiece, 1)">원피스<small style="color : #b2b2b2">Onepiece</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.onepiece)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.pants, 1)">바지<small style="color : #b2b2b2">Pants</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.pants)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.skirt, 1)">스커트<small style="color : #b2b2b2">Skirt</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.skirt)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.bag, 1)">가방<small style="color : #b2b2b2">Bag</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.bag)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="javascript:void(0)"
+                            v-on:click="goToMinimumList(category.sneakers, 1)">스니커즈<small style="color : #b2b2b2">Sneakers</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.sneakers)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.shoes, 1)">신발<small style="color : #b2b2b2">Shoes</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.shoes)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="javascript:void(0)"
+                            v-on:click="goToMinimumList(category.headwear, 1)">모자<small style="color : #b2b2b2">HeadWear</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.headwear)}})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" v-on:click="goToMinimumList(category.socks, 1)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear</small>
+                            <span style="color : #b2b2b2">({{keyToValue(minimumPriceCategory, category.socks)}})</span>
+                        </a>
+                    </li>
+                </ul>
+            </b-tab>
         </b-tabs>
     </div>
 </template>
@@ -204,7 +264,8 @@
                     '008': 'Socks/Legwear'
                 },
                 brands: {},
-                discountCategory: {}
+                discountCategory: {},
+                minimumPriceCategory: {},
             }
         },
         methods: {
@@ -233,6 +294,21 @@
                             "category": category,
                             "page": page,
                             "type": 'discount'
+                        }
+                    })
+                    .catch(() => {})
+                },
+            goToMinimumList(category, page) {
+                this.$emit('isLoading', true)
+                EventBus.$emit("goToMinimumList", category, page)
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page,
+                            "type": 'minimum'
                         }
                     })
                     .catch(() => {})
@@ -275,6 +351,16 @@
                         console.log(error);
                     });
             },
+            findMinimumPriceList(){
+                axios
+                    .get('http://www.musinsa.cf/api/v1/product/minimum/list')
+                    .then((response) => {
+                        this.minimumPriceCategory = response.data
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
             keyToValue(dict, key) {
                 return key in dict
                     ? dict[key]
@@ -285,6 +371,7 @@
             const brandType = 1
             this.findBrandList(brandType)
             this.findDiscountList();
+            this.findMinimumPriceList();
         }
     }
 </script>
