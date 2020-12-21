@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -11,7 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class DiscountedProductDto {
+public class DiscountedProductDto implements Serializable {
 
   private int productId;
   private String productName;

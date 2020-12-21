@@ -34,6 +34,7 @@ dependencies {
     compile('com.h2database:h2')
     compile('org.mariadb.jdbc:mariadb-java-client')
     compile 'org.springframework.boot:spring-boot-devtools'
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
     annotationProcessor('org.projectlombok:lombok')
     testAnnotationProcessor('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')

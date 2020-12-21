@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web.dto;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class MinimumPriceProductDto {
+public class MinimumPriceProductDto implements Serializable {
 
   private int productId;
   private String productName;

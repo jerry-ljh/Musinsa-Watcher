@@ -83,7 +83,6 @@ public class ProductService {
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(String category, Pageable pageable) {
     Page<Object[]> page = productRepository
         .findProductByMinimumPrice(category, findLastUpdateDate(), pageable);
-    log.info(Arrays.toString(page.toList().get(0)));
     return new PageImpl<MinimumPriceProductDto>(
         MinimumPriceProductDto.objectsToDtoList(page.getContent()),
         pageable, page.getTotalElements());
