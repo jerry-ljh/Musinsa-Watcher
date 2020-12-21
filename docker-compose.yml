@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  real1:
+    image: j005580/musinsa-watcher
+    ports: 
+      - 8081:8081
+    volumes:
+      - /tmp:/config
+    environment:
+      PROPERTIES: application-real1.properties
+      PROFILE: real1
+
+  real2:
+    image: j005580/musinsa-watcher
+    ports: 
+      - 8082:8082
+    volumes:
+      - /tmp:/config
+    environment:
+      PROPERTIES: application-real2.properties
+      PROFILE: real2
