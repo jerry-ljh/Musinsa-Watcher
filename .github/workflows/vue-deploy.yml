@@ -20,28 +20,16 @@ jobs:
         run: npm run build
         working-directory: frontend
 
-      - name: Make deploy config file
-        run: cp appspec.yml ./frontend/dist/
-
-      - name: zip dist folder
-        run: cd frontend && zip -r ./dist.zip ./dist/*
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Load balancer scp dist folder
+        uses: appleboy/scp-action@master
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Deploy to s3
-        run: |
-          aws s3 cp \
-            --region ap-northeast-2 \
-            ./frontend/dist.zip s3://musinsa-watcher
-
-      - name: Code Deploy
-        run: |
-          aws deploy create-deployment --application-name musinsa-front --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name musinsa-front-group --s3-location bucket=musinsa-watcher,bundleType=zip,key=dist.zip
+          host: ${{ secrets.LOAD_BALANCER_HOST }}
+          username: ${{ secrets.LOAD_BALANCER_USERNAME }}
+          password: ${{ secrets.LOAD_BALANCER_PASSWORD }}
+          port: ${{ secrets.LOAD_BALANCER_PORT }}
+          source: "./frontend/dist/*"
+          target: "~/"
+          overwrite: true
 
       - name: action-slack
         uses: 8398a7/action-slack@v3
