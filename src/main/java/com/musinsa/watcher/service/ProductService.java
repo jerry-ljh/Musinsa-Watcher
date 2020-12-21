@@ -4,9 +4,11 @@ import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
+import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -74,6 +76,16 @@ public class ProductService {
         .findDiscountedProduct(category, findLastUpdateDate(), pageable);
     return new PageImpl<DiscountedProductDto>(
         DiscountedProductDto.objectsToDtoList(page.getContent()),
+        pageable, page.getTotalElements());
+  }
+
+  @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber")
+  public Page<MinimumPriceProductDto> findMinimumPriceProduct(String category, Pageable pageable) {
+    Page<Object[]> page = productRepository
+        .findProductByMinimumPrice(category, findLastUpdateDate(), pageable);
+    log.info(Arrays.toString(page.toList().get(0)));
+    return new PageImpl<MinimumPriceProductDto>(
+        MinimumPriceProductDto.objectsToDtoList(page.getContent()),
         pageable, page.getTotalElements());
   }
 
