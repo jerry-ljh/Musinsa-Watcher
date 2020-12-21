@@ -16,8 +16,11 @@
                         style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
                         v-if="product.discount !=null">-{{Math.ceil(product.percent)}}%</h6>
                     <h6
+                        style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
+                        v-if="currentListTopic == 'minimum'">-{{Math.ceil((product.maxPrice - product.today_price) * 100/product.maxPrice)}}%</h6>
+                    <h6
                         style="position: absolute; top: 0; left: 5px; background-color:#FFF"
-                        v-if="product.discount ==null">
+                        v-if="product.discount ==null && currentListTopic != 'minimum'">
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
@@ -36,7 +39,15 @@
                                     <strong>{{numberToPrice(product.price)}}원</strong>
                                 </span>
                             </div>
-                            <small v-if="product.discount ==null" class="text-muted">updated
+                            <div v-if="currentListTopic == 'minimum'">
+                                <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.maxPrice)}}원</span>
+                                <span style="color:#ae0000">
+                                    <strong>{{numberToPrice(product.today_price)}}원</strong>
+                                </span>
+                            </div>
+                            <small
+                                v-if="product.discount ==null && product.today_price == null"
+                                class="text-muted">updated
                                 {{product.modifiedDate}}</small>
                         </em>
                     </template>
@@ -112,6 +123,8 @@
                     this.goToSearch(this.curSearchTopic, page)
                 } else if (this.currentListTopic == "discount") {
                     this.goToDiscountList(this.curCategory, page)
+                } else if (this.currentListTopic == "minimum") {
+                    this.goToMinimumList(this.curCategory, page);
                 }
                 this.bufferPage = page
             },
@@ -156,6 +169,42 @@
                             .catch(() => {});
                         this.$emit('isLoading', false)
                         window.scrollTo(0, 0)
+                    })
+                    .catch((error) => {
+                        this.$emit('isLoading', false)
+                        console.log(error);
+                    });
+            },
+            goToMinimumList(category, page) {
+                let self = this
+                self.currentListTopic = "minimum"
+                axios
+                    .get(this.API + '/api/v1/product/minimum', {
+                        params: {
+                            "category": category,
+                            "page": page - 1
+                        }
+                    })
+                    .then((response) => {
+                        self.products = response.data.content
+                        self.currentPage = response.data.pageable.pageNumber + 1
+                        self.rows = response.data.totalElements
+                        self.perpage = response.data.pageable.pageSize
+                        self.curCategory = category
+                        this
+                            .$router
+                            .push({
+                                name: 'ProductList',
+                                query: {
+                                    "category": this.curCategory,
+                                    "page": page,
+                                    "type": 'minimum'
+                                }
+                            })
+                            .catch(() => {});
+                        this.$emit('isLoading', false)
+                        window.scrollTo(0, 0);
+
                     })
                     .catch((error) => {
                         this.$emit('isLoading', false)
@@ -290,6 +339,9 @@
             EventBus.$on("goToSearch", (searchText, page) => {
                 this.goToSearch(searchText, page)
             })
+            EventBus.$on("goToMinimumList", (category, page) => {
+                this.goToMinimumList(category, page)
+            })
             if (this.$route.path == '/') {
                 this.curCategory = '001'
                 this.goToCategory(this.curCategory, 1)
@@ -304,6 +356,14 @@
                             ? this.$route.query.page
                             : 1
                     )
+                } else if (this.$route.query.type == 'minimum') {
+                    this.goToMinimumList(
+                        this.curCategory,
+                        this.$route.query.page
+                            ? this.$route.query.page
+                            : 1
+                    )
+                    this.curBrand = this.$route.query.brand
                 } else {
                     this.goToCategory(
                         this.curCategory,
@@ -331,10 +391,12 @@
                 )
                 this.curBrand = this.$route.query.brand
             }
+
         },
         destroyed() {
             EventBus.$off("goToCategory")
             EventBus.$off("goToDiscountList")
+            EventBus.$off("goToMinimumList")
             EventBus.$off("goToBrand")
             EventBus.$off("goToSearch")
         }
