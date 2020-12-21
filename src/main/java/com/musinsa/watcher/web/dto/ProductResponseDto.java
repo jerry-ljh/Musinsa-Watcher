@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductResponseDto {
+public class ProductResponseDto implements Serializable {
 
   private int rank;
   private int productId;
