@@ -56,11 +56,14 @@
                         {{numberToPrice(computeMin(this.realPriceList))}}원</span><br/>
                     <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
                         {{numberToPrice(computeAvg(this.realPriceList))}}원</span><br/>
-                    <span style="color:rgb(234 7 7)" v-if="computeOrder(this.realPriceList)==0  && isTodayUpdated()">
+                    <span style="color:rgb(234 7 7)" v-if="order==100  && isTodayUpdated()">
+                        <strong>오늘은 역대 최고가입니다.</strong>
+                    </span>
+                    <span style="color:rgb(234 7 7)" v-if="order==0  && isTodayUpdated()">
                         <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
                     </span>
-                    <span style="color:rgb(234 7 7) " v-if="computeOrder(this.realPriceList)!=0 && isTodayUpdated()">오늘은 역대 상위
-                        {{numberToPrice(computeOrder(this.realPriceList))}}%로 낮은 가격입니다.</span><br/>
+                    <span style="color:rgb(234 7 7) " v-if="order!=0 &&order!=100 && isTodayUpdated()">오늘은 역대 상위
+                        {{numberToPrice(order)}}%로 낮은 가격입니다.</span><br/>
                     <div style="vertical-align : middle">
                         <b-form-rating
                             id="rating-inline"
@@ -101,6 +104,7 @@
                 dateList: [],
                 priceList: [],
                 realPriceList: [],
+                order : 0,
                 datasets: [
                     {
                         label: '',
@@ -145,6 +149,7 @@
                     }
                     this
                     .chartRender();
+                    this.order = this.computeOrder(this.realPriceList);
             },
             chartRender() {
                 this
@@ -249,13 +254,19 @@
             },
             computeOrder(list) {
                 if(list.length == 1){
-                    return 100
+                    return 100;
                 }
                 var count = 0;
+                var max = 0;
                 for (var i = 0; i < list.length - 1; i++) {
+                    max = max <= list[i] ? list[i] : max;
                     if (list[list.length - 1] > list[i]) {
                         count += 1
                     }
+                }
+                if(max == list[list.length-1]){
+                    console.log(max);
+                    return 100;
                 }
                 return Math.ceil(count / (list.length - 1) * 100)
             },
