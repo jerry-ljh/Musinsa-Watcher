@@ -65,9 +65,11 @@
                     style="margin-bottom : 100px"></b-pagination>
             </div>
         </div>
-        <div v-if="products.length==0 && $parent.loading == false">
+        <div v-if="products.length==0 && $parent.loading == false" style="margin-bottom:1000px">
             <h2 style="text-align:center">일치하는 결과가 없습니다!</h2>
         </div>
+
+        <span style="text-align:center; color :#b2b2b2;">contact : gurwns5580@gmail.com </span>
     </div>
 </template>
 
