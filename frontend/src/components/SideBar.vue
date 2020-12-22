@@ -109,7 +109,7 @@
                     </li>
                 </ul>
             </b-tab>
-            <b-tab title="오늘 할인 상품">
+            <b-tab title="오늘 깜짝 할인">
                 <ul class="sidebar-nav">
                     <li>
                         <a href="javascript:void(0)" v-on:click="goToDiscountList(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
@@ -169,7 +169,7 @@
                     </li>
                 </ul>
             </b-tab>
-            <b-tab title="오늘 역대 최저가 상품">
+            <b-tab title="오늘 역대 최저가">
                 <ul class="sidebar-nav">
                     <li>
                         <a href="javascript:void(0)" v-on:click="goToMinimumList(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
