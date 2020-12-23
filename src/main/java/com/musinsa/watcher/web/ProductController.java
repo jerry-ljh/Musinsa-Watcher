@@ -87,4 +87,7 @@ public class ProductController {
     return productService.findProductWithPrice(id);
   }
 
+  @GetMapping("/api/product/link")
+  public void outboundLog() {}
+
 }
