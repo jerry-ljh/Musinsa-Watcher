@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.LogInterceptor;
 import com.musinsa.watcher.service.PriceService;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.Test;
@@ -22,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
+@MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(controllers = PriceController.class)
 public class PriceControllerTest {
 
@@ -31,6 +34,9 @@ public class PriceControllerTest {
   @MockBean
   private PriceService priceService;
 
+  @MockBean
+  private LogInterceptor logInterceptor;
+
   private final String API = "/api/v1/product/";
 
   @Test
@@ -38,6 +44,7 @@ public class PriceControllerTest {
   public void 상품_상세정보_조회() throws Exception {
     int productId = 1234;
     Page<PriceResponseDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(priceService.findByProductId(eq(productId), any())).thenReturn(mockPage);
     mvc.perform(get(API + "price")
         .param("id", Integer.toString(productId)))
