@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.LogInterceptor;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.Test;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
+@MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(controllers = ProductController.class)
 public class ProductControllerTest {
 
@@ -37,12 +40,16 @@ public class ProductControllerTest {
   @MockBean
   private ProductService mockProductService;
 
+  @MockBean
+  private LogInterceptor logInterceptor;
+
   private final String API = "/api/v1/product/";
 
   @Test
   @DisplayName("브랜드 리스트 조회")
   public void 브랜드_리스트_조회() throws Exception {
     Page<String> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findAllBrand(any())).thenReturn(mockPage);
     mvc.perform(get("/api/v1/search/brands/list"))
         .andExpect(status().isOk());
@@ -54,6 +61,7 @@ public class ProductControllerTest {
   public void 브랜드_상품_리스트_조회() throws Exception {
     String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByBrand(eq(brandName), any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand")
         .param("name", brandName))
@@ -67,6 +75,7 @@ public class ProductControllerTest {
     String type = "1";
     Map<String, Integer> map = new HashMap<>();
     String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(map);
     mvc.perform(get( "/api/v1/search/brands")
         .param("type", type))
@@ -81,6 +90,7 @@ public class ProductControllerTest {
     String category2 = "002";
     Page<ProductResponseDto> mockPage1 = mock(Page.class);
     Page<ProductResponseDto> mockPage2 = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByCategory(eq(category1), any())).thenReturn(mockPage1);
     when(mockProductService.findByCategory(eq(category2), any())).thenReturn(mockPage2);
     mvc.perform(get(API + "list")
@@ -98,6 +108,7 @@ public class ProductControllerTest {
   public void 할인_품목_조회() throws Exception {
     String category = "001";
     Page<DiscountedProductDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findDiscountedProduct(eq(category), any())).thenReturn(mockPage);
     mvc.perform(get(API + "discount")
         .param("category", category))
@@ -110,6 +121,7 @@ public class ProductControllerTest {
   public void 검색_품목_조회() throws Exception {
     String topic = "셔츠";
     Page<ProductResponseDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.searchItems(eq(topic), any())).thenReturn(mockPage);
     mvc.perform(get("/api/v1/search")
         .param("topic", topic))
@@ -122,6 +134,7 @@ public class ProductControllerTest {
   public void 품목_상세_정보_조회() throws Exception {
     int productId = 1;
     ProductWithPriceResponseDto mockDto = mock(ProductWithPriceResponseDto.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findProductWithPrice(eq(productId))).thenReturn(mockDto);
     mvc.perform(get(API)
         .param("id", Integer.toString(productId)))
