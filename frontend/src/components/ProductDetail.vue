@@ -12,11 +12,17 @@
                 <span style="font-size : 20px;">{{product.productName}}</span>
             </div>
             <div style="text-align : left">
-                <a v-bind:href="'https://store.musinsa.com/app/goods/' + product.productId">상품 링크</a>
+                <a
+                    v-bind:href="'https://store.musinsa.com/app/goods/' + product.productId"
+                    v-on:mousedown="outbound(product.productId)"
+                    >상품 링크</a>
                 <span>
                     /
                 </span>
-                <a v-bind:href="product.brandUrl">브랜드 링크</a>
+                <a
+                    v-bind:href="product.brandUrl"
+                    v-on:mousedown="outbound(product.productId)"
+                    >브랜드 링크</a>
             </div>
             <b-row>
                 <b-col style="width:600px; margin-bottom : 100px;">
@@ -279,6 +285,16 @@
                 var updatedAtArr = this.updatedAt.split('-')
                 var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1]-1, updatedAtArr[2]).toLocaleDateString()
                 return lastUpdate == updatedAt
+            },
+            outbound(productId) {
+                axios.get('http://www.musinsa.cf/api/product/link', {
+                    params: {
+                        'id': productId
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             }
         },
         created() {
