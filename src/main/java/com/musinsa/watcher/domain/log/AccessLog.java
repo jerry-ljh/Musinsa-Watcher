@@ -28,17 +28,14 @@ public class AccessLog extends BaseTimeEntity {
   @Column(nullable = false)
   private String url;
 
-  private String brand;
-
-  private String product_name;
+  private String parameter;
 
   @Builder
-  public AccessLog(String ip, String agent, String url, String brand, String product_name) {
+  public AccessLog(String ip, String agent, String url, String parameter) {
     this.ip=ip;
     this.agent=agent;
     this.url=url;
-    this.brand=brand;
-    this.product_name=product_name;
+    this.parameter=parameter;
   }
 
 }
