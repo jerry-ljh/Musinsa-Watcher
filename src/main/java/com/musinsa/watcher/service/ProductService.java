@@ -57,7 +57,6 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2+#initial3")
   public Map<String, Integer> findBrandByInitial(String initial1, String initial2, String initial3) {
-    Map<String, Integer> map = new HashMap<>();
     List<Object[]> objectList = productRepository.findBrandByInitial(initial1, initial2, initial3);
     return MapperUtils.objectToStringAndIntegerMap(objectList);
   }
