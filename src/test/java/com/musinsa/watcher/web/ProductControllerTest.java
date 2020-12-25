@@ -1,6 +1,7 @@
 package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.config.LogInterceptor;
+import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
@@ -74,13 +75,13 @@ public class ProductControllerTest {
   public void 브랜드_초성_조회() throws Exception {
     String type = "1";
     Map<String, Integer> map = new HashMap<>();
-    String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
+    Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]))).thenReturn(map);
+    when(mockProductService.findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()))).thenReturn(map);
     mvc.perform(get( "/api/v1/search/brands")
         .param("type", type))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findBrandByInitial(eq(initial[0]), eq(initial[1]), eq(initial[2]));
+    verify(mockProductService, only()).findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()));
   }
 
   @Test

@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
@@ -27,16 +28,18 @@ public class ProductController {
 
   private final ProductService productService;
   private final String DEFAULT_PAGE = "0";
-  
+
   @GetMapping("/api/v1/search/brands/list")
-  public Page<String> findBrandList(@RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page) {
+  public Page<String> findBrandList(
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page) {
     return productService.findAllBrand(PageRequest.of(page, 25, Sort.by("brand")));
   }
 
   @GetMapping("/api/v1/search/brands")
   public Map<String, Integer> findBrandByInitial(String type) {
-    String[] initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
-    return productService.findBrandByInitial(initial[0], initial[1], initial[2]);
+    Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
+    return productService
+        .findBrandByInitial(initial.getRLIKE(), initial.getSTART(), initial.getEND());
   }
 
   @GetMapping("/api/v1/search")
@@ -88,6 +91,7 @@ public class ProductController {
   }
 
   @GetMapping("/api/product/link")
-  public void outboundLog() {}
+  public void outboundLog() {
+  }
 
 }
