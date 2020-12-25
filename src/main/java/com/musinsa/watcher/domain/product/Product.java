@@ -58,12 +58,13 @@ public class Product implements Serializable {
   }
 
   @Builder
-  public Product(int productId, String productName, String brand, String category, int rank ){
+  public Product(int productId, String productName, String brand, String category, int rank, String img ){
     this.productId = productId;
     this.productName = productName;
     this.brand = brand;
     this.category = category;
     this.rank = rank;
+    this.img = img;
   }
 
 }
