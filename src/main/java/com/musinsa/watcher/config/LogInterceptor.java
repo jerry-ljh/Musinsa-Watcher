@@ -33,7 +33,6 @@ public class LogInterceptor extends HandlerInterceptorAdapter {
         .build());
     if (request.getRequestURI().equals(OUTBOUND_URI)) {
       response.setStatus(HttpStatus.OK.value());
-      log.info("zz");
       return false;
     }
     return true;
