@@ -68,7 +68,7 @@ jobs:
           port: ${{ secrets.NCP_SERVER1_PORT }}
           script: |
             cd deploy
-            sudo bash deploy.sh 
+            sudo bash deploy.sh
 
       - name: AWS sever1 scp deploy folder
         uses: appleboy/scp-action@master
@@ -88,6 +88,28 @@ jobs:
           username: ${{ secrets.AWS_SERVER1_USERNAME }}
           password: ${{ secrets.AWS_SERVER1_PASSWORD }}
           port: ${{ secrets.AWS_SERVER1_PORT }}
+          script: |
+            cd deploy
+            sudo bash deploy.sh
+
+      - name: AWS sever2 scp deploy folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_SERVER2_HOST }}
+          username: ${{ secrets.AWS_SERVER2_USERNAME }}
+          password: ${{ secrets.AWS_SERVER2_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER2_PORT }}
+          source: "./deploy/*"
+          target: "~/"
+          overwrite: true
+
+      - name: AWS sever2 deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_SERVER2_HOST   }}
+          username: ${{ secrets.AWS_SERVER2_USERNAME }}
+          password: ${{ secrets.AWS_SERVER2_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER2_PORT }}
           script: |
             cd deploy
             sudo bash deploy.sh
