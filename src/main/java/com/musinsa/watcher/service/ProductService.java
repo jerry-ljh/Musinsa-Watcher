@@ -2,6 +2,7 @@ package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Product;
+import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
   private final ProductRepository productRepository;
+  private final ProductQueryRepository productQueryRepository;
 
   public Page<String> findAllBrand(Pageable pageable) {
     return productRepository.findAllBrand(pageable);
@@ -44,15 +46,11 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'category'+#category+#pageable.pageNumber", condition = "#pageable.pageNumber==0")
   public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
-    Page<Product> page = productRepository.findByCategory(category, pageable);
-    return new PageImpl<ProductResponseDto>(page.getContent()
-        .stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable, page.getTotalElements());
+    return productQueryRepository.findByCategory(category, pageable);
   }
 
   public ProductWithPriceResponseDto findProductWithPrice(int productId) {
-    return new ProductWithPriceResponseDto(productRepository.findProductWithPrice(productId));
+    return new ProductWithPriceResponseDto(productQueryRepository.findProductWithPrice(productId));
   }
 
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2+#initial3")
@@ -62,11 +60,7 @@ public class ProductService {
   }
 
   public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {
-    Page<Product> page = productRepository.searchItems(text, pageable);
-    return new PageImpl<ProductResponseDto>(page.getContent()
-        .stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable, page.getTotalElements());
+    return productQueryRepository.searchItems(text, pageable);
   }
 
   @Cacheable(value = "productCache", key = "'distcount'+#category+#pageable.pageNumber")
@@ -100,7 +94,7 @@ public class ProductService {
   }
 
   public LocalDate findLastUpdateDate() {
-    return productRepository.findLastUpdateDate().toLocalDate();
+    return productQueryRepository.findLastUpdateDate().toLocalDate();
   }
 
 }

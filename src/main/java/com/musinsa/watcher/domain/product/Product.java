@@ -1,5 +1,6 @@
 package com.musinsa.watcher.domain.product;
 
+import com.musinsa.watcher.domain.BaseTimeEntity;
 import com.musinsa.watcher.domain.price.Price;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class Product implements Serializable {
 
   @Column(columnDefinition = "SMALLINT")
   private int rank;
-  
+
   private String img;
 
   private String productName;
@@ -43,7 +44,6 @@ public class Product implements Serializable {
 
   private String brandUrl;
 
-  @LastModifiedDate
   private LocalDateTime modifiedDate;
 
   private String category;
@@ -58,13 +58,15 @@ public class Product implements Serializable {
   }
 
   @Builder
-  public Product(int productId, String productName, String brand, String category, int rank, String img ){
+  public Product(int productId, String productName, String brand, String category, int rank,
+      String img, LocalDateTime modifiedDate) {
     this.productId = productId;
     this.productName = productName;
     this.brand = brand;
     this.category = category;
     this.rank = rank;
     this.img = img;
+    this.modifiedDate = modifiedDate;
   }
 
 }

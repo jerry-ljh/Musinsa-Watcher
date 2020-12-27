@@ -17,10 +17,27 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
 
 group 'org.example'
 version '1.0-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+test {
+    useJUnitPlatform()
+}
 repositories {
     mavenCentral()
     jcenter()

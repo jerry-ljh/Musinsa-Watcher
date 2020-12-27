@@ -1,5 +1,6 @@
 package com.musinsa.watcher.service;
 
+import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class CacheService {
 
   public static final String DATE_KEY = "current date";
   private final CacheManager cacheManager;
-  private final ProductRepository productRepository;
+  private final ProductQueryRepository productRepository;
 
   public LocalDate updateCacheByDate() {
     LocalDateTime localDateTime = productRepository.findLastUpdateDate();

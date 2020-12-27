@@ -18,18 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   Page<Product> findByBrand(String brand, Pageable pageable);
 
-  @Query("SELECT p FROM Product p WHERE p.category = ?1 ORDER BY function('date_format', p.modifiedDate, '%Y, %m, %d') DESC, p.rank")
-  Page<Product> findByCategory(String category, Pageable pageable);
-
-  @Query("SELECT p FROM Product p WHERE p.brand LIKE %?1% OR p.productName LIKE %?1%")
-  Page<Product> searchItems(String text, Pageable pageable);
-
-  @Query("SELECT distinct p FROM Product p JOIN FETCH p.prices p2 WHERE p.productId =  ?1 ORDER BY p2.createdDate DESC")
-  Product findProductWithPrice(int productId);
-
-  @Query("SELECT max(p.modifiedDate) FROM Product p")
-  LocalDateTime findLastUpdateDate();
-
   @Query(value =
       "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price + p2.coupon), p1.img, p1.modified_date, \n"
           + "(CASE WHEN  p2.created_date <  ?2 THEN  p2.price + p2.coupon END - min(p2.price + p2.coupon)) as discount, \n"
