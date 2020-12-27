@@ -34,6 +34,21 @@ jacocoTestReport {
         csv.enabled false
         html.destination file("${buildDir}/jacocoHtml")
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ["**/QA*", "**/QP*", "**/QB*"])
+        }))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+jacocoTestCoverageVerification {
+    violationRules {
+        enabled = true
+        rule {
+            excludes = ["*.QA*", "*.QP*", "*.QB*"]
+        }
+    }
 }
 test {
     useJUnitPlatform()
