@@ -17,16 +17,53 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
 
 group 'org.example'
 version '1.0-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ["**/QA*", "**/QP*", "**/QB*"])
+        }))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+jacocoTestCoverageVerification {
+    violationRules {
+        enabled = true
+        rule {
+            excludes = ["*.QA*", "*.QP*", "*.QB*"]
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+}
 repositories {
     mavenCentral()
     jcenter()
 }
 
 dependencies {
+    compile("com.querydsl:querydsl-core") // querydsl
+    compile("com.querydsl:querydsl-jpa") // querydsl
+    annotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa") // querydsl JPAAnnotationProcessor 사용 지정
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.projectlombok:lombok')
@@ -41,4 +78,17 @@ dependencies {
     testImplementation "org.mockito:mockito-core:3.5.9"
     testImplementation "org.mockito:mockito-inline:3.5.9"
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+def generated='src/main/generated'
+sourceSets {
+    main.java.srcDirs += [ generated ]
+}
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(generated)
+}
+
+clean.doLast {
+    file(generated).deleteDir()
 }

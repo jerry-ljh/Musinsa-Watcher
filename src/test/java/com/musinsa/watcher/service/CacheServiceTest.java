@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class CacheServiceTest {
   @Mock
   CacheManager cacheManager;
   @Mock
-  ProductRepository productRepository;
+  ProductQueryRepository productRepository;
 
   public final String DATE_KEY = "current date";
 

@@ -7,7 +7,7 @@ build/
 src/main/resources/application-real1.properties
 src/main/resources/application-real2.properties
 src/main/resources/application-dev.properties
-
+src/main/generated/
 ### STS ###
 .apt_generated
 .classpath
