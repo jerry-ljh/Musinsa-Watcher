@@ -40,19 +40,43 @@ jacocoTestReport {
                     exclude: ["**/QA*", "**/QP*", "**/QB*"])
         }))
     }
-    finalizedBy 'jacocoTestCoverageVerification'
 }
 jacocoTestCoverageVerification {
     violationRules {
         enabled = true
         rule {
             excludes = ["*.QA*", "*.QP*", "*.QB*"]
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
         }
     }
 }
 test {
     useJUnitPlatform()
 }
+
+task testCoverage(type: Test) {
+    group 'verification'
+    description 'Runs the unit tests with coverage'
+
+    dependsOn(':test',
+            ':jacocoTestReport',
+            ':jacocoTestCoverageVerification')
+
+    tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+    tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
 repositories {
     mavenCentral()
     jcenter()
