@@ -1,7 +1,6 @@
 package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.service.CacheService;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +20,6 @@ public class CacheController {
 
   @GetMapping("/api/v1/product/cache/last-modified")
   public String updateDate() {
-    return cacheService.getLastUpdatedByCache().toString();
+    return cacheService.getLastUpdatedDate().toString();
   }
 }

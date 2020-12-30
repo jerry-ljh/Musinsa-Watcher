@@ -2,7 +2,6 @@ package com.musinsa.watcher.domain.price;
 
 import com.musinsa.watcher.domain.BaseTimeEntity;
 import com.musinsa.watcher.domain.product.Product;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 @NoArgsConstructor
 @Getter

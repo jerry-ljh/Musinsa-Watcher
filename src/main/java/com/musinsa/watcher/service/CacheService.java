@@ -1,13 +1,11 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
-import com.musinsa.watcher.domain.product.ProductRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -34,7 +32,7 @@ public class CacheService {
     return cachedLocalDateTime.toLocalDate();
   }
 
-  public LocalDate getLastUpdatedByCache() {
+  public LocalDate getLastUpdatedDate() {
     if (cacheManager.getCache("productCache").get(DATE_KEY) != null) {
       LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
           .get(DATE_KEY).get();
@@ -44,5 +42,4 @@ public class CacheService {
     cacheManager.getCache("productCache").putIfAbsent(DATE_KEY, localDateTime);
     return localDateTime.toLocalDate();
   }
-
 }

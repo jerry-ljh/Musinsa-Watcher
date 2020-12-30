@@ -92,7 +92,7 @@ public class CacheServiceTest {
     when(cache.get(eq(DATE_KEY))).thenReturn(valueWrapper);
     when(valueWrapper.get()).thenReturn(now);
     //when
-    LocalDate result = cacheService.getLastUpdatedByCache();
+    LocalDate result = cacheService.getLastUpdatedDate();
     //then
     assertEquals(result, now.toLocalDate());
   }
@@ -110,7 +110,7 @@ public class CacheServiceTest {
     when(productRepository.findLastUpdateDate()).thenReturn(now);
     when(cache.putIfAbsent(eq(DATE_KEY), eq(now))).thenReturn(valueWrapper);
     //when
-    LocalDate result = cacheService.getLastUpdatedByCache();
+    LocalDate result = cacheService.getLastUpdatedDate();
     //then
     verify(cache, times(1)).putIfAbsent(eq(DATE_KEY), eq(now));
   }
