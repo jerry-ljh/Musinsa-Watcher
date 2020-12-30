@@ -22,7 +22,8 @@ public class LogInterceptor extends HandlerInterceptorAdapter {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
-    if (!request.getRequestURI().equals(OUTBOUND_URI) && handler instanceof HandlerMethod == false) {
+    if (!request.getRequestURI().equals(OUTBOUND_URI)
+        && handler instanceof HandlerMethod == false) {
       return true;
     }
     accessLogRepository.save(AccessLog.builder()

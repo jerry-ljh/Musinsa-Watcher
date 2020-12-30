@@ -23,7 +23,7 @@ public enum InitialWord {
     this.initials = initials;
   }
 
-  public static String getType(String number){
+  public static String getType(String number) {
     return "type".concat(number);
   }
 

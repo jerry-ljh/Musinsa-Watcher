@@ -8,9 +8,6 @@ import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +28,7 @@ public class ProductService {
 
   private final ProductRepository productRepository;
   private final ProductQueryRepository productQueryRepository;
+  private final CacheService cacheService;
 
   public Page<String> findAllBrand(Pageable pageable) {
     return productRepository.findAllBrand(pageable);
@@ -46,7 +44,8 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'category'+#category+#pageable.pageNumber", condition = "#pageable.pageNumber==0")
   public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
-    return productQueryRepository.findByCategory(category, pageable);
+    return productQueryRepository
+        .findByCategory(category, cacheService.getLastUpdatedDate(), pageable);
   }
 
   public ProductWithPriceResponseDto findProductWithPrice(int productId) {
@@ -54,7 +53,8 @@ public class ProductService {
   }
 
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2+#initial3")
-  public Map<String, Integer> findBrandByInitial(String initial1, String initial2, String initial3) {
+  public Map<String, Integer> findBrandByInitial(String initial1, String initial2,
+      String initial3) {
     List<Object[]> objectList = productRepository.findBrandByInitial(initial1, initial2, initial3);
     return MapperUtils.objectToStringAndIntegerMap(objectList);
   }
@@ -66,7 +66,7 @@ public class ProductService {
   @Cacheable(value = "productCache", key = "'distcount'+#category+#pageable.pageNumber")
   public Page<DiscountedProductDto> findDiscountedProduct(String category, Pageable pageable) {
     Page<Object[]> page = productRepository
-        .findDiscountedProduct(category, findLastUpdateDate(), pageable);
+        .findDiscountedProduct(category, cacheService.getLastUpdatedDate(), pageable);
     return new PageImpl<DiscountedProductDto>(
         DiscountedProductDto.objectsToDtoList(page.getContent()),
         pageable, page.getTotalElements());
@@ -75,7 +75,7 @@ public class ProductService {
   @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber")
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(String category, Pageable pageable) {
     Page<Object[]> page = productRepository
-        .findProductByMinimumPrice(category, findLastUpdateDate(), pageable);
+        .findProductByMinimumPrice(category, cacheService.getLastUpdatedDate(), pageable);
     return new PageImpl<MinimumPriceProductDto>(
         MinimumPriceProductDto.objectsToDtoList(page.getContent()),
         pageable, page.getTotalElements());
@@ -83,18 +83,16 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'distcount list'")
   public Map<String, Integer> countDiscountProductEachCategory() {
-    List<Object[]> objectList = productRepository.countDiscountProductEachCategory(findLastUpdateDate());
+    List<Object[]> objectList = productRepository
+        .countDiscountProductEachCategory(cacheService.getLastUpdatedDate());
     return MapperUtils.objectToStringAndIntegerMap(objectList);
   }
 
   @Cacheable(value = "productCache", key = "'minimum price list'")
   public Map<String, Integer> countMinimumPriceProductEachCategory() {
-    List<Object[]> objectList = productRepository.countMinimumPriceProductEachCategory(findLastUpdateDate());
+    List<Object[]> objectList = productRepository
+        .countMinimumPriceProductEachCategory(cacheService.getLastUpdatedDate());
     return MapperUtils.objectToStringAndIntegerMap(objectList);
-  }
-
-  public LocalDate findLastUpdateDate() {
-    return productQueryRepository.findLastUpdateDate().toLocalDate();
   }
 
 }

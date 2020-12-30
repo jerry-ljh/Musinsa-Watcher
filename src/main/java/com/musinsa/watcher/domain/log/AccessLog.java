@@ -32,10 +32,10 @@ public class AccessLog extends BaseTimeEntity {
 
   @Builder
   public AccessLog(String ip, String agent, String url, String parameter) {
-    this.ip=ip;
-    this.agent=agent;
-    this.url=url;
-    this.parameter=parameter;
+    this.ip = ip;
+    this.agent = agent;
+    this.url = url;
+    this.parameter = parameter;
   }
 
 }

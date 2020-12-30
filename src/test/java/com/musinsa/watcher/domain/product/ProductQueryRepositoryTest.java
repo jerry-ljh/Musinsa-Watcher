@@ -68,15 +68,81 @@ public class ProductQueryRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
+  }
 
+  @Test
+  @DisplayName("잘못된 검색어를 조회한다.")
+  public void findByValidTopic() {
+    String searchText = "양말";
+    for (int i = 0; i < 10; i++) {
+      productRepository.save(Product.builder()
+          .productId(i)
+          .productName("고급 신발")
+          .brand("고급 브랜드")
+          .category("001")
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+      productRepository.save(Product.builder()
+          .productId(10 + i)
+          .productName("모자")
+          .brand("신발 최강")
+          .category("003")
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+      productRepository.save(Product.builder()
+          .productId(20 + i)
+          .productName("편한 셔츠")
+          .brand("일반 브랜드")
+          .category("002")
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+    }
     Page<ProductResponseDto> productPage = productQueryRepository
         .searchItems(searchText, PageRequest.of(0, 10));
     List<ProductResponseDto> productList = productPage.getContent();
-    assertEquals(productPage.getTotalElements(), 20);
-    productList.stream().forEach(i -> assertTrue(
-        i.getProductName().contains(searchText) ||
-            i.getBrand().contains(searchText)
-    ));
+    assertEquals(productPage.getTotalElements(), 0);
+    assertEquals(productList.size(), 0);
+  }
+
+  @Test
+  @DisplayName("특정 카테고리를 조회한다.")
+  public void findByCategory() {
+    String category = "001";
+    for (int i = 0; i < 10; i++) {
+      productRepository.save(Product.builder()
+          .productId(i)
+          .productName("고급 신발")
+          .brand("고급 브랜드")
+          .category(category)
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+      productRepository.save(Product.builder()
+          .productId(10 + i)
+          .productName("모자")
+          .brand("신발 최강")
+          .category("003")
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+      productRepository.save(Product.builder()
+          .productId(20 + i)
+          .productName("편한 셔츠")
+          .brand("일반 브랜드")
+          .category("002")
+          .img("http://cdn.img?id=10000_125.jpg")
+          .modifiedDate(LocalDateTime.now())
+          .build());
+    }
+
+    Page<ProductResponseDto> productPage = productQueryRepository
+        .findByCategory(category, LocalDateTime.now().toLocalDate(), PageRequest.of(0, 10));
+    List<ProductResponseDto> productList = productPage.getContent();
+    assertEquals(productPage.getTotalElements(), 10);
+    productList.stream().forEach(i -> assertTrue(i.getCategory().equals(category)));
   }
 
   @Test
@@ -123,7 +189,7 @@ public class ProductQueryRepositoryTest {
 
   @Test
   @DisplayName("마지막 업데이트된 시간을 조회한다")
-  public void findLastModifiedDate() throws Exception{
+  public void findLastModifiedDate() throws Exception {
     String productName = "고급 신발";
     String brand = "고급 브랜드";
     String category = "001";
@@ -143,7 +209,7 @@ public class ProductQueryRepositoryTest {
     LocalDateTime result = productQueryRepository.findLastUpdateDate();
     List<Product> productList = productRepository.findAll();
     LocalDateTime lastModifiedDate = productList.get(0).getModifiedDate();
-    for(Product product : productList){
+    for (Product product : productList) {
       lastModifiedDate = product.getModifiedDate().isAfter(lastModifiedDate)
           ? product.getModifiedDate()
           : lastModifiedDate;

@@ -1,6 +1,5 @@
 package com.musinsa.watcher.domain.product;
 
-import com.musinsa.watcher.domain.BaseTimeEntity;
 import com.musinsa.watcher.domain.price.Price;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @NoArgsConstructor
 @Getter

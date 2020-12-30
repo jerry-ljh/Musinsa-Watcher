@@ -1,7 +1,6 @@
 package com.musinsa.watcher.domain.product;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,7 +61,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           + "on p1.product_id = p2.product_id\n"
           + "where min_price = today_price\n"
           + "order by (max_price - min_price)/max_price DESC",
-      countQuery ="select count(*) from \n"
+      countQuery = "select count(*) from \n"
           + "(SELECT p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
           + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
           + "FROM product p1 \n"
