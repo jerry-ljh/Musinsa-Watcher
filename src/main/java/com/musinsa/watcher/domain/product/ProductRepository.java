@@ -12,11 +12,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   @Query("SELECT distinct p.brand FROM Product p ")
   Page<String> findAllBrand(Pageable pageable);
 
-  @Query(value = "SELECT brand, count(brand) as count  FROM product WHERE (brand RLIKE ?1 OR ( brand >= ?2 AND brand < ?3 )) GROUP BY brand ORDER BY brand", nativeQuery = true)
-  List<Object[]> findBrandByInitial(String initial1, String initial2, String initial3);
-
-  Page<Product> findByBrand(String brand, Pageable pageable);
-
   @Query(value =
       "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price + p2.coupon), p1.img, p1.modified_date, \n"
           + "(CASE WHEN  p2.created_date <  ?2 THEN  p2.price + p2.coupon END - min(p2.price + p2.coupon)) as discount, \n"

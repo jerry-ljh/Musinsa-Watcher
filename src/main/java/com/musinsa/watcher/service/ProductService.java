@@ -1,7 +1,6 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.MapperUtils;
-import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
@@ -9,7 +8,6 @@ import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,11 +33,7 @@ public class ProductService {
   }
 
   public Page<ProductResponseDto> findByBrand(String name, Pageable pageable) {
-    Page<Product> page = productRepository.findByBrand(name, pageable);
-    return new PageImpl<ProductResponseDto>(page.getContent()
-        .stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable, page.getTotalElements());
+    return productQueryRepository.findByBrand(name, pageable);
   }
 
   @Cacheable(value = "productCache", key = "'category'+#category+#pageable.pageNumber", condition = "#pageable.pageNumber==0")
@@ -52,11 +46,10 @@ public class ProductService {
     return new ProductWithPriceResponseDto(productQueryRepository.findProductWithPrice(productId));
   }
 
-  @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2+#initial3")
-  public Map<String, Integer> findBrandByInitial(String initial1, String initial2,
-      String initial3) {
-    List<Object[]> objectList = productRepository.findBrandByInitial(initial1, initial2, initial3);
-    return MapperUtils.objectToStringAndIntegerMap(objectList);
+  @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2")
+  public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
+    List<Object[]> objectList = productQueryRepository.findBrandByInitial(initial1, initial2);
+    return MapperUtils.objectToStringAndLongMap(objectList);
   }
 
   public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {
