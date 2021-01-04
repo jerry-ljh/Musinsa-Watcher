@@ -97,6 +97,8 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-devtools'
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     annotationProcessor('org.projectlombok:lombok')
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
     testAnnotationProcessor('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testImplementation "org.mockito:mockito-core:3.5.9"
