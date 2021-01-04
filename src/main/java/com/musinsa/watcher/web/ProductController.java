@@ -39,7 +39,7 @@ public class ProductController {
   public Map<String, Integer> findBrandByInitial(String type) {
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     return productService
-        .findBrandByInitial(initial.getRLIKE(), initial.getSTART(), initial.getEND());
+        .findBrandByInitial(initial.getSTART(), initial.getEND());
   }
 
   @GetMapping("/api/v1/search")

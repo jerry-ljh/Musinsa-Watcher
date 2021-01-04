@@ -140,12 +140,12 @@ public class ProductServiceTest {
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     String category = "001";
-    when(productRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
+    when(productQueryRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findByBrand(category, pageable);
     //then
-    verify(productRepository, times(1))
+    verify(productQueryRepository, times(1))
         .findByBrand(eq(category), eq(pageable));
   }
 
@@ -174,16 +174,16 @@ public class ProductServiceTest {
     Initial initial = InitialWord.type1.getInitials();
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productRepository
-        .findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND())))
+    when(productQueryRepository
+        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
         .thenReturn(list);
     when(MapperUtils.objectToStringAndIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService
-        .findBrandByInitial(initial.getRLIKE(), initial.getSTART(), initial.getEND());
+        .findBrandByInitial(initial.getSTART(), initial.getEND());
     //then
-    verify(productRepository, times(1))
-        .findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()));
+    verify(productQueryRepository, times(1))
+        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
     assertEquals(resultMap, map);
   }
 

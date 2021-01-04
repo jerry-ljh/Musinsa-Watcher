@@ -77,11 +77,11 @@ public class ProductControllerTest {
     Map<String, Integer> map = new HashMap<>();
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()))).thenReturn(map);
+    when(mockProductService.findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()))).thenReturn(map);
     mvc.perform(get( "/api/v1/search/brands")
         .param("type", type))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()));
+    verify(mockProductService, only()).findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
   }
 
   @Test
