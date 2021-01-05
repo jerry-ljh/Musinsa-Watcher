@@ -1,6 +1,5 @@
 package com.musinsa.watcher.service;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -8,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.musinsa.watcher.domain.price.PriceRepository;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import java.util.ArrayList;
 import java.util.List;

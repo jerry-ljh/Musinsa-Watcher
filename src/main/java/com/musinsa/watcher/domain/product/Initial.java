@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Initial {
 
-  private final String RLIKE;
   private final String START;
   private final String END;
 }

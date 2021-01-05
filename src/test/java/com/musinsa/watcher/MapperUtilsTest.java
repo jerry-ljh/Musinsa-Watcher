@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,7 @@ public class MapperUtilsTest {
     list.add(new Object[]{"003", new BigInteger("300")});
     list.add(new Object[]{"004", new BigInteger("400")});
     list.add(new Object[]{"005", new BigInteger("500")});
-    Map<String, Integer> map = MapperUtils.objectToStringAndIntegerMap(list);
+    Map<String, Integer> map = MapperUtils.BingIntegerToIntegerMap(list);
     for(int i=0; i<list.size(); i++){
       BigInteger bigInteger = (BigInteger)list.get(i)[1];
       assertEquals(bigInteger.intValue(), (int)map.get(list.get(i)[0]));

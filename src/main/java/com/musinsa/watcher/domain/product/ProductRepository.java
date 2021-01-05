@@ -1,6 +1,7 @@
 package com.musinsa.watcher.domain.product;
 
 import java.time.LocalDate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,11 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   @Query("SELECT distinct p.brand FROM Product p ")
   Page<String> findAllBrand(Pageable pageable);
 
-  @Query(value = "SELECT brand, count(brand) as count  FROM product WHERE (brand RLIKE ?1 OR ( brand >= ?2 AND brand < ?3 )) GROUP BY brand ORDER BY brand", nativeQuery = true)
-  List<Object[]> findBrandByInitial(String initial1, String initial2, String initial3);
-
-  Page<Product> findByBrand(String brand, Pageable pageable);
-
   @Query(value =
       "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.price + p2.coupon), p1.img, p1.modified_date, \n"
           + "(CASE WHEN  p2.created_date <  ?2 THEN  p2.price + p2.coupon END - min(p2.price + p2.coupon)) as discount, \n"
@@ -24,16 +20,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
           + "where p1.category = ?1 and p2.created_date >=  ?2 - INTERVAL 1 DAY \n"
           + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1\n"
-          + "order by percent desc, product_name",
-      countQuery = "select count(*) from (SELECT\n"
-          + "      (CASE WHEN p2.created_date <=  ?2 THEN p2.price + p2.coupon END - min(p2.price + p2.coupon))/max(p2.price + p2.coupon)*100 as percent \n"
-          + "      FROM product p1 \n"
-          + "      inner join price p2 \n"
-          + "      on p1.product_id = p2.product_id\n"
-          + "      where p1.category = ?1 and p2.created_date  >=  ?2 - INTERVAL 1 DAY \n"
-          + "      group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t",
+          + "order by percent desc, product_name limit ?3, ?4",
       nativeQuery = true)
-  Page<Object[]> findDiscountedProduct(String category, LocalDate date, Pageable pageable);
+  List<Object[]> findDiscountedProduct(String category, LocalDate date, long offset, int limit);
+
+  @Cacheable(value = "productCache", key = "'distcount count'+#category")
+  @Query(value = "select count(*) from (SELECT\n"
+      + "      (CASE WHEN p2.created_date <=  ?2 THEN p2.price + p2.coupon END - min(p2.price + p2.coupon))/max(p2.price + p2.coupon)*100 as percent \n"
+      + "      FROM product p1 \n"
+      + "      inner join price p2 \n"
+      + "      on p1.product_id = p2.product_id\n"
+      + "      where p1.category = ?1 and p2.created_date  >=  ?2 - INTERVAL 1 DAY \n"
+      + "      group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t",
+      nativeQuery = true)
+  Long countDiscountedProduct(String category, LocalDate date);
 
   @Query(value =
       "select category, count(category) as count from (SELECT category,\n"
@@ -60,22 +60,26 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
           + "where p1.created_date > ?2) p2\n"
           + "on p1.product_id = p2.product_id\n"
           + "where min_price = today_price\n"
-          + "order by (max_price - min_price)/max_price DESC",
-      countQuery = "select count(*) from \n"
-          + "(SELECT p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
-          + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
-          + "FROM product p1 \n"
-          + "inner join price p2 on p1.product_id = p2.product_id\n"
-          + "where p1.category = ?1\n"
-          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
-          + "inner join \n"
-          + "(SELECT p1.product_id, p1.price as today_price\n"
-          + "FROM price p1 \n"
-          + "where p1.created_date > ?2) p2\n"
-          + "on p1.product_id = p2.product_id\n"
-          + "where min_price = today_price",
+          + "order by (max_price - min_price)/max_price DESC limit ?3, ?4",
       nativeQuery = true)
-  Page<Object[]> findProductByMinimumPrice(String category, LocalDate date, Pageable pageable);
+  List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset, int limit);
+
+  @Cacheable(value = "productCache", key = "'minimum count'+#category")
+  @Query(value = "select count(*) from \n"
+      + "(SELECT p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
+      + " min(p2.price + p2.coupon) as min_price, max(p2.price + p2.coupon) as max_price\n"
+      + "FROM product p1 \n"
+      + "inner join price p2 on p1.product_id = p2.product_id\n"
+      + "where p1.category = ?1\n"
+      + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+      + "inner join \n"
+      + "(SELECT p1.product_id, p1.price as today_price\n"
+      + "FROM price p1 \n"
+      + "where p1.created_date > ?2) p2\n"
+      + "on p1.product_id = p2.product_id\n"
+      + "where min_price = today_price",
+      nativeQuery = true)
+  long countMinimumPrice(String category, LocalDate date);
 
   @Query(value =
       "select category, count(category) from \n"

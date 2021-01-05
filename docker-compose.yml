@@ -6,7 +6,7 @@ services:
     ports: 
       - 8081:8081
     volumes:
-      - /tmp:/config
+      - /var/properties:/config
     environment:
       PROPERTIES: application-real1.properties
       PROFILE: real1
@@ -16,7 +16,7 @@ services:
     ports: 
       - 8082:8082
     volumes:
-      - /tmp:/config
+      - /var/properties:/config
     environment:
       PROPERTIES: application-real2.properties
       PROFILE: real2

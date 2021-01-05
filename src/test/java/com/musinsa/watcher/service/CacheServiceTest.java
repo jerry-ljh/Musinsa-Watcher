@@ -1,11 +1,8 @@
 package com.musinsa.watcher.service;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -13,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
-import com.musinsa.watcher.domain.product.ProductRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.Test;

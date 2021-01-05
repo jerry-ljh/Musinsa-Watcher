@@ -12,12 +12,10 @@ import static org.mockito.Mockito.when;
 import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
-import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
-import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,63 +65,77 @@ public class ProductServiceTest {
   @DisplayName("오늘 할인 폭이 큰 상품 조회")
   public void 오늘할인() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     LocalDate mockLocalDate = mock(LocalDate.class);
-    Page mockPage = mock(Page.class);
+    List mockList = mock(List.class);
     Pageable pageable = mock(Pageable.class);
+    long offset = 100L;
+    int pagesize = 25;
     List<DiscountedProductDto> list = new ArrayList<>();
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(productRepository.findDiscountedProduct(eq(category), eq(mockLocalDate), any()))
-        .thenReturn(mockPage);
+    when(pageable.getOffset()).thenReturn(offset);
+    when(pageable.getPageSize()).thenReturn(pagesize);
+    when(productRepository.findDiscountedProduct(eq(category),
+        eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
+    when(productRepository.countDiscountedProduct(eq(category), eq(mockLocalDate)))
+        .thenReturn(100L);
     when(DiscountedProductDto.objectsToDtoList(any())).thenReturn(list);
-    when(mockPage.getContent()).thenReturn(list);
-    when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findDiscountedProduct(category, pageable);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(cacheService, times(2)).getLastUpdatedDate();
+    verify(productRepository, times(1)).countDiscountedProduct(eq(category), eq(mockLocalDate));
     verify(productRepository, times(1))
-        .findDiscountedProduct(eq(category), eq(mockLocalDate), any());
+        .findDiscountedProduct(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
   @Test
   @DisplayName("오늘 역대 최저가 상품 조회")
   public void 오늘최저가() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     LocalDateTime mockLocalDateTime = mock(LocalDateTime.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
-    Page mockPage = mock(Page.class);
+    List mockList = mock(List.class);
     Pageable pageable = mock(Pageable.class);
+    long offset = 100L;
+    int pagesize = 25;
     List<MinimumPriceProductDto> list = new ArrayList<>();
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
     when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
-    when(productRepository.findProductByMinimumPrice(eq(category), eq(mockLocalDate), any()))
-        .thenReturn(mockPage);
-    when(MinimumPriceProductDto.objectsToDtoList(any())).thenReturn(list);
-    when(mockPage.getContent()).thenReturn(list);
-    when(mockPage.getTotalElements()).thenReturn(100L);
+    when(pageable.getOffset()).thenReturn(offset);
+    when(pageable.getPageSize()).thenReturn(pagesize);
+    when(productRepository.findProductByMinimumPrice(eq(category),
+        eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
+    when(productRepository.countMinimumPrice(eq(category), eq(mockLocalDate)))
+        .thenReturn(100L);
+    when(MinimumPriceProductDto.objectsToDtoList(eq(mockList))).thenReturn(list);
     //when
     productService.findMinimumPriceProduct(category, pageable);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(cacheService, times(2)).getLastUpdatedDate();
+    verify(productRepository, times(1)).countMinimumPrice(eq(category), eq(mockLocalDate));
     verify(productRepository, times(1))
-        .findProductByMinimumPrice(eq(category), eq(mockLocalDate), any());
+        .findProductByMinimumPrice(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
   @Test
   @DisplayName("카테고리 상품 조회")
   public void 카테고리조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(productQueryRepository.findByCategory(eq(category), eq(mockLocalDate), eq(pageable))).thenReturn(mockPage);
+    when(productQueryRepository.findByCategory(eq(category), eq(mockLocalDate), eq(pageable)))
+        .thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findByCategory(category, pageable);
@@ -136,16 +148,17 @@ public class ProductServiceTest {
   @DisplayName("브랜드 상품 조회")
   public void 브랜드상품조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     String category = "001";
-    when(productRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
+    when(productQueryRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findByBrand(category, pageable);
     //then
-    verify(productRepository, times(1))
+    verify(productQueryRepository, times(1))
         .findByBrand(eq(category), eq(pageable));
   }
 
@@ -153,7 +166,8 @@ public class ProductServiceTest {
   @DisplayName("검색 조회")
   public void 검색조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     String category = "001";
@@ -170,20 +184,21 @@ public class ProductServiceTest {
   @DisplayName("브랜드 이니셜 조회")
   public void 브랜드이니셜조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     Initial initial = InitialWord.type1.getInitials();
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productRepository
-        .findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND())))
+    when(productQueryRepository
+        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
         .thenReturn(list);
-    when(MapperUtils.objectToStringAndIntegerMap(list)).thenReturn(map);
+    when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService
-        .findBrandByInitial(initial.getRLIKE(), initial.getSTART(), initial.getEND());
+        .findBrandByInitial(initial.getSTART(), initial.getEND());
     //then
-    verify(productRepository, times(1))
-        .findBrandByInitial(eq(initial.getRLIKE()), eq(initial.getSTART()), eq(initial.getEND()));
+    verify(productQueryRepository, times(1))
+        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
     assertEquals(resultMap, map);
   }
 
@@ -191,13 +206,14 @@ public class ProductServiceTest {
   @DisplayName("오늘 할인 품목 수 조회")
   public void 오늘할인_품목_수_조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
     when(productRepository.countDiscountProductEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
-    when(MapperUtils.objectToStringAndIntegerMap(list)).thenReturn(map);
+    when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countDiscountProductEachCategory();
     //then
@@ -209,13 +225,14 @@ public class ProductServiceTest {
   @DisplayName("오늘 역대 최저가 품목 수 조회")
   public void 오늘_역대_최저가_품목_수_조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository, cacheService);
+    ProductService productService = new ProductService(productRepository, productQueryRepository,
+        cacheService);
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
     when(productRepository.countMinimumPriceProductEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
-    when(MapperUtils.objectToStringAndIntegerMap(list)).thenReturn(map);
+    when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countMinimumPriceProductEachCategory();
     //then

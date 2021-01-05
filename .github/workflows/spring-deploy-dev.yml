@@ -1,9 +1,8 @@
-name: spring boot deploy
+name: spring boot deploy-dev
 
 on:
-  pull_request:
-    types: [ closed ]
-    branches: [ backend-release ]
+  push:
+    branches: [ backend-dev ]
 
 jobs:
   build:
@@ -29,7 +28,7 @@ jobs:
 
       - name: Move deploy script
         run: cp scripts/*.sh ./deploy/
-      
+
       - name: Move nginx.conf
         run: cp nginx.conf ./deploy/
 
@@ -38,7 +37,7 @@ jobs:
 
       - name: Copy Jar
         run: cp build/libs/*.jar ./app.jar
-    
+
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
@@ -48,7 +47,7 @@ jobs:
           repository: ${{ secrets.DOCKER_REPOSITORY }}
           tags: latest
 
-      - name: NCP sever1 scp deploy folder
+      - name: Dev sever scp deploy folder
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.NCP_SERVER1_HOST }}
@@ -59,35 +58,13 @@ jobs:
           target: "~/"
           overwrite: true
 
-      - name: NCP sever1 deploy
+      - name: Dev sever deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.NCP_SERVER1_HOST }}
           username: ${{ secrets.NCP_SERVER1_USERNAME }}
           password: ${{ secrets.NCP_SERVER1_PASSWORD }}
           port: ${{ secrets.NCP_SERVER1_PORT }}
-          script: |
-            cd deploy
-            sudo bash deploy.sh
-
-      - name: AWS sever1 scp deploy folder
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.AWS_SERVER1_HOST }}
-          username: ${{ secrets.AWS_SERVER1_USERNAME }}
-          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
-          port: ${{ secrets.AWS_SERVER1_PORT }}
-          source: "./deploy/*"
-          target: "~/"
-          overwrite: true
-
-      - name: AWS sever1 deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_SERVER1_HOST   }}
-          username: ${{ secrets.AWS_SERVER1_USERNAME }}
-          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
-          port: ${{ secrets.AWS_SERVER1_PORT }}
           script: |
             cd deploy
             sudo bash deploy.sh
