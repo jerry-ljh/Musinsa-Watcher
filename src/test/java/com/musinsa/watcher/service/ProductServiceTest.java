@@ -68,22 +68,27 @@ public class ProductServiceTest {
     ProductService productService = new ProductService(productRepository, productQueryRepository,
         cacheService);
     LocalDate mockLocalDate = mock(LocalDate.class);
-    Page mockPage = mock(Page.class);
+    List mockList = mock(List.class);
     Pageable pageable = mock(Pageable.class);
+    long offset = 100L;
+    int pagesize = 25;
     List<DiscountedProductDto> list = new ArrayList<>();
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(productRepository.findDiscountedProduct(eq(category), eq(mockLocalDate), any()))
-        .thenReturn(mockPage);
+    when(pageable.getOffset()).thenReturn(offset);
+    when(pageable.getPageSize()).thenReturn(pagesize);
+    when(productRepository.findDiscountedProduct(eq(category),
+        eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
+    when(productRepository.countDiscountedProduct(eq(category), eq(mockLocalDate)))
+        .thenReturn(100L);
     when(DiscountedProductDto.objectsToDtoList(any())).thenReturn(list);
-    when(mockPage.getContent()).thenReturn(list);
-    when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findDiscountedProduct(category, pageable);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(cacheService, times(2)).getLastUpdatedDate();
+    verify(productRepository, times(1)).countDiscountedProduct(eq(category), eq(mockLocalDate));
     verify(productRepository, times(1))
-        .findDiscountedProduct(eq(category), eq(mockLocalDate), any());
+        .findDiscountedProduct(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
   @Test
@@ -94,23 +99,28 @@ public class ProductServiceTest {
         cacheService);
     LocalDateTime mockLocalDateTime = mock(LocalDateTime.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
-    Page mockPage = mock(Page.class);
+    List mockList = mock(List.class);
     Pageable pageable = mock(Pageable.class);
+    long offset = 100L;
+    int pagesize = 25;
     List<MinimumPriceProductDto> list = new ArrayList<>();
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
     when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
-    when(productRepository.findProductByMinimumPrice(eq(category), eq(mockLocalDate), any()))
-        .thenReturn(mockPage);
-    when(MinimumPriceProductDto.objectsToDtoList(any())).thenReturn(list);
-    when(mockPage.getContent()).thenReturn(list);
-    when(mockPage.getTotalElements()).thenReturn(100L);
+    when(pageable.getOffset()).thenReturn(offset);
+    when(pageable.getPageSize()).thenReturn(pagesize);
+    when(productRepository.findProductByMinimumPrice(eq(category),
+        eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
+    when(productRepository.countMinimumPrice(eq(category), eq(mockLocalDate)))
+        .thenReturn(100L);
+    when(MinimumPriceProductDto.objectsToDtoList(eq(mockList))).thenReturn(list);
     //when
     productService.findMinimumPriceProduct(category, pageable);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(cacheService, times(2)).getLastUpdatedDate();
+    verify(productRepository, times(1)).countMinimumPrice(eq(category), eq(mockLocalDate));
     verify(productRepository, times(1))
-        .findProductByMinimumPrice(eq(category), eq(mockLocalDate), any());
+        .findProductByMinimumPrice(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
   @Test

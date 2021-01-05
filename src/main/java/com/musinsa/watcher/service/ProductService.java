@@ -58,20 +58,23 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'distcount'+#category+#pageable.pageNumber")
   public Page<DiscountedProductDto> findDiscountedProduct(String category, Pageable pageable) {
-    Page<Object[]> page = productRepository
-        .findDiscountedProduct(category, cacheService.getLastUpdatedDate(), pageable);
+    List<Object[]> result = productRepository
+        .findDiscountedProduct(category, cacheService.getLastUpdatedDate(),
+            pageable.getOffset(), pageable.getPageSize());
     return new PageImpl<DiscountedProductDto>(
-        DiscountedProductDto.objectsToDtoList(page.getContent()),
-        pageable, page.getTotalElements());
+        DiscountedProductDto.objectsToDtoList(result),
+        pageable,
+        productRepository.countDiscountedProduct(category, cacheService.getLastUpdatedDate()));
   }
 
   @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber")
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(String category, Pageable pageable) {
-    Page<Object[]> page = productRepository
-        .findProductByMinimumPrice(category, cacheService.getLastUpdatedDate(), pageable);
+    List<Object[]> results = productRepository
+        .findProductByMinimumPrice(category, cacheService.getLastUpdatedDate(),
+            pageable.getOffset(), pageable.getPageSize());
     return new PageImpl<MinimumPriceProductDto>(
-        MinimumPriceProductDto.objectsToDtoList(page.getContent()),
-        pageable, page.getTotalElements());
+        MinimumPriceProductDto.objectsToDtoList(results),
+        pageable, productRepository.countMinimumPrice(category, cacheService.getLastUpdatedDate()));
   }
 
   @Cacheable(value = "productCache", key = "'distcount list'")
