@@ -55,7 +55,7 @@ public class PriceRepositoryTest {
     assertEquals(price.getPrice(), 1000);
     assertEquals(price.getDelPrice(), 10000);
     assertEquals(price.getRank(), 1);
-    assertEquals(Double.compare(price.getRating(), (double)11), 0);
+    assertEquals(Double.compare(price.getRating(), (double) 11), 0);
     assertEquals(price.getRatingCount(), 120);
     assertEquals(price.getCoupon(), -200);
     assertEquals(product1.getProductName(), product.getProductName());

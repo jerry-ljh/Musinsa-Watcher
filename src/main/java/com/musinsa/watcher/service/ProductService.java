@@ -49,7 +49,7 @@ public class ProductService {
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2")
   public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
     List<Object[]> objectList = productQueryRepository.findBrandByInitial(initial1, initial2);
-    return MapperUtils.objectToStringAndLongMap(objectList);
+    return MapperUtils.longToIntegerMapper(objectList);
   }
 
   public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {
@@ -78,14 +78,14 @@ public class ProductService {
   public Map<String, Integer> countDiscountProductEachCategory() {
     List<Object[]> objectList = productRepository
         .countDiscountProductEachCategory(cacheService.getLastUpdatedDate());
-    return MapperUtils.objectToStringAndIntegerMap(objectList);
+    return MapperUtils.BingIntegerToIntegerMap(objectList);
   }
 
   @Cacheable(value = "productCache", key = "'minimum price list'")
   public Map<String, Integer> countMinimumPriceProductEachCategory() {
     List<Object[]> objectList = productRepository
         .countMinimumPriceProductEachCategory(cacheService.getLastUpdatedDate());
-    return MapperUtils.objectToStringAndIntegerMap(objectList);
+    return MapperUtils.BingIntegerToIntegerMap(objectList);
   }
 
 }

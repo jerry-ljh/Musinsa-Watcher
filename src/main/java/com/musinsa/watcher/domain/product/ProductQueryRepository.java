@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +21,6 @@ public class ProductQueryRepository {
 
   private final JPAQueryFactory queryFactory;
   private final ApplicationContext applicationContext;
-  private final EntityManager em;
 
   private ProductQueryRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
@@ -112,7 +110,7 @@ public class ProductQueryRepository {
         .fetchFirst().getModifiedDate();
   }
 
-  public List<Object[]> findBrandByInitial(String initial1, String initial2){
+  public List<Object[]> findBrandByInitial(String initial1, String initial2) {
     return queryFactory.from(QProduct.product)
         .where(QProduct.product.brand.goe(initial1).and(QProduct.product.brand.lt(initial2)))
         .groupBy(QProduct.product.brand)
