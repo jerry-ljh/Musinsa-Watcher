@@ -1,0 +1,41 @@
+.sidebar-nav {
+  width: 300px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-nav li {
+  text-indent: 1.5em;
+  line-height: 2.8em;
+  border-bottom: 1px solid #b2b2b260;
+  margin: 20px;
+}
+
+.sidebar-nav li a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+}
+
+.sidebar-nav li:hover {
+  background: #b2b2b21c;
+}
+
+.sidebar-nav > .sidebar-brand {
+  font-size: 1.3em;
+  line-height: 3em;
+}
+
+.brand {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.brand a {
+  color: #000;
+  text-decoration: none;
+}
+
+.brand:hover {
+  background: #b2b2b21c;
+}
