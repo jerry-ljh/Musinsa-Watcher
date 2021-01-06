@@ -49,16 +49,7 @@ jobs:
           source: "./frontend-mobile/dist/*"
           target: "~/mobile/"
           overwrite: true
-          
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
-        with:
-          push: true
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_FRONT_REPOSITORY }}
-          tags: latest
-          
+        
       - name: action-slack
         uses: 8398a7/action-slack@v3
         with:
