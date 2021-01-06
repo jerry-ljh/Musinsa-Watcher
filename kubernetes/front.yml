@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watcher-front
+  labels:
+    app: watcher-front
+spec:
+  selector:
+    matchLabels:
+      app: watcher-front
+      tier: front
+  template:
+    metadata:
+      labels:
+        app: watcher-front
+        tier: front
+    spec:
+      containers:
+      - image: j005580/musinsa-watcher-front
+        name: watcher-front
+        ports:
+        - containerPort: 8080
+          name: watcher-front
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: watcher-front
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: watcher-front

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server1
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: api-server1
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: api-server1
+        tier: app
+    spec:
+      containers:
+        - name: server
+          image: j005580/musinsa-watcher
+          livenessProbe:
+            httpGet:
+              path: /api/profile
+              port: 8081
+            initialDelaySeconds: 30
+            timeoutSeconds: 10 # Default 1
+          env:
+            - name: PROPERTIES
+              value: config/application-real.properties
+            - name: PROFILE
+              value: real1
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          ports:
+            - containerPort: 8081
+              name: api-server1
+      volumes:
+        - name: config-volume
+          configMap:
+            name: application-real.properties
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-server1
+spec:
+  ports:
+  - port: 80
+    targetPort: 8081
+    protocol: TCP
+    name: http
+  selector:
+    app: api-server1
