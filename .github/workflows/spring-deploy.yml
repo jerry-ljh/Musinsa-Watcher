@@ -48,28 +48,6 @@ jobs:
           repository: ${{ secrets.DOCKER_REPOSITORY }}
           tags: latest
 
-      - name: NCP sever1 scp deploy folder
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
-          source: "./deploy/*"
-          target: "~/"
-          overwrite: true
-
-      - name: NCP sever1 deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
-          script: |
-            cd deploy
-            sudo bash deploy.sh
-
       - name: AWS sever1 scp deploy folder
         uses: appleboy/scp-action@master
         with:

@@ -1,8 +1,9 @@
 name: k8s backend deploy
 
 on:
-  push:
-    branches: [ backend-dev ]
+  pull_request:
+    types: [ closed ]
+    branches: [ backend-release ]
 
 jobs:
   build:
