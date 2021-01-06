@@ -19,12 +19,12 @@ public class DiscountedProductDto implements Serializable {
   private String brand;
   private String img;
   private LocalDate modifiedDate;
-  private long price;
+  private int price;
   private long discount;
   private float percent;
 
   @Builder
-  public DiscountedProductDto(int productId, String productName, String brand, long price,
+  public DiscountedProductDto(int productId, String productName, String brand, int price,
       String img, Timestamp modifiedDate, long discount, float percent) {
     this.productId = productId;
     this.productName = productName;
@@ -42,7 +42,7 @@ public class DiscountedProductDto implements Serializable {
         .productId((int) object[0])
         .productName((String) object[1])
         .brand((String) object[2])
-        .price(((BigInteger) object[3]).longValue())
+        .price(((int) object[3]))
         .img((String) object[4])
         .modifiedDate((Timestamp) object[5])
         .discount(((BigInteger) object[6]).longValue())

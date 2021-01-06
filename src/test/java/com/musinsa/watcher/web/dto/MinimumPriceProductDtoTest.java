@@ -21,7 +21,7 @@ public class MinimumPriceProductDtoTest {
     Object productName = "name";
     Object brand = "brand";
     Object img = "url";
-    Object maxPrice = BigInteger.valueOf(10000L);
+    Object maxPrice = 10000;
     Object today_price = 7000;
     Object modifiedDate = Timestamp.from(Instant.now());
     MinimumPriceProductDto testDto = MinimumPriceProductDto
@@ -29,8 +29,8 @@ public class MinimumPriceProductDtoTest {
         .productId((int) productId)
         .productName((String) productName)
         .brand((String) brand)
-        .maxPrice(((BigInteger) maxPrice).longValue())
-        .today_price((Integer)today_price)
+        .maxPrice(((int) maxPrice))
+        .today_price((int)today_price)
         .img((String) img)
         .modifiedDate((Timestamp) modifiedDate)
         .build();
