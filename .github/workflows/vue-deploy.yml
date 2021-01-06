@@ -12,13 +12,21 @@ jobs:
       - name: Checkout source code.
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
+      - name: Front Install Dependencies
         run: npm install
         working-directory: frontend
 
-      - name: Build
+      - name: Front build
         run: npm run build
         working-directory: frontend
+
+      - name: Front-mobile Install Dependencies
+        run: npm install
+        working-directory: frontend-mobile
+
+      - name: Front-mobile build
+        run: npm run build
+        working-directory: frontend-mobile
 
       - name: Load balancer scp dist folder
         uses: appleboy/scp-action@master
@@ -31,6 +39,17 @@ jobs:
           target: "~/"
           overwrite: true
 
+      - name: Load balancer scp dist folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.LOAD_BALANCER_HOST }}
+          username: ${{ secrets.LOAD_BALANCER_USERNAME }}
+          password: ${{ secrets.LOAD_BALANCER_PASSWORD }}
+          port: ${{ secrets.LOAD_BALANCER_PORT }}
+          source: "./frontend-mobile/dist/*"
+          target: "~/mobile/"
+          overwrite: true
+        
       - name: action-slack
         uses: 8398a7/action-slack@v3
         with:

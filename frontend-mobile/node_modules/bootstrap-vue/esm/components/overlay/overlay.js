@@ -1,0 +1,201 @@
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+import Vue from '../../vue';
+import { NAME_OVERLAY } from '../../constants/components';
+import { makePropsConfigurable } from '../../utils/config';
+import { BVTransition } from '../../utils/bv-transition';
+import { toFloat } from '../../utils/number';
+import normalizeSlotMixin from '../../mixins/normalize-slot';
+import { BSpinner } from '../spinner/spinner';
+var positionCover = {
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0
+};
+export var BOverlay = /*#__PURE__*/Vue.extend({
+  name: NAME_OVERLAY,
+  mixins: [normalizeSlotMixin],
+  props: makePropsConfigurable({
+    show: {
+      type: Boolean,
+      default: false
+    },
+    variant: {
+      type: String,
+      default: 'light'
+    },
+    bgColor: {
+      // Alternative to variant, allowing a specific
+      // CSS color to be applied to the overlay
+      type: String // default: null
+
+    },
+    opacity: {
+      type: [Number, String],
+      default: 0.85,
+      validator: function validator(value) {
+        var number = toFloat(value, 0);
+        return number >= 0 && number <= 1;
+      }
+    },
+    blur: {
+      type: String,
+      default: '2px'
+    },
+    rounded: {
+      type: [Boolean, String],
+      default: false
+    },
+    noCenter: {
+      type: Boolean,
+      default: false
+    },
+    noFade: {
+      type: Boolean,
+      default: false
+    },
+    spinnerType: {
+      type: String,
+      default: 'border'
+    },
+    spinnerVariant: {
+      type: String // default: null
+
+    },
+    spinnerSmall: {
+      type: Boolean,
+      default: false
+    },
+    overlayTag: {
+      type: String,
+      default: 'div'
+    },
+    wrapTag: {
+      type: String,
+      default: 'div'
+    },
+    noWrap: {
+      // If set, does not render the default slot
+      // and switches to absolute positioning
+      type: Boolean,
+      default: false
+    },
+    fixed: {
+      type: Boolean,
+      default: false
+    },
+    zIndex: {
+      type: [Number, String],
+      default: 10
+    }
+  }, NAME_OVERLAY),
+  computed: {
+    computedRounded: function computedRounded() {
+      var rounded = this.rounded;
+      return rounded === true || rounded === '' ? 'rounded' : !rounded ? '' : "rounded-".concat(rounded);
+    },
+    computedVariant: function computedVariant() {
+      return this.variant && !this.bgColor ? "bg-".concat(this.variant) : '';
+    },
+    overlayScope: function overlayScope() {
+      return {
+        spinnerType: this.spinnerType || null,
+        spinnerVariant: this.spinnerVariant || null,
+        spinnerSmall: this.spinnerSmall
+      };
+    }
+  },
+  methods: {
+    defaultOverlayFn: function defaultOverlayFn(_ref) {
+      var spinnerType = _ref.spinnerType,
+          spinnerVariant = _ref.spinnerVariant,
+          spinnerSmall = _ref.spinnerSmall;
+      return this.$createElement(BSpinner, {
+        props: {
+          type: spinnerType,
+          variant: spinnerVariant,
+          small: spinnerSmall
+        }
+      });
+    }
+  },
+  render: function render(h) {
+    var _this = this;
+
+    var $overlay = h();
+
+    if (this.show) {
+      var scope = this.overlayScope; // Overlay backdrop
+
+      var $background = h('div', {
+        staticClass: 'position-absolute',
+        class: [this.computedVariant, this.computedRounded],
+        style: _objectSpread(_objectSpread({}, positionCover), {}, {
+          opacity: this.opacity,
+          backgroundColor: this.bgColor || null,
+          backdropFilter: this.blur ? "blur(".concat(this.blur, ")") : null
+        })
+      }); // Overlay content
+
+      var $content = h('div', {
+        staticClass: 'position-absolute',
+        style: this.noCenter ?
+        /* istanbul ignore next */
+        _objectSpread({}, positionCover) : {
+          top: '50%',
+          left: '50%',
+          transform: 'translateX(-50%) translateY(-50%)'
+        }
+      }, [this.normalizeSlot('overlay', scope) || this.defaultOverlayFn(scope)]); // Overlay positioning
+
+      $overlay = h(this.overlayTag, {
+        key: 'overlay',
+        staticClass: 'b-overlay',
+        class: {
+          'position-absolute': !this.noWrap || this.noWrap && !this.fixed,
+          'position-fixed': this.noWrap && this.fixed
+        },
+        style: _objectSpread(_objectSpread({}, positionCover), {}, {
+          zIndex: this.zIndex || 10
+        }),
+        on: {
+          click: function click(evt) {
+            return _this.$emit('click', evt);
+          }
+        }
+      }, [$background, $content]);
+    } // Wrap in a fade transition
+
+
+    $overlay = h(BVTransition, {
+      props: {
+        noFade: this.noFade,
+        appear: true
+      },
+      on: {
+        'after-enter': function afterEnter() {
+          return _this.$emit('shown');
+        },
+        'after-leave': function afterLeave() {
+          return _this.$emit('hidden');
+        }
+      }
+    }, [$overlay]);
+
+    if (this.noWrap) {
+      return $overlay;
+    }
+
+    return h(this.wrapTag, {
+      staticClass: 'b-overlay-wrap position-relative',
+      attrs: {
+        'aria-busy': this.show ? 'true' : null
+      }
+    }, this.noWrap ? [$overlay] : [this.normalizeSlot(), $overlay]);
+  }
+});
