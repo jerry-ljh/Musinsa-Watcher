@@ -3,7 +3,7 @@ name: spring boot deploy
 on:
   pull_request:
     types: [ closed ]
-    branches: [ backend-release ]
+    #branches: [ backend-release ]
 
 jobs:
   build:

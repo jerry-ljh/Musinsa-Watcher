@@ -23,6 +23,12 @@ spec:
               port: 8081
             initialDelaySeconds: 30
             timeoutSeconds: 10 # Default 1
+          readinessProbe:
+            httpGet:
+              path: /api/profile
+              port: 8081
+            initialDelaySeconds: 30
+            timeoutSeconds: 10 # Default 1
           env:
             - name: PROPERTIES
               value: config/application-real.properties
