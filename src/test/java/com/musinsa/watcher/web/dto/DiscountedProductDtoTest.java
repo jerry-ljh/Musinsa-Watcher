@@ -23,7 +23,7 @@ public class DiscountedProductDtoTest {
     Object productName = "name";
     Object brand = "brand";
     Object img = "url";
-    Object price = BigInteger.valueOf(10000L);
+    Object price = 10000;
     Object modifiedDate = Timestamp.from(Instant.now());
     Object discount = BigInteger.valueOf(1000L);
     Object percent = new BigDecimal(15.3);
@@ -32,7 +32,7 @@ public class DiscountedProductDtoTest {
         .productId((int) productId)
         .productName((String) productName)
         .brand((String) brand)
-        .price(((BigInteger) price).longValue())
+        .price(((int) price))
         .img((String) img)
         .modifiedDate((Timestamp) modifiedDate)
         .discount(((BigInteger) discount).longValue())

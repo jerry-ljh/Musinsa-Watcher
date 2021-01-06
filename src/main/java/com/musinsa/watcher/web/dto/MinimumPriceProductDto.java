@@ -17,12 +17,12 @@ public class MinimumPriceProductDto implements Serializable {
   private String brand;
   private String img;
   private LocalDate modifiedDate;
-  private long today_price;
-  private long maxPrice;
+  private int today_price;
+  private int maxPrice;
 
   @Builder
   public MinimumPriceProductDto(int productId, String productName, String brand,
-      String img, Timestamp modifiedDate, long today_price, long maxPrice) {
+      String img, Timestamp modifiedDate, int today_price, int maxPrice) {
     this.productId = productId;
     this.productName = productName;
     this.today_price = today_price;
@@ -40,8 +40,8 @@ public class MinimumPriceProductDto implements Serializable {
         .brand((String) object[2])
         .img((String) object[3])
         .modifiedDate((Timestamp) object[4])
-        .today_price(((Integer) object[5]).longValue())
-        .maxPrice(((BigInteger) object[6]).longValue())
+        .today_price(((int) object[5]))
+        .maxPrice(((int) object[6]))
         .build();
   }
 
