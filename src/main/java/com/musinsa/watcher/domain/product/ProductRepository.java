@@ -47,53 +47,53 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   List<Object[]> countDiscountProductEachCategory(LocalDate date);
 
   @Query(value =
-      "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price, max_price from \n"
+      "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price, avg_price from \n"
           + "(SELECT p1.product_id,  p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
-          + "min(real_price) as min_price, max(real_price) as max_price\n"
+          + "min(real_price) as min_price, avg(real_price) as avg_price\n"
           + "FROM product p1 \n"
           + "inner join price p2 on p1.product_id = p2.product_id\n"
           + "where p1.category = ?1  and p1.modified_date > ?2\n"
-          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5 order by null ) p1\n"
+          + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5 order by null ) p1\n"
           + "inner join \n"
           + "(SELECT p1.product_id, p1.real_price as today_price\n"
           + "FROM price p1 \n"
           + "where p1.created_date > ?2) p2\n"
           + "on p1.product_id = p2.product_id\n"
-          + "where min_price = today_price and max_price - min_price > max_price/20\n"
-          + "order by (max_price - min_price)/max_price DESC limit ?3, ?4",
+          + "where min_price = today_price and avg_price - min_price > avg_price/20\n"
+          + "order by (avg_price - min_price)/avg_price DESC limit ?3, ?4",
       nativeQuery = true)
   List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset, int limit);
 
   @Cacheable(value = "productCache", key = "'minimum count'+#category")
   @Query(value = "select count(p1.product_id) from \n"
-      + "(SELECT p1.product_id, min(real_price) as min_price, max(real_price) as max_price\n"
+      + "(SELECT p1.product_id, min(real_price) as min_price, avg(real_price) as avg_price\n"
       + "FROM product p1 \n"
       + "inner join price p2 on p1.product_id = p2.product_id\n"
       + "where p1.category = ?1  and p1.modified_date > ?2\n"
-      + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5 order by null ) p1\n"
+      + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5 order by null ) p1\n"
       + "inner join \n"
       + "(SELECT p1.product_id, p1.real_price as today_price\n"
       + "FROM price p1 \n"
       + "where p1.created_date > ?2) p2\n"
       + "on p1.product_id = p2.product_id\n"
-      + "where min_price = today_price and max_price - min_price > max_price/20;",
+      + "where min_price = today_price and avg_price - min_price > avg_price/20;",
       nativeQuery = true)
   long countMinimumPrice(String category, LocalDate date);
 
   @Query(value =
       "select category, count(category) from \n"
           + "(SELECT p1.product_id, p1.category,\n"
-          + " min(p2.real_price) as min_price, max(p2.real_price) as max_price\n"
+          + " min(p2.real_price) as min_price, avg(p2.real_price) as avg_price\n"
           + "FROM product p1 \n"
           + "inner join price p2 on p1.product_id = p2.product_id\n"
-          + "group by p1.product_id having min_price != max_price and count(p2.created_date) > 5) p1\n"
+          + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5) p1\n"
           + "inner join \n"
           + "(SELECT p1.product_id, p1.real_price as today_price\n"
           + "FROM price p1 \n"
           + "where p1.created_date > ?1) p2\n"
           + "on p1.product_id = p2.product_"
           + "id\n"
-          + "where min_price = today_price and max_price - min_price > max_price/20 \n"
+          + "where min_price = today_price and avg_price - min_price > avg_price/20 \n"
           + "group by category",
       nativeQuery = true)
   List<Object[]> countMinimumPriceProductEachCategory(LocalDate date);

@@ -1,7 +1,7 @@
 package com.musinsa.watcher.web.dto;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,15 +18,15 @@ public class MinimumPriceProductDto implements Serializable {
   private String img;
   private LocalDate modifiedDate;
   private int today_price;
-  private int maxPrice;
+  private int avgPrice;
 
   @Builder
   public MinimumPriceProductDto(int productId, String productName, String brand,
-      String img, Timestamp modifiedDate, int today_price, int maxPrice) {
+      String img, Timestamp modifiedDate, int today_price, int avgPrice) {
     this.productId = productId;
     this.productName = productName;
     this.today_price = today_price;
-    this.maxPrice = maxPrice;
+    this.avgPrice = avgPrice;
     this.brand = brand;
     this.img = img;
     this.modifiedDate = modifiedDate.toLocalDateTime().toLocalDate();
@@ -41,7 +41,7 @@ public class MinimumPriceProductDto implements Serializable {
         .img((String) object[3])
         .modifiedDate((Timestamp) object[4])
         .today_price(((int) object[5]))
-        .maxPrice(((int) object[6]))
+        .avgPrice(((BigDecimal) object[6]).intValue())
         .build();
   }
 
