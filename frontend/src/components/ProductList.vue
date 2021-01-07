@@ -1,5 +1,17 @@
 <template>
     <div>
+        <span v-if="currentListTopic == 'minimum'" style="color :#b2b2b2; margin-left:20px; margin-bottom:50px">
+        오늘 역대 최저가<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                <b-tooltip v-if="currentListTopic == 'minimum'" target="question" triggers="hover">
+                    오늘 역대 최저가는 과거 평균 실구매가와 오늘 실구매가를 비교합니다.
+                </b-tooltip>
+        </span>
+        <span v-if="currentListTopic == 'discount'" style="color :#b2b2b2; margin-left:20px; margin-bottom:50px">
+        오늘 깜짝 할인<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                <b-tooltip v-if="currentListTopic == 'discount'" target="question" triggers="hover">
+                    오늘 깜짝 할인은 어제 실구매가와 오늘 실구매가를 비교합니다.
+                </b-tooltip>
+        </span>
         <div v-if="products.length>0">
             <b-card-group
                 deck="deck"
@@ -17,7 +29,7 @@
                         v-if="product.discount !=null">-{{Math.ceil(product.percent)}}%</h6>
                     <h6
                         style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
-                        v-if="currentListTopic == 'minimum' && product.today_price != null">-{{Math.ceil((product.maxPrice - product.today_price) * 100/product.maxPrice)}}%</h6>
+                        v-if="currentListTopic == 'minimum' && product.today_price != null">-{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
                         style="position: absolute; top: 0; left: 5px; background-color:#FFF"
                         v-if="product.discount ==null && currentListTopic != 'minimum'">
@@ -40,7 +52,7 @@
                                 </span>
                             </div>
                             <div v-if="currentListTopic == 'minimum' && product.today_price != null">
-                                <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.maxPrice)}}원</span>
+                                <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.avgPrice)}}원</span>
                                 <span style="color:#ae0000">
                                     <strong>{{numberToPrice(product.today_price)}}원</strong>
                                 </span>
