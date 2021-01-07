@@ -3,7 +3,6 @@ package com.musinsa.watcher.web.dto;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class MinimumPriceProductDtoTest {
     Object productName = "name";
     Object brand = "brand";
     Object img = "url";
-    Object maxPrice = 10000;
+    Object avgPrice = new BigDecimal(10000);
     Object today_price = 7000;
     Object modifiedDate = Timestamp.from(Instant.now());
     MinimumPriceProductDto testDto = MinimumPriceProductDto
@@ -29,14 +28,14 @@ public class MinimumPriceProductDtoTest {
         .productId((int) productId)
         .productName((String) productName)
         .brand((String) brand)
-        .maxPrice(((int) maxPrice))
+        .avgPrice(((BigDecimal) avgPrice).intValue())
         .today_price((int)today_price)
         .img((String) img)
         .modifiedDate((Timestamp) modifiedDate)
         .build();
 
     Object[] objects = new Object[]{productId, productName, brand, img, modifiedDate, today_price,
-        maxPrice};
+        avgPrice};
     List<Object[]> list = new ArrayList<>();
     list.add(objects);
     //when
@@ -44,7 +43,7 @@ public class MinimumPriceProductDtoTest {
         .objectsToDtoList(list);
     //then
     MinimumPriceProductDto minimumPriceProductDto = minimumPriceProductDtoList.get(0);
-    assertEquals(testDto.getMaxPrice(), minimumPriceProductDto.getMaxPrice());
+    assertEquals(testDto.getAvgPrice(), minimumPriceProductDto.getAvgPrice());
     assertEquals(testDto.getToday_price(), minimumPriceProductDto.getToday_price());
     assertEquals(testDto.getBrand(), minimumPriceProductDto.getBrand());
     assertEquals(testDto.getImg(), minimumPriceProductDto.getImg());
