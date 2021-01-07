@@ -1,23 +1,23 @@
 <template>
     <div style="min-width:1300px;">
-        <div
-            style="display: block;
-                z-index: 1000;
-                position: fixed;
-                width: 100%; height: 100%;
-                left: 0; top: 0;
-                background-color: rgba(0,0,0, 0.4);
-                overflow-x: hidden;"
-            v-if="loading"></div>
-        <navigation v-on:isLoading="isLoading"></navigation>
-        <div id="page-wrapper">
-            <sidebar v-on:isLoading="isLoading"></sidebar>
-            <div id="page-content-wrapper">
-                <router-view
-                    v-on:isLoading="isLoading"
-                    :updatedAt="updatedAt"></router-view>
+        <b-overlay
+            :show="loading"
+            :no-fade=true
+            spinner-type="null"
+            @shown="onShown"
+            @hidden="onHidden">
+            <div v-if="loading" style="position:fixed; top : 50%; left:50%; z-index: 1000;">
+                <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+                <p id="cancel-label">Please wait...</p>
             </div>
-        </div>
+            <navigation v-on:isLoading="isLoading"></navigation>
+            <div id="page-wrapper">
+                <sidebar v-on:isLoading="isLoading"></sidebar>
+                <div id="page-content-wrapper">
+                    <router-view v-on:isLoading="isLoading" :updatedAt="updatedAt"></router-view>
+                </div>
+            </div>
+        </b-overlay>
     </div>
 </template>
 
@@ -38,7 +38,20 @@
         },
         methods: {
             isLoading(value) {
+                if (value) {
+                    this.onShown()
+                } else {
+                    this.onHidden();
+                }
                 this.loading = value
+            },
+            onShown() {
+                // Focus the cancel button when the overlay is showing
+                this.loading = true;
+            },
+            onHidden() {
+                // Focus the show button when the overlay is removed
+                this.loading = false;
             }
         },
         created() {

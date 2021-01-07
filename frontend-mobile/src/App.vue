@@ -1,23 +1,24 @@
 <template>
     <div>
-        <div
-            style="display: block;
-                z-index: 1000;
-                position: fixed;
-                width: 100%; height: 100%;
-                left: 0; top: 0;
-                background-color: rgba(0,0,0, 0.4);
-                overflow-x: hidden;"
-            v-if="loading"></div>
-        <navigation
-            v-on:isLoading="isLoading"
-            style="width: 100%; position : fixed; top:0px; z-index:10"></navigation>
-        <sidebar v-on:isLoading="isLoading"></sidebar>
-
-        <router-view
-            v-on:isLoading="isLoading"
-            :updatedAt="updatedAt"
-            style="width:100%; margin-top:75px"></router-view>
+        <b-overlay
+            :show="loading"
+            :no-fade=true
+            spinner-type="null"
+            @shown="onShown"
+            @hidden="onHidden">
+            <div v-if="loading" style="position:fixed; top : 50%; left:42%; z-index: 1000;">
+                <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+                <p id="cancel-label">Please wait...</p>
+            </div>
+            <navigation
+                v-on:isLoading="isLoading"
+                style="width: 100%; position : fixed; top:0px; z-index:10"></navigation>
+            <sidebar v-on:isLoading="isLoading"></sidebar>
+            <router-view
+                v-on:isLoading="isLoading"
+                :updatedAt="updatedAt"
+                style="width:100%; margin-top:75px"></router-view>
+        </b-overlay>
     </div>
 </template>
 
@@ -38,7 +39,18 @@
         },
         methods: {
             isLoading(value) {
+                if (value) {
+                    this.onShown()
+                } else {
+                    this.onHidden();
+                }
                 this.loading = value
+            },
+            onShown() {
+                this.loading = true;
+            },
+            onHidden() {
+                this.loading = false;
             }
         },
         created() {
