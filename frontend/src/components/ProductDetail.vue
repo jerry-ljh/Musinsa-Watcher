@@ -286,7 +286,7 @@
                 return lastUpdate == updatedAt
             },
             outbound(productId) {
-                axios.get('https://api.musinsa.cf/api/product/link', {
+                axios.get('https://www.musinsa.cf/api/product/link', {
                     params: {
                         'id': productId
                     }
@@ -299,7 +299,7 @@
         created() {
             let self = this
             axios
-                .get('https://api.musinsa.cf/api/v1/product', {
+                .get('https://www.musinsa.cf/api/v1/product', {
                     params: {
                         "id": this.$route.query.id
                     }

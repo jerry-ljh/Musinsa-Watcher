@@ -3,13 +3,13 @@
         <span v-if="currentListTopic == 'minimum'" style="color :#b2b2b2; margin-left:20px">
         오늘 역대 최저가<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip v-if="currentListTopic == 'minimum'" target="question" triggers="hover">
-                    오늘 역대 최저가는 과거 평균 실구매가와 오늘 실구매가를 비교합니다.
+                    오늘 역대 최저가는 과거 평균 가격과 오늘 가격를 비교합니다.
                 </b-tooltip>
         </span>
         <span v-if="currentListTopic == 'discount'" style="color :#b2b2b2; margin-left:20px">
         오늘 깜짝 할인<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip v-if="currentListTopic == 'discount'" target="question" triggers="hover">
-                    오늘 깜짝 할인은 어제 실구매가와 오늘 실구매가를 비교합니다.
+                    오늘 깜짝 할인은 어제 가격과 오늘 가격을 비교합니다.
                 </b-tooltip>
         </span>
         <div v-if="products.length>0">
@@ -98,7 +98,7 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                API: "https://api.musinsa.cf/"
+                API: "https://www.musinsa.cf/"
             }
         },
         methods: {

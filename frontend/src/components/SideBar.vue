@@ -329,7 +329,7 @@
                 },
             findBrandList(typeNumber) {
                 axios
-                    .get('https://api.musinsa.cf/api/v1/search/brands', {
+                    .get('https://www.musinsa.cf/api/v1/search/brands', {
                         params: {
                             "type": typeNumber
                         }
@@ -343,7 +343,7 @@
             },
             findDiscountList() {
                 axios
-                    .get('https://api.musinsa.cf/api/v1/product/discount/list')
+                    .get('https://www.musinsa.cf/api/v1/product/discount/list')
                     .then((response) => {
                         this.discountCategory = response.data
                     })
@@ -353,7 +353,7 @@
             },
             findMinimumPriceList(){
                 axios
-                    .get('https://api.musinsa.cf/api/v1/product/minimum/list')
+                    .get('https://www.musinsa.cf/api/v1/product/minimum/list')
                     .then((response) => {
                         this.minimumPriceCategory = response.data
                     })
