@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin({"http://www.musinsa.cf/", "http://m.musinsa.cf/"})
+@CrossOrigin({"http://www.musinsa.cf/", "http://api.musinsa.cf/, https://www.musinsa.cf/",
+    "https://api.musinsa.cf/"})
 @RequiredArgsConstructor
 @RestController
 public class PriceController {
