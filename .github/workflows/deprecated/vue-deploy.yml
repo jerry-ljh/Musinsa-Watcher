@@ -1,9 +1,9 @@
 name: vue deploy
 
-#on:
-#  pull_request:
-#    types: [closed]
-#    branches: [front-release]
+on:
+  pull_request:
+    types: [closed]
+    branches: [front-release]
 
 jobs:
   build:

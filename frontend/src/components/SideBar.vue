@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar-wrapper">
         <b-tabs content-class="mt-3" style="margin-top : 20px;">
-            <b-tab title="품목" active="active" align="left">
+            <b-tab title="랭킹" active="active" align="left">
                 <ul class="sidebar-nav">
                     <li>
                         <a href="javascript:void(0)" v-on:click="goToCategory(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>

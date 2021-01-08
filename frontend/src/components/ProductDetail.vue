@@ -271,7 +271,6 @@
                     }
                 }
                 if(max == list[list.length-1]){
-                    console.log(max);
                     return 100;
                 }
                 return Math.ceil(count / (list.length - 1) * 100)
