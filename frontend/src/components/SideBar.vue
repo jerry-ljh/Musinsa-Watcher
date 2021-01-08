@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar-wrapper">
         <b-tabs content-class="mt-3" style="margin-top : 20px;">
-            <b-tab title="품목" active="active" align="left">
+            <b-tab title="랭킹" active="active" align="left">
                 <ul class="sidebar-nav">
                     <li>
                         <a href="javascript:void(0)" v-on:click="goToCategory(category.top, 1)">상의<small style="color : #b2b2b2">Top</small>
@@ -329,7 +329,7 @@
                 },
             findBrandList(typeNumber) {
                 axios
-                    .get('http://www.musinsa.cf/api/v1/search/brands', {
+                    .get('https://api.musinsa.cf/api/v1/search/brands', {
                         params: {
                             "type": typeNumber
                         }
@@ -343,7 +343,7 @@
             },
             findDiscountList() {
                 axios
-                    .get('http://www.musinsa.cf/api/v1/product/discount/list')
+                    .get('https://api.musinsa.cf/api/v1/product/discount/list')
                     .then((response) => {
                         this.discountCategory = response.data
                     })
@@ -353,7 +353,7 @@
             },
             findMinimumPriceList(){
                 axios
-                    .get('http://www.musinsa.cf/api/v1/product/minimum/list')
+                    .get('https://api.musinsa.cf/api/v1/product/minimum/list')
                     .then((response) => {
                         this.minimumPriceCategory = response.data
                     })
