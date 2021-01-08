@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @EnableCaching
-@CrossOrigin({"http://www.musinsa.cf/", "http://m.musinsa.cf/"})
+@CrossOrigin({"http://www.musinsa.cf/", "http://api.musinsa.cf/, https://www.musinsa.cf/",
+    "https://api.musinsa.cf/"})
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
