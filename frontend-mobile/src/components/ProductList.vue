@@ -98,7 +98,7 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                API: "http://www.musinsa.cf/"
+                API: "https://api.musinsa.cf/"
             }
         },
         methods: {
