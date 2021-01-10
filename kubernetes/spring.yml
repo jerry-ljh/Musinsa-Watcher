@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-server1
+  name: watcher-api-dp
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: api-server1
+      app: watcher-api
       tier: app
   template:
     metadata:
       labels:
-        app: api-server1
+        app: watcher-api
         tier: app
     spec:
       containers:
@@ -21,14 +21,14 @@ spec:
             httpGet:
               path: /api/profile
               port: 8081
-            initialDelaySeconds: 30
-            timeoutSeconds: 10 # Default 1
+            initialDelaySeconds: 20
+            timeoutSeconds: 15
           readinessProbe:
             httpGet:
               path: /api/profile
               port: 8081
-            initialDelaySeconds: 30
-            timeoutSeconds: 10 # Default 1
+            initialDelaySeconds: 20
+            timeoutSeconds: 15
           env:
             - name: PROPERTIES
               value: config/application-real.properties
@@ -39,7 +39,7 @@ spec:
               mountPath: /config
           ports:
             - containerPort: 8081
-              name: api-server1
+              name: watcher-api
       volumes:
         - name: config-volume
           configMap:
@@ -50,12 +50,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-server1
+  name: watcher-api-svc
 spec:
   ports:
-  - port: 80
+  - port: 443
     targetPort: 8081
     protocol: TCP
     name: http
   selector:
-    app: api-server1
+    app: watcher-api

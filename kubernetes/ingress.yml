@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: ab-ingress
+  name: watcher-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
     ingress.kubernetes.io/rewrite-target: /
@@ -13,11 +13,11 @@ spec:
       paths:
       - path: /api
         backend:
-          serviceName: api-server1
-          servicePort: 80
+          serviceName: watcher-api-svc
+          servicePort: 443
       - path: /
         backend:
-          serviceName: watcher-front
+          serviceName: watcher-front-svc
           servicePort: 80
 ---
 kind: Service
