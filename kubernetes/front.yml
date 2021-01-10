@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: watcher-front
+  name: watcher-front-dp
   labels:
     app: watcher-front
 spec:
@@ -21,11 +21,23 @@ spec:
         ports:
         - containerPort: 8080
           name: watcher-front
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: watcher-front
+  name: watcher-front-svc
 spec:
   ports:
   - port: 80
