@@ -56,7 +56,7 @@
         created() {
             let self = this
             axios
-                .get('https://api.musinsa.cf/api/v1/product/cache/last-modified')
+                .get('https://www.musinsa.cf/api/v1/product/cache/last-modified')
                 .then(function (response) {
                     self.updatedAt = response.data
                 })
