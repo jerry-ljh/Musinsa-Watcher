@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+  updateCheck="false">
+  <diskStore path="java.io.tmpdir" />
+
+  <cache name="productCache"
+    maxEntriesLocalHeap="10000"
+    eternal="false"
+    diskSpoolBufferSizeMB="20"
+    timeToLiveSeconds="10"
+    memoryStoreEvictionPolicy="LFU"
+    transactionalMode="off">
+    <persistence strategy="localTempSwap" />
+  </cache>
+
+</ehcache>
