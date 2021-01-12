@@ -17,14 +17,15 @@ public class HystrixPutIfAbsentCommand extends HystrixCommand<ValueWrapper> {
   private final Object value;
 
   public HystrixPutIfAbsentCommand(Cache localCache, Cache globalCache, Object key, Object value) {
-    super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("testGroupKey"))
-        .andCommandKey(HystrixCommandKey.Factory.asKey("cache-get"))
+    super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("cacheGroupKey"))
+        .andCommandKey(HystrixCommandKey.Factory.asKey("cache-putIfAbsent"))
         .andCommandPropertiesDefaults(
             HystrixCommandProperties.defaultSetter()
                 .withExecutionTimeoutInMilliseconds(1000)
                 .withCircuitBreakerErrorThresholdPercentage(50)
-                .withCircuitBreakerRequestVolumeThreshold(5)
-                .withMetricsRollingStatisticalWindowInMilliseconds(20000)));
+                .withCircuitBreakerRequestVolumeThreshold(10)
+                .withCircuitBreakerSleepWindowInMilliseconds(30000)
+                .withMetricsRollingStatisticalWindowInMilliseconds(10000)));
     this.globalCache = globalCache;
     this.localCache = localCache;
     this.key = key;

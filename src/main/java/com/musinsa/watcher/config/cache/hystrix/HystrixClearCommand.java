@@ -15,14 +15,15 @@ public class HystrixClearCommand extends HystrixCommand {
   private final Cache localCache;
 
   public HystrixClearCommand(Cache localCache, Cache globalCache) {
-    super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("testGroupKey"))
-        .andCommandKey(HystrixCommandKey.Factory.asKey("cache-get"))
+    super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("cacheGroupKey"))
+        .andCommandKey(HystrixCommandKey.Factory.asKey("cache-clear"))
         .andCommandPropertiesDefaults(
             HystrixCommandProperties.defaultSetter()
                 .withExecutionTimeoutInMilliseconds(1000)
                 .withCircuitBreakerErrorThresholdPercentage(50)
-                .withCircuitBreakerRequestVolumeThreshold(5)
-                .withMetricsRollingStatisticalWindowInMilliseconds(20000)));
+                .withCircuitBreakerRequestVolumeThreshold(10)
+                .withCircuitBreakerSleepWindowInMilliseconds(30000)
+                .withMetricsRollingStatisticalWindowInMilliseconds(10000)));
     this.globalCache = globalCache;
     this.localCache = localCache;
   }

@@ -7,9 +7,8 @@
   <cache name="productCache"
     maxEntriesLocalHeap="10000"
     eternal="false"
-    diskSpoolBufferSizeMB="20"
-    timeToLiveSeconds="10"
-    memoryStoreEvictionPolicy="LFU"
+    timeToLiveSeconds="60000"
+    memoryStoreEvictionPolicy="LRU"
     transactionalMode="off">
     <persistence strategy="localTempSwap" />
   </cache>
