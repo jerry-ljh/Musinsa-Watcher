@@ -19,7 +19,7 @@ spec:
           image: j005580/musinsa-watcher
           livenessProbe:
             httpGet:
-              path: /api/v1/cache/sycn
+              path: /api/v1/cache/sync
               port: 8081
             initialDelaySeconds: 30
             timeoutSeconds: 5
@@ -27,12 +27,12 @@ spec:
             failureThreshold: 5
           readinessProbe:
             httpGet:
-              path: /api/v1/cache/sycn
+              path: /api/v1/cache/sync
               port: 8081
             initialDelaySeconds: 30
-              timeoutSeconds: 5
-              periodSeconds: 10
-              failureThreshold: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
           env:
             - name: PROPERTIES
               value: config/application-real.properties
