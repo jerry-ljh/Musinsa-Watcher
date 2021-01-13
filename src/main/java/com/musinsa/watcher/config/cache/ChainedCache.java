@@ -41,19 +41,16 @@ public class ChainedCache implements Cache {
 
   @Override
   public ValueWrapper putIfAbsent(Object key, Object value) {
-    log.info("putIfAbsent");
     return new HystrixPutIfAbsentCommand(localCache, globalCache, key, value).execute();
   }
 
   @Override
   public boolean evictIfPresent(Object key) {
-    log.info("evictIfPresent");
     return localCache.evictIfPresent(key);
   }
 
   @Override
   public boolean invalidate() {
-    log.info("invalidate");
     return localCache.invalidate();
   }
 
@@ -64,19 +61,16 @@ public class ChainedCache implements Cache {
 
   @Override
   public Object getNativeCache() {
-    log.info("command되지않은 getNativeCache발동");
     return localCache.getNativeCache();
   }
 
   @Override
   public <T> T get(Object key, Class<T> type) {
-    log.info("command되지않은 get발동");
     return localCache.get(key, type);
   }
 
   @Override
   public <T> T get(Object key, Callable<T> valueLoader) {
-    log.info("command되지않은 get발동");
     return localCache.get(key, valueLoader);
   }
 
@@ -95,18 +89,13 @@ public class ChainedCache implements Cache {
     new HystrixClearCommand(localCache, globalCache).execute();
   }
 
-  public void clearLocalCache(Object key){
-    ValueWrapper valueWrapper = new HystrixGetCommand(globalCache, key).execute();
-    if(valueWrapper == null || valueWrapper.get() == null){
-      return;
-    }else{
-      localCache.clear();
-    }
+  public void clearLocalCache() {
+    localCache.clear();
   }
 
   public boolean isSynchronized(Object key) {
     ValueWrapper localValue = localCache.get(key);
-    ValueWrapper globalValue = new HystrixGetCommand(globalCache, key){
+    ValueWrapper globalValue = new HystrixGetCommand(globalCache, key) {
       @Override
       protected ValueWrapper getFallback() {
         log.warn("Synchronize get fallback called, circuit is {}", super.circuitBreaker.isOpen());

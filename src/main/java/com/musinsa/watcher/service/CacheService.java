@@ -48,10 +48,9 @@ public class CacheService {
   public boolean doSynchronize(){
     ChainedCache cache = (ChainedCache)cacheManager.getCache(CACHE_NAME);
     if(cache.isSynchronized(DATE_KEY)){
-      log.info("이미 동기화되었습니다.");
       return false;
     }else{
-      cache.clearLocalCache(DATE_KEY);
+      cache.clearLocalCache();
       log.info("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
       return true;
     }

@@ -36,8 +36,6 @@ public class HystrixPutIfAbsentCommand extends HystrixCommand<ValueWrapper> {
   protected ValueWrapper run() {
     localCache.putIfAbsent(key, value);
     globalCache.putIfAbsent(key, value);
-    log.info("글로벌 putIfAbsent");
-    log.info("로컬 putIfAbsent");
     return null;
   }
 
@@ -45,7 +43,6 @@ public class HystrixPutIfAbsentCommand extends HystrixCommand<ValueWrapper> {
   protected ValueWrapper getFallback() {
     log.warn("putIfAbsent fallback called, circuit is {}", super.circuitBreaker.isOpen());
     localCache.putIfAbsent(key, value);
-    log.info("로컬 putIfAbsent");
     return null;
   }
 }
