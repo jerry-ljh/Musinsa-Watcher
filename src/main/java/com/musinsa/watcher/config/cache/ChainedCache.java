@@ -31,7 +31,7 @@ public class ChainedCache implements Cache {
     } else {
       valueWrapper = new HystrixGetCommand(globalCache, key).execute();
       log.info("글로벌 캐시 : " + valueWrapper);
-      if(valueWrapper != null){
+      if (valueWrapper != null) {
         localCache.put(key, valueWrapper.get());
       }
       return valueWrapper;
@@ -59,7 +59,7 @@ public class ChainedCache implements Cache {
 
   @Override
   public String getName() {
-      return localCache.getName();
+    return localCache.getName();
   }
 
   @Override
@@ -95,4 +95,30 @@ public class ChainedCache implements Cache {
     new HystrixClearCommand(localCache, globalCache).execute();
   }
 
+  public void clearLocalCache(Object key){
+    ValueWrapper valueWrapper = new HystrixGetCommand(globalCache, key).execute();
+    if(valueWrapper == null || valueWrapper.get() == null){
+      return;
+    }else{
+      localCache.clear();
+    }
+  }
+
+  public boolean isSynchronized(Object key) {
+    ValueWrapper localValue = localCache.get(key);
+    ValueWrapper globalValue = new HystrixGetCommand(globalCache, key){
+      @Override
+      protected ValueWrapper getFallback() {
+        log.warn("Synchronize get fallback called, circuit is {}", super.circuitBreaker.isOpen());
+        return localValue;
+      }
+    }.execute();
+    if (localValue == null || localValue.get() == null) {
+      return true;
+    } else if (globalValue == null || globalValue.get() == null) {
+      return false;
+    } else {
+      return localValue.get().equals(globalValue.get());
+    }
+  }
 }

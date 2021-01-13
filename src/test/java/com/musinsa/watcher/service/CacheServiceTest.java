@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.musinsa.watcher.config.cache.ChainedCache;
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -109,5 +110,35 @@ public class CacheServiceTest {
     LocalDate result = cacheService.getLastUpdatedDate();
     //then
     verify(cache, times(1)).putIfAbsent(eq(DATE_KEY), eq(now));
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시와 로컬 캐시가 다르면 동기화를 진행한다.")
+  public void cacheSynchronized(){
+    //given
+    CacheService cacheService = new CacheService(cacheManager, productRepository);
+    ChainedCache chainedCache = mock(ChainedCache.class);
+    when(cacheManager.getCache(eq("productCache"))).thenReturn(chainedCache);
+    when(chainedCache.isSynchronized(eq(DATE_KEY))).thenReturn(false);
+    //when
+    cacheService.doSynchronize();
+    //then
+    verify(chainedCache, times(1)).isSynchronized(eq(DATE_KEY));
+    verify(chainedCache, times(1)).clearLocalCache(eq(DATE_KEY));
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시와 로컬 캐시가 같으면 동기화를 진행하지 않는다.")
+  public void cacheNotSynchronized(){
+    //given
+    CacheService cacheService = new CacheService(cacheManager, productRepository);
+    ChainedCache chainedCache = mock(ChainedCache.class);
+    when(cacheManager.getCache(eq("productCache"))).thenReturn(chainedCache);
+    when(chainedCache.isSynchronized(eq(DATE_KEY))).thenReturn(true);
+    //when
+    cacheService.doSynchronize();
+    //then
+    verify(chainedCache, times(1)).isSynchronized(eq(DATE_KEY));
+    verify(chainedCache, never()).clearLocalCache(eq(DATE_KEY));
   }
 }

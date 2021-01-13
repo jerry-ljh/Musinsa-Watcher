@@ -1,5 +1,6 @@
 package com.musinsa.watcher.service;
 
+import com.musinsa.watcher.config.cache.ChainedCache;
 import com.musinsa.watcher.domain.product.ProductQueryRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,33 +14,47 @@ import org.springframework.stereotype.Service;
 @Service
 public class CacheService {
 
-  public static final String DATE_KEY = "current date";
+  private static final String CACHE_NAME = "productCache";
+  private static final String DATE_KEY = "current date";
   private final CacheManager cacheManager;
   private final ProductQueryRepository productRepository;
 
   public LocalDate updateCacheByDate() {
     LocalDateTime localDateTime = productRepository.findLastUpdateDate();
-    cacheManager.getCache("productCache").putIfAbsent(DATE_KEY, localDateTime);
+    cacheManager.getCache(CACHE_NAME).putIfAbsent(DATE_KEY, localDateTime);
     LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
         .get(DATE_KEY).get();
     if (localDateTime.isAfter(cachedLocalDateTime)) {
       log.info(localDateTime.toString());
       log.info(cachedLocalDateTime.toString());
       log.info("cache update!");
-      cacheManager.getCache("productCache").clear();
-      cacheManager.getCache("productCache").put(DATE_KEY, localDateTime);
+      cacheManager.getCache(CACHE_NAME).clear();
+      cacheManager.getCache(CACHE_NAME).put(DATE_KEY, localDateTime);
     }
     return cachedLocalDateTime.toLocalDate();
   }
 
   public LocalDate getLastUpdatedDate() {
-    if (cacheManager.getCache("productCache").get(DATE_KEY) != null) {
-      LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
+    if (cacheManager.getCache(CACHE_NAME).get(DATE_KEY) != null) {
+      LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache(CACHE_NAME)
           .get(DATE_KEY).get();
       return cachedLocalDateTime.toLocalDate();
     }
     LocalDateTime localDateTime = productRepository.findLastUpdateDate();
-    cacheManager.getCache("productCache").putIfAbsent(DATE_KEY, localDateTime);
+    cacheManager.getCache(CACHE_NAME).putIfAbsent(DATE_KEY, localDateTime);
     return localDateTime.toLocalDate();
   }
+
+  public boolean doSynchronize(){
+    ChainedCache cache = (ChainedCache)cacheManager.getCache(CACHE_NAME);
+    if(cache.isSynchronized(DATE_KEY)){
+      log.info("이미 동기화되었습니다.");
+      return false;
+    }else{
+      cache.clearLocalCache(DATE_KEY);
+      log.info("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
+      return true;
+    }
+  }
+
 }

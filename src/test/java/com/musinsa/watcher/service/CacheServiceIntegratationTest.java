@@ -1,6 +1,7 @@
 package com.musinsa.watcher.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductRepository;
@@ -14,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @Slf4j
@@ -29,6 +32,12 @@ public class CacheServiceIntegratationTest {
 
   @Autowired
   private CacheManager cacheManager;
+
+  @Autowired
+  private RedisCacheManager redisCacheManager;
+
+  @Autowired
+  private EhCacheCacheManager ehCacheCacheManager;
 
   @Before
   public void clean() {
@@ -97,5 +106,32 @@ public class CacheServiceIntegratationTest {
 
     //then
     assertEquals(cachedLocalDateTime, localDateTime2);
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시와 로컬 캐시가 같아 동기화 하지 않는다.")
+  public void cacheSynchronized1() {
+    //given
+    LocalDateTime localDateTime = LocalDateTime.now();
+    redisCacheManager.getCache("productCache").put("current date", localDateTime);
+    ehCacheCacheManager.getCache("productCache").put("current date", localDateTime);
+    //when
+    cacheService.doSynchronize();
+    //then
+    assertEquals(redisCacheManager.getCache("productCache").get("current date").get(),
+        ehCacheCacheManager.getCache("productCache").get("current date").get());
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시와 로컬 캐시가 달라 동기화 한다.")
+  public void cacheSynchronized2() {
+    //given
+    LocalDateTime localDateTime = LocalDateTime.now();
+    redisCacheManager.getCache("productCache").put("current date", localDateTime.plusDays(1));
+    ehCacheCacheManager.getCache("productCache").put("current date", localDateTime);
+    //when
+    cacheService.doSynchronize();
+    //then
+    assertNull(ehCacheCacheManager.getCache("productCache").get("current date"));
   }
 }
