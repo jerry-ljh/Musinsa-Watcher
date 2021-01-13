@@ -92,7 +92,7 @@ public class ChainedCache implements Cache {
 
   @Override
   public void clear() {
-    new HystrixClearCommand(localCache, globalCache);
+    new HystrixClearCommand(localCache, globalCache).execute();
   }
 
 }

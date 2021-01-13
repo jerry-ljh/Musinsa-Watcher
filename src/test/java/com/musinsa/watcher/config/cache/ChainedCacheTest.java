@@ -161,5 +161,22 @@ public class ChainedCacheTest {
     verify(localCache, times(1)).put(eq(key), eq(value));
   }
 
+  @Test
+  @DisplayName("cache를 초기화하면 local, global cache 둘 다 초기화된다.")
+  public void clearCache() {
+    //given
+    List<Cache> caches = mock(List.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+
+    //when
+    cache.clear();
+
+    //then
+    verify(localCache, times(1)).clear();
+    verify(globalCache, times(1)).clear();
+
+  }
 
 }
