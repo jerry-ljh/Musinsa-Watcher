@@ -1,8 +1,12 @@
 package com.musinsa.watcher.config.cache;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -179,4 +183,186 @@ public class ChainedCacheTest {
 
   }
 
+  @Test
+  @DisplayName("로컬 캐시에 값이 없으면 동기화가 필요 없다1")
+  public void cacheSynchronized1(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(null);
+
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("로컬 캐시에 값이 없으면 동기화가 필요 없다2")
+  public void cacheSynchronized2(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(valueWrapper);
+    when(valueWrapper.get()).thenReturn(null);
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("로컬 캐시가 있고 글로벌 캐시가 없으면 동기화가 필요하다1")
+  public void cacheSynchronized3(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper localValue = mock(ValueWrapper.class);
+    ValueWrapper globalValue = mock(ValueWrapper.class);
+
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(localValue);
+    when(localValue.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenReturn(globalValue);
+    when(globalValue.get()).thenReturn(null);
+
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertFalse(result);
+  }
+
+  @Test
+  @DisplayName("로컬 캐시가 있고 글로벌 캐시가 없으면 동기화가 필요하다2")
+  public void cacheSynchronized4(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper localValue = mock(ValueWrapper.class);
+
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(localValue);
+    when(localValue.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenReturn(null);
+
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertFalse(result);
+  }
+
+  @Test
+  @DisplayName("로컬 캐시와 글로벌 캐시와 값이 같으면 동기화가 필요 없다.")
+  public void cacheSynchronized5(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(valueWrapper);
+    when(globalCache.get(eq(key))).thenReturn(valueWrapper);
+    when(valueWrapper.get()).thenReturn(value);
+
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("로컬 캐시와 글로벌 캐시의 값이 다르면 동기화가 필요하다.")
+  public void cacheSynchronized6(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(valueWrapper);
+    when(valueWrapper.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenReturn(null);
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertFalse(result);
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시에 장애가 발생하면 동기화가 필요없다.")
+  public void cacheSynchronized7(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(localCache.get(eq(key))).thenReturn(valueWrapper);
+    when(valueWrapper.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenThrow(new RuntimeException());
+    //when
+    boolean result = cache.isSynchronized(key);
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시로 복사되지 않는다.")
+  public void clearLocalCache1(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(valueWrapper.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenReturn(null);
+    //when
+    cache.clearLocalCache(key);
+    //then
+    verify(localCache, never()).put(any(), any());
+  }
+
+  @Test
+  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시로 복사되지 않는다.")
+  public void clearLocalCache2(){
+    ///given
+    String key = "key";
+    String value = "value";
+    List<Cache> caches = mock(List.class);
+    ValueWrapper valueWrapper = mock(ValueWrapper.class);
+    when(caches.get(eq(0))).thenReturn(localCache);
+    when(caches.get(eq(1))).thenReturn(globalCache);
+    ChainedCache cache = new ChainedCache(caches);
+    when(valueWrapper.get()).thenReturn(value);
+    when(globalCache.get(eq(key))).thenReturn(valueWrapper);
+    when(valueWrapper.get()).thenReturn(null);
+    //when
+    cache.clearLocalCache(key);
+    //then
+    verify(localCache, never()).put(any(), any());
+  }
 }

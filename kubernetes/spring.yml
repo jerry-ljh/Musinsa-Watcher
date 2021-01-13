@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: watcher-api-dp
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: watcher-api
@@ -19,16 +19,20 @@ spec:
           image: j005580/musinsa-watcher
           livenessProbe:
             httpGet:
-              path: /api/profile
+              path: /api/v1/cache/sycn
               port: 8081
-            initialDelaySeconds: 20
-            timeoutSeconds: 15
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
-              path: /api/profile
+              path: /api/v1/cache/sycn
               port: 8081
-            initialDelaySeconds: 20
-            timeoutSeconds: 15
+            initialDelaySeconds: 30
+              timeoutSeconds: 5
+              periodSeconds: 10
+              failureThreshold: 5
           env:
             - name: PROPERTIES
               value: config/application-real.properties
