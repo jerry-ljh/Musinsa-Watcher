@@ -42,11 +42,16 @@ jacocoTestReport {
     }
 }
 jacocoTestCoverageVerification {
-    violationRules {
-        enabled = true
-        rule {
-            excludes = ["*.QA*", "*.QP*", "*.QB*"]
+    def Qdomains = []
 
+    for (qPattern in '*.QA'..'*.QZ') { // qPattern = '*.QA', '*.QB', ... '*.QZ'
+        Qdomains.add(qPattern + '*')
+    }
+
+    violationRules {
+
+        rule {
+            enabled = true
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
@@ -58,6 +63,7 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.80
             }
+            excludes = [] + Qdomains
         }
     }
 }
@@ -88,6 +94,7 @@ dependencies {
     annotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa") // querydsl JPAAnnotationProcessor 사용 지정
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.1.0.RELEASE")
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.projectlombok:lombok')
@@ -99,6 +106,7 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok')
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    compile group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.3'
     testAnnotationProcessor('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testImplementation "org.mockito:mockito-core:3.5.9"

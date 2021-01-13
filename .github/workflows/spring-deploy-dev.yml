@@ -50,10 +50,10 @@ jobs:
       - name: Dev sever scp deploy folder
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
+          host: ${{ secrets.DEV_SERVER_HOST }}
+          username: ${{ secrets.DEV_SERVER_USERNAME }}
+          password: ${{ secrets.DEV_SERVER_PASSWORD }}
+          port: ${{ secrets.DEV_SERVER_PORT }}
           source: "./deploy/*"
           target: "~/"
           overwrite: true
@@ -61,10 +61,10 @@ jobs:
       - name: Dev sever deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
+          host: ${{ secrets.DEV_SERVER_HOST }}
+          username: ${{ secrets.DEV_SERVER_USERNAME }}
+          password: ${{ secrets.DEV_SERVER_PASSWORD }}
+          port: ${{ secrets.DEV_SERVER_PORT }}
           script: |
             cd deploy
             sudo bash deploy.sh
