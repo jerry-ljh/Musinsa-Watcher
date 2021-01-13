@@ -35,8 +35,6 @@ public class HystrixPutCommand extends HystrixCommand {
   protected Object run() {
     localCache.put(key, value);
     globalCache.put(key, value);
-    log.info("글로벌 put");
-    log.info("로컬 put");
     return null;
   }
 
@@ -44,7 +42,6 @@ public class HystrixPutCommand extends HystrixCommand {
   protected Object getFallback() {
     log.warn("put fallback called, circuit is {}", super.circuitBreaker.isOpen());
     localCache.put(key, value);
-    log.info("로컬 put");
     return null;
   }
 }

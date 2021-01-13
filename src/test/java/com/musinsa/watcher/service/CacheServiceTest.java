@@ -124,7 +124,7 @@ public class CacheServiceTest {
     cacheService.doSynchronize();
     //then
     verify(chainedCache, times(1)).isSynchronized(eq(DATE_KEY));
-    verify(chainedCache, times(1)).clearLocalCache(eq(DATE_KEY));
+    verify(chainedCache, times(1)).clearLocalCache();
   }
 
   @Test
@@ -139,6 +139,6 @@ public class CacheServiceTest {
     cacheService.doSynchronize();
     //then
     verify(chainedCache, times(1)).isSynchronized(eq(DATE_KEY));
-    verify(chainedCache, never()).clearLocalCache(eq(DATE_KEY));
+    verify(chainedCache, never()).clearLocalCache();
   }
 }
