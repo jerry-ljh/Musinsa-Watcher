@@ -30,7 +30,6 @@ public class HystrixGetCommand extends HystrixCommand<ValueWrapper> {
 
   @Override
   protected ValueWrapper run() {
-    log.info("글로벌 get");
     return globalCache.get(key);
   }
 

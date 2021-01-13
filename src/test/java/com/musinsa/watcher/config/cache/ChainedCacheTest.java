@@ -328,7 +328,7 @@ public class ChainedCacheTest {
   }
 
   @Test
-  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시로 복사되지 않는다.")
+  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시를 초기화하지 않는다.")
   public void clearLocalCache1(){
     ///given
     String key = "key";
@@ -341,13 +341,13 @@ public class ChainedCacheTest {
     when(valueWrapper.get()).thenReturn(value);
     when(globalCache.get(eq(key))).thenReturn(null);
     //when
-    cache.clearLocalCache(key);
+    cache.clearLocalCache();
     //then
     verify(localCache, never()).put(any(), any());
   }
 
   @Test
-  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시로 복사되지 않는다.")
+  @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시를 초기화하지 않는다.")
   public void clearLocalCache2(){
     ///given
     String key = "key";
@@ -361,7 +361,7 @@ public class ChainedCacheTest {
     when(globalCache.get(eq(key))).thenReturn(valueWrapper);
     when(valueWrapper.get()).thenReturn(null);
     //when
-    cache.clearLocalCache(key);
+    cache.clearLocalCache();
     //then
     verify(localCache, never()).put(any(), any());
   }
