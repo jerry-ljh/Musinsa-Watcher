@@ -42,3 +42,15 @@ spec:
       port: 443
       targetPort: https
 
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: watcher-db-svc
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: watcher-db
+  type: LoadBalancer

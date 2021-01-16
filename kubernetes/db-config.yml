@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slave02.cnf
+data:
+  slave01.cnf: |
+    [mysqld]
+    server-id = 2
+    slave-skip-errors=all
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slave04.cnf
+data:
+  slave01.cnf: |
+    [mysqld]
+    server-id = 4
+    slave-skip-errors=all
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slave06.cnf
+data:
+  slave01.cnf: |
+    [mysqld]
+    server-id = 6
+    slave-skip-errors=all
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slave05.cnf
+data:
+  slave01.cnf: |
+    [mysqld]
+    server-id = 5
+    slave-skip-errors=all
+---
