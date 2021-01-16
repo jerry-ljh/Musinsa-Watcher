@@ -1,7 +1,7 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.config.cache.ChainedCache;
-import com.musinsa.watcher.domain.product.master.ProductQueryMasterRepository;
+import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class CacheService {
   private static final String CACHE_NAME = "productCache";
   private static final String DATE_KEY = "current date";
   private final CacheManager cacheManager;
-  private final ProductQueryMasterRepository productRepository;
+  private final ProductQuerySlaveRepository productRepository;
 
   public LocalDate updateCacheByDate() {
     LocalDateTime localDateTime = productRepository.findLastUpdateDate();
