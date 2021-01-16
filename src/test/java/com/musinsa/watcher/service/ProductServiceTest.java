@@ -12,8 +12,8 @@ import static org.mockito.Mockito.when;
 import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
-import com.musinsa.watcher.domain.product.ProductQueryRepository;
-import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
+import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import java.time.LocalDate;
@@ -36,9 +36,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ProductServiceTest {
 
   @Mock
-  private ProductRepository productRepository;
+  private ProductSlaveRepository productSlaveRepository;
   @Mock
-  private ProductQueryRepository productQueryRepository;
+  private ProductQuerySlaveRepository productQuerySlaveRepository;
   @Mock
   private CacheService cacheService;
 
@@ -65,7 +65,8 @@ public class ProductServiceTest {
   @DisplayName("오늘 할인 폭이 큰 상품 조회")
   public void 오늘할인() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     LocalDate mockLocalDate = mock(LocalDate.class);
     List mockList = mock(List.class);
@@ -77,17 +78,17 @@ public class ProductServiceTest {
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
     when(pageable.getOffset()).thenReturn(offset);
     when(pageable.getPageSize()).thenReturn(pagesize);
-    when(productRepository.findDiscountedProduct(eq(category),
+    when(productSlaveRepository.findDiscountedProduct(eq(category),
         eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
-    when(productRepository.countDiscountedProduct(eq(category), eq(mockLocalDate)))
+    when(productSlaveRepository.countDiscountedProduct(eq(category), eq(mockLocalDate)))
         .thenReturn(100L);
     when(DiscountedProductDto.objectsToDtoList(any())).thenReturn(list);
     //when
     productService.findDiscountedProduct(category, pageable);
     //then
     verify(cacheService, times(2)).getLastUpdatedDate();
-    verify(productRepository, times(1)).countDiscountedProduct(eq(category), eq(mockLocalDate));
-    verify(productRepository, times(1))
+    verify(productSlaveRepository, times(1)).countDiscountedProduct(eq(category), eq(mockLocalDate));
+    verify(productSlaveRepository, times(1))
         .findDiscountedProduct(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
@@ -95,7 +96,8 @@ public class ProductServiceTest {
   @DisplayName("오늘 역대 최저가 상품 조회")
   public void 오늘최저가() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     LocalDateTime mockLocalDateTime = mock(LocalDateTime.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
@@ -109,17 +111,17 @@ public class ProductServiceTest {
     when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
     when(pageable.getOffset()).thenReturn(offset);
     when(pageable.getPageSize()).thenReturn(pagesize);
-    when(productRepository.findProductByMinimumPrice(eq(category),
+    when(productSlaveRepository.findProductByMinimumPrice(eq(category),
         eq(mockLocalDate), eq(offset), eq(pagesize))).thenReturn(mockList);
-    when(productRepository.countMinimumPrice(eq(category), eq(mockLocalDate)))
+    when(productSlaveRepository.countMinimumPrice(eq(category), eq(mockLocalDate)))
         .thenReturn(100L);
     when(MinimumPriceProductDto.objectsToDtoList(eq(mockList))).thenReturn(list);
     //when
     productService.findMinimumPriceProduct(category, pageable);
     //then
     verify(cacheService, times(2)).getLastUpdatedDate();
-    verify(productRepository, times(1)).countMinimumPrice(eq(category), eq(mockLocalDate));
-    verify(productRepository, times(1))
+    verify(productSlaveRepository, times(1)).countMinimumPrice(eq(category), eq(mockLocalDate));
+    verify(productSlaveRepository, times(1))
         .findProductByMinimumPrice(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize));
   }
 
@@ -127,20 +129,21 @@ public class ProductServiceTest {
   @DisplayName("카테고리 상품 조회")
   public void 카테고리조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
     String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(productQueryRepository.findByCategory(eq(category), eq(mockLocalDate), eq(pageable)))
+    when(productQuerySlaveRepository.findByCategory(eq(category), eq(mockLocalDate), eq(pageable)))
         .thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findByCategory(category, pageable);
     //then
-    verify(productQueryRepository, times(1))
+    verify(productQuerySlaveRepository, times(1))
         .findByCategory(eq(category), eq(mockLocalDate), eq(pageable));
   }
 
@@ -148,17 +151,18 @@ public class ProductServiceTest {
   @DisplayName("브랜드 상품 조회")
   public void 브랜드상품조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     String category = "001";
-    when(productQueryRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
+    when(productQuerySlaveRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.findByBrand(category, pageable);
     //then
-    verify(productQueryRepository, times(1))
+    verify(productQuerySlaveRepository, times(1))
         .findByBrand(eq(category), eq(pageable));
   }
 
@@ -166,17 +170,18 @@ public class ProductServiceTest {
   @DisplayName("검색 조회")
   public void 검색조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     String category = "001";
-    when(productQueryRepository.searchItems(eq(category), eq(pageable))).thenReturn(mockPage);
+    when(productQuerySlaveRepository.searchItems(eq(category), eq(pageable))).thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     //when
     productService.searchItems(category, pageable);
     //then
-    verify(productQueryRepository, times(1))
+    verify(productQuerySlaveRepository, times(1))
         .searchItems(eq(category), eq(pageable));
   }
 
@@ -184,12 +189,13 @@ public class ProductServiceTest {
   @DisplayName("브랜드 이니셜 조회")
   public void 브랜드이니셜조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     Initial initial = InitialWord.type1.getInitials();
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productQueryRepository
+    when(productQuerySlaveRepository
         .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
         .thenReturn(list);
     when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
@@ -197,7 +203,7 @@ public class ProductServiceTest {
     Map<String, Integer> resultMap = productService
         .findBrandByInitial(initial.getSTART(), initial.getEND());
     //then
-    verify(productQueryRepository, times(1))
+    verify(productQuerySlaveRepository, times(1))
         .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
     assertEquals(resultMap, map);
   }
@@ -206,18 +212,19 @@ public class ProductServiceTest {
   @DisplayName("오늘 할인 품목 수 조회")
   public void 오늘할인_품목_수_조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productRepository.countDiscountProductEachCategory(localDate)).thenReturn(list);
+    when(productSlaveRepository.countDiscountProductEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
     when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countDiscountProductEachCategory();
     //then
-    verify(productRepository, times(1)).countDiscountProductEachCategory(localDate);
+    verify(productSlaveRepository, times(1)).countDiscountProductEachCategory(localDate);
     assertEquals(resultMap, map);
   }
 
@@ -225,18 +232,19 @@ public class ProductServiceTest {
   @DisplayName("오늘 역대 최저가 품목 수 조회")
   public void 오늘_역대_최저가_품목_수_조회() {
     //given
-    ProductService productService = new ProductService(productRepository, productQueryRepository,
+    ProductService productService = new ProductService(productSlaveRepository,
+        productQuerySlaveRepository,
         cacheService);
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productRepository.countMinimumPriceProductEachCategory(localDate)).thenReturn(list);
+    when(productSlaveRepository.countMinimumPriceProductEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
     when(MapperUtils.BingIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countMinimumPriceProductEachCategory();
     //then
-    verify(productRepository, times(1)).countMinimumPriceProductEachCategory(localDate);
+    verify(productSlaveRepository, times(1)).countMinimumPriceProductEachCategory(localDate);
     assertEquals(resultMap, map);
   }
 

@@ -2,8 +2,10 @@ package com.musinsa.watcher.domain.price;
 
 import static org.junit.Assert.*;
 
+import com.musinsa.watcher.domain.price.master.PriceMasterRepository;
 import com.musinsa.watcher.domain.product.Product;
-import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.domain.product.master.ProductMasterRepository;
+import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
 import java.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -15,13 +17,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PriceRepositoryTest {
+public class PriceSlaveRepositoryTest {
 
   @Autowired
-  private PriceRepository priceRepository;
+  private PriceMasterRepository priceMasterRepository;
 
   @Autowired
-  private ProductRepository productRepository;
+  private ProductMasterRepository productMasterRepository;
 
   @Test
   @DisplayName("가격이 조회 된다.")
@@ -38,8 +40,8 @@ public class PriceRepositoryTest {
         .img(img)
         .modifiedDate(LocalDateTime.now())
         .build();
-    productRepository.save(product);
-    priceRepository.save(Price.builder()
+    productMasterRepository.save(product);
+    priceMasterRepository.save(Price.builder()
         .product(product)
         .delPrice(10000)
         .price(1000)
@@ -49,7 +51,7 @@ public class PriceRepositoryTest {
         .ratingCount(120)
         .build());
 
-    List<Price> priceList = priceRepository.findAll();
+    List<Price> priceList = priceMasterRepository.findAll();
     Price price = priceList.get(0);
     Product product1 = price.getProduct();
     assertEquals(price.getPrice(), 1000);

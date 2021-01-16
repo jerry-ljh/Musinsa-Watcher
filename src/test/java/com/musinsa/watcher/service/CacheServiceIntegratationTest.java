@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.musinsa.watcher.domain.product.Product;
-import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.domain.product.master.ProductMasterRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CacheServiceIntegratationTest {
 
   @Autowired
-  private ProductRepository productRepository;
+  private ProductMasterRepository productMasterRepository;
 
   @Autowired
   private CacheService cacheService;
@@ -42,7 +42,7 @@ public class CacheServiceIntegratationTest {
   @Before
   public void clean() {
     cacheManager.getCache("productCache").clear();
-    productRepository.deleteAll();
+    productMasterRepository.deleteAll();
   }
 
   @Test
@@ -50,7 +50,7 @@ public class CacheServiceIntegratationTest {
   public void callCache() {
     LocalDateTime localDateTime1 = LocalDateTime.now();
     LocalDateTime localDateTime2 = localDateTime1.plusDays(3);
-    productRepository.save(Product.builder()
+    productMasterRepository.save(Product.builder()
         .productId(1)
         .productName("고급 신발")
         .brand("고급 브랜드")
@@ -59,7 +59,7 @@ public class CacheServiceIntegratationTest {
         .modifiedDate(localDateTime1)
         .build());
     cacheService.updateCacheByDate();
-    productRepository.save(Product.builder()
+    productMasterRepository.save(Product.builder()
         .productId(2)
         .productName("고급 신발")
         .brand("고급 브랜드")
@@ -80,7 +80,7 @@ public class CacheServiceIntegratationTest {
     //given
     LocalDateTime localDateTime1 = LocalDateTime.now();
     LocalDateTime localDateTime2 = localDateTime1.plusMinutes(1L);
-    productRepository.save(Product.builder()
+    productMasterRepository.save(Product.builder()
         .productId(1)
         .productName("고급 신발")
         .brand("고급 브랜드")
@@ -91,7 +91,7 @@ public class CacheServiceIntegratationTest {
     //when
     cacheService.updateCacheByDate();
     //given
-    productRepository.save(Product.builder()
+    productMasterRepository.save(Product.builder()
         .productId(2)
         .productName("고급 신발")
         .brand("고급 브랜드")

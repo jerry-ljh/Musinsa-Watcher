@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.musinsa.watcher.domain.price.PriceRepository;
+import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +22,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PriceServiceTest {
 
   @Mock
-  private PriceRepository priceRepository;
+  private PriceSlaveRepository priceSlaveRepository;
 
   @Test
   @DisplayName("가격 데이터를 조회한다.")
   public void 가격을_조회한다() {
-    PriceService priceService = new PriceService(priceRepository);
+    PriceService priceService = new PriceService(priceSlaveRepository);
     int product_id = 1;
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
     List<PriceResponseDto> list = new ArrayList<>();
-    when(priceRepository.findByProductId(eq(product_id), eq(pageable))).thenReturn(mockPage);
+    when(priceSlaveRepository.findByProductId(eq(product_id), eq(pageable))).thenReturn(mockPage);
     when(mockPage.getTotalElements()).thenReturn(100L);
     when(mockPage.getContent()).thenReturn(list);
     //when
     priceService.findByProductId(product_id, pageable);
     //then
-    verify(priceRepository, times(1)).findByProductId(product_id, pageable);
+    verify(priceSlaveRepository, times(1)).findByProductId(product_id, pageable);
   }
 }

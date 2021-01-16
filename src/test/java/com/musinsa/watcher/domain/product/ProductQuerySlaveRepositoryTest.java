@@ -1,9 +1,12 @@
 package com.musinsa.watcher.domain.product;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.musinsa.watcher.domain.price.Price;
-import com.musinsa.watcher.domain.price.PriceRepository;
+import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
+import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
+import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,20 +22,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ProductQueryRepositoryTest {
+public class ProductQuerySlaveRepositoryTest {
 
   @Autowired
-  private ProductQueryRepository productQueryRepository;
+  private ProductQuerySlaveRepository productQuerySlaveRepository;
 
   @Autowired
-  private ProductRepository productRepository;
+  private ProductSlaveRepository productSlaveRepository;
 
   @Autowired
-  private PriceRepository priceRepository;
+  private PriceSlaveRepository priceSlaveRepository;
 
   @After
   public void clear() {
-    productRepository.deleteAll();
+    productSlaveRepository.deleteAll();
   }
 
 
@@ -41,7 +44,7 @@ public class ProductQueryRepositoryTest {
   public void countFindByTopic() {
     String searchText = "신발";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
@@ -49,7 +52,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("신발 최강")
@@ -57,7 +60,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -66,8 +69,9 @@ public class ProductQueryRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    long count = productQueryRepository.countSearchItems(searchText);
-    assertEquals(count, 20);
+
+    assertEquals(productSlaveRepository.findAll().size(), 30);
+    assertEquals(productQuerySlaveRepository.countSearchItems(searchText), 20);
   }
 
   @Test
@@ -75,7 +79,7 @@ public class ProductQueryRepositoryTest {
   public void findByTopic() {
     String searchText = "신발";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
@@ -83,7 +87,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("신발 최강")
@@ -91,7 +95,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -100,12 +104,15 @@ public class ProductQueryRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    Page<ProductResponseDto> productPage = productQueryRepository
+
+    Page<ProductResponseDto> productPage = productQuerySlaveRepository
         .searchItems(searchText, PageRequest.of(0, 20));
     assertEquals(productPage.getTotalElements(), 20);
     List<ProductResponseDto> productList = productPage.getContent();
     productList.stream().forEach(i -> assertTrue(
         i.getProductName().contains(searchText) || i.getBrand().contains(searchText)));
+
+
   }
 
   @Test
@@ -113,7 +120,7 @@ public class ProductQueryRepositoryTest {
   public void findByValidTopic() {
     String searchText = "양말";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
@@ -121,7 +128,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("신발 최강")
@@ -129,7 +136,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -138,7 +145,7 @@ public class ProductQueryRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    Page<ProductResponseDto> productPage = productQueryRepository
+    Page<ProductResponseDto> productPage = productQuerySlaveRepository
         .searchItems(searchText, PageRequest.of(0, 10));
     List<ProductResponseDto> productList = productPage.getContent();
     assertEquals(productPage.getTotalElements(), 0);
@@ -150,7 +157,7 @@ public class ProductQueryRepositoryTest {
   public void countFindByCategory() {
     String category = "001";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
@@ -158,7 +165,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("신발 최강")
@@ -166,7 +173,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -176,10 +183,9 @@ public class ProductQueryRepositoryTest {
           .build());
     }
 
-    long totalElement = productQueryRepository
+    long totalElement = productQuerySlaveRepository
         .countFindByCategory(category, LocalDateTime.now().toLocalDate());
     assertEquals(totalElement, 10);
-
   }
 
   @Test
@@ -187,7 +193,7 @@ public class ProductQueryRepositoryTest {
   public void findByCategory() {
     String category = "001";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
@@ -195,7 +201,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("신발 최강")
@@ -203,7 +209,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -212,7 +218,7 @@ public class ProductQueryRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    Page<ProductResponseDto> productPage = productQueryRepository
+    Page<ProductResponseDto> productPage = productQuerySlaveRepository
         .findByCategory(category, LocalDateTime.now().toLocalDate(), PageRequest.of(0, 10));
     List<ProductResponseDto> productList = productPage.getContent();
     assertEquals(productPage.getTotalElements(), 10);
@@ -235,9 +241,9 @@ public class ProductQueryRepositoryTest {
         .img(img)
         .modifiedDate(LocalDateTime.now())
         .build();
-    productRepository.save(product);
+    productSlaveRepository.save(product);
     for (int i = 0; i < 5; i++) {
-      priceRepository.save(Price.builder()
+      priceSlaveRepository.save(Price.builder()
           .product(product)
           .delPrice(10000)
           .price(1000)
@@ -248,7 +254,7 @@ public class ProductQueryRepositoryTest {
           .build());
       Thread.sleep(1000);
     }
-    Product product1 = productQueryRepository.findProductWithPrice(productId);
+    Product product1 = productQuerySlaveRepository.findProductWithPrice(productId);
     assertEquals(product1.getProductName(), productName);
     assertEquals(product1.getCategory(), category);
     assertEquals(product1.getProductId(), productId);
@@ -277,11 +283,11 @@ public class ProductQueryRepositoryTest {
           .img(img)
           .modifiedDate(LocalDateTime.now())
           .build();
-      productRepository.save(product);
+      productSlaveRepository.save(product);
       Thread.sleep(1000);
     }
-    LocalDateTime result = productQueryRepository.findLastUpdateDate();
-    List<Product> productList = productRepository.findAll();
+    LocalDateTime result = productQuerySlaveRepository.findLastUpdateDate();
+    List<Product> productList = productSlaveRepository.findAll();
     LocalDateTime lastModifiedDate = productList.get(0).getModifiedDate();
     for (Product product : productList) {
       lastModifiedDate = product.getModifiedDate().isAfter(lastModifiedDate)
@@ -296,7 +302,7 @@ public class ProductQueryRepositoryTest {
   public void findByBrand() {
     String findBrand = "고급 브랜드";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("셔츠")
           .brand(findBrand)
@@ -304,7 +310,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand(findBrand)
@@ -312,7 +318,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .modifiedDate(LocalDateTime.now())
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("바지")
           .brand("일반 브랜드")
@@ -322,7 +328,7 @@ public class ProductQueryRepositoryTest {
           .build());
     }
 
-    Page<ProductResponseDto> productPage = productQueryRepository
+    Page<ProductResponseDto> productPage = productQuerySlaveRepository
         .findByBrand(findBrand, PageRequest.of(0, 25));
     List<ProductResponseDto> productList = productPage.getContent();
     assertEquals(productPage.getTotalElements(), 20);
@@ -334,21 +340,21 @@ public class ProductQueryRepositoryTest {
   public void countFindByBrand() {
     String findBrand = "고급 브랜드";
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("셔츠")
           .brand(findBrand)
           .category("001")
           .img("http://cdn.img?id=10000_125.jpg")
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand(findBrand)
           .category("003")
           .img("http://cdn.img?id=10000_125.jpg")
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("바지")
           .brand("일반 브랜드")
@@ -356,7 +362,7 @@ public class ProductQueryRepositoryTest {
           .img("http://cdn.img?id=10000_125.jpg")
           .build());
     }
-    long count = productQueryRepository.countFindByBrand(findBrand);
+    long count = productQuerySlaveRepository.countFindByBrand(findBrand);
     assertEquals(count, 20);
   }
 
@@ -365,21 +371,21 @@ public class ProductQueryRepositoryTest {
   public void 이니셜로_조회() {
     Initial initial = InitialWord.type1.getInitials();
     for (int i = 0; i < 10; i++) {
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(i)
           .productName("고급 신발")
           .brand("고급 브랜드")
           .category("001")
           .img("http://cdn.img?id=10000_125.jpg")
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(10 + i)
           .productName("모자")
           .brand("보통 브랜드")
           .category("003")
           .img("http://cdn.img?id=10000_125.jpg")
           .build());
-      productRepository.save(Product.builder()
+      productSlaveRepository.save(Product.builder()
           .productId(20 + i)
           .productName("편한 셔츠")
           .brand("일반 브랜드")
@@ -388,7 +394,7 @@ public class ProductQueryRepositoryTest {
           .build());
     }
 
-    List<Object[]> brandList = productQueryRepository
+    List<Object[]> brandList = productQuerySlaveRepository
         .findBrandByInitial(initial.getSTART(), initial.getEND());
 
     assertEquals(brandList.size(), 1);

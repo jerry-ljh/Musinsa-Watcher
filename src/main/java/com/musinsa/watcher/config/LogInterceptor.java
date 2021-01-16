@@ -1,7 +1,7 @@
 package com.musinsa.watcher.config;
 
 import com.musinsa.watcher.domain.log.AccessLog;
-import com.musinsa.watcher.domain.log.AccessLogRepository;
+import com.musinsa.watcher.domain.log.master.AccessLogRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
