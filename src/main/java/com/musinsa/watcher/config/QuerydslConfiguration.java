@@ -9,11 +9,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QuerydslConfiguration {
 
-  @PersistenceContext
-  private EntityManager entityManager;
+  @PersistenceContext(unitName = "masterEntityManager")
+  private EntityManager masterEntityManager;
 
-  @Bean
-  public JPAQueryFactory jpaQueryFactory() {
-    return new JPAQueryFactory(entityManager);
+  @PersistenceContext(unitName = "slaveEntityManager")
+  private EntityManager slaveEntityManager;
+
+  @Bean(value = "masterJPAQueryFactory")
+  public JPAQueryFactory jpaMasterQueryFactory() {
+    return new JPAQueryFactory(masterEntityManager);
+  }
+
+  @Bean(value = "slaveJPAQueryFactory")
+  public JPAQueryFactory jpaSlaveQueryFactory() {
+    return new JPAQueryFactory(slaveEntityManager);
   }
 }

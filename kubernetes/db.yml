@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watcher-db-dp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: watcher-db
+      tier: mysql
+  template:
+    metadata:
+      labels:
+        app: watcher-db
+        tier: mysql
+    spec:
+      containers:
+        - name: slave
+          image: mariadb
+          env:
+            - name : MYSQL_ROOT_PASSWORD
+              value: root
+          ports:
+            - containerPort: 3306
+              name: watcher-db
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/mysql/conf.d
+      volumes:
+        - name: config-volume
+          configMap:
+            name: slave04.cnf
+
+

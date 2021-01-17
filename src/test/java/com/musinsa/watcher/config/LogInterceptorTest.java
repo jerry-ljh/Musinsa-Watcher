@@ -3,7 +3,7 @@ package com.musinsa.watcher.config;
 import static org.junit.Assert.*;
 
 import com.musinsa.watcher.domain.log.AccessLog;
-import com.musinsa.watcher.domain.log.AccessLogRepository;
+import com.musinsa.watcher.domain.log.master.AccessLogRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

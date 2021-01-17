@@ -24,13 +24,10 @@ public class ChainedCache implements Cache {
   @Override
   public ValueWrapper get(Object key) {
     ValueWrapper valueWrapper = localCache.get(key);
-    log.info("로컬 캐시 : " + valueWrapper);
     if (valueWrapper != null && valueWrapper.get() != null) {
-      log.info("로컬 캐시 조회");
       return valueWrapper;
     } else {
       valueWrapper = new HystrixGetCommand(globalCache, key).execute();
-      log.info("글로벌 캐시 : " + valueWrapper);
       if (valueWrapper != null) {
         localCache.put(key, valueWrapper.get());
       }

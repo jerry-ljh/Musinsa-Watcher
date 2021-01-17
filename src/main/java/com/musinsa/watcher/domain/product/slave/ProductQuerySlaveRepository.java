@@ -1,13 +1,20 @@
-package com.musinsa.watcher.domain.product;
+package com.musinsa.watcher.domain.product.slave;
 
 import com.musinsa.watcher.domain.price.QPrice;
+import com.musinsa.watcher.domain.product.Product;
+import com.musinsa.watcher.domain.product.QProduct;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
@@ -17,12 +24,13 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class ProductQueryRepository {
+public class ProductQuerySlaveRepository {
 
+  @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
   private final ApplicationContext applicationContext;
 
-  private ProductQueryRepository getSpringProxy() {
+  private ProductQuerySlaveRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
   }
 

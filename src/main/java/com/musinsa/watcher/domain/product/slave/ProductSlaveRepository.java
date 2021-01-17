@@ -1,14 +1,15 @@
-package com.musinsa.watcher.domain.product;
+package com.musinsa.watcher.domain.product.slave;
 
+import com.musinsa.watcher.domain.product.Product;
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import java.util.List;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
 
   @Query("SELECT distinct p.brand FROM Product p ")
   Page<String> findAllBrand(Pageable pageable);

@@ -2,6 +2,7 @@ package com.musinsa.watcher.domain.log;
 
 import static org.junit.Assert.*;
 
+import com.musinsa.watcher.domain.log.master.AccessLogRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
