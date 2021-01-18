@@ -2,7 +2,7 @@
     <div style="margin-top:50px; margin-bottom:50px">
         <b-container class="bv-example-row">
             <h3 style="text-align : left">
-                <strong>{{product.brand}}</strong>
+                <a :href="'/product/list?brand='+product.brand" style="color : #000000"><strong>{{product.brand}}</strong></a>
             </h3>
             <div style="text-align : left">
                 <span style="font-size : 20px; color :#b2b2b2;">분류 :
