@@ -36,7 +36,7 @@
                         v-if="currentListTopic == 'minimum' && product.today_price != null">{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
                         style="position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="product.discount ==null && currentListTopic != 'minimum'">
+                        v-if="product.discount ==null && currentListTopic == 'category'">
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
