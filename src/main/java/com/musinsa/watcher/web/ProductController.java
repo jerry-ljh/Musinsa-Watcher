@@ -29,11 +29,13 @@ public class ProductController {
 
   private final ProductService productService;
   private final String DEFAULT_PAGE = "0";
+  private final String DEFAULT_PAGE_SIZE = "100";
 
   @GetMapping("/api/v1/search/brands/list")
   public Page<String> findBrandList(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page) {
-    return productService.findAllBrand(PageRequest.of(page, 25, Sort.by("brand")));
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
+    return productService.findAllBrand(PageRequest.of(page, pagesize, Sort.by("brand")));
   }
 
   @GetMapping("/api/v1/search/brands")
@@ -45,21 +47,24 @@ public class ProductController {
 
   @GetMapping("/api/v1/search")
   public Page<ProductResponseDto> searchItem(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String topic) {
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String topic,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
     return productService
-        .searchItems(topic, PageRequest.of(page, 25, Sort.by("modifiedDate").descending()));
+        .searchItems(topic, PageRequest.of(page, pagesize, Sort.by("modifiedDate").descending()));
   }
 
   @GetMapping("/api/v1/product/discount")
   public Page<DiscountedProductDto> findDiscountedProduct(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
-    return productService.findDiscountedProduct(category, PageRequest.of(page, 25));
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
+    return productService.findDiscountedProduct(category, PageRequest.of(page, pagesize));
   }
 
   @GetMapping("/api/v1/product/minimum")
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
-    return productService.findMinimumPriceProduct(category, PageRequest.of(page, 25));
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
+    return productService.findMinimumPriceProduct(category, PageRequest.of(page, pagesize));
   }
 
   @GetMapping("/api/v1/product/discount/list")
@@ -74,16 +79,18 @@ public class ProductController {
 
   @GetMapping("/api/v1/product/brand")
   public Page<ProductResponseDto> findProductByBrand(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String name) {
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String name,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
     return productService
-        .findByBrand(name, PageRequest.of(page, 25, Sort.by("modifiedDate").descending()));
+        .findByBrand(name, PageRequest.of(page, pagesize, Sort.by("modifiedDate").descending()));
   }
 
   @GetMapping("/api/v1/product/list")
   public Page<ProductResponseDto> findProductByCategory(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category) {
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
+      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
     return productService
-        .findByCategory(category, PageRequest.of(page, 25));
+        .findByCategory(category, PageRequest.of(page, pagesize));
   }
 
   @GetMapping("/api/v1/product")
