@@ -151,7 +151,7 @@
             },
             itemListToCardDeck(list) {
                 var productDeck = []
-                for (var i = 0; i < this.columnCount; i++) {
+                for (var i = 0; i < this.perpage/this.columnCount; i++) {
                     productDeck.push(list.slice(i * this.columnCount, (i + 1) * this.columnCount))
                 }
                 return productDeck
