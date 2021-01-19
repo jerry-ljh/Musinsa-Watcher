@@ -20,7 +20,7 @@ public class MapperUtilsTest {
     list.add(new Object[]{"003", new BigInteger("300")});
     list.add(new Object[]{"004", new BigInteger("400")});
     list.add(new Object[]{"005", new BigInteger("500")});
-    Map<String, Integer> map = MapperUtils.BingIntegerToIntegerMap(list);
+    Map<String, Integer> map = MapperUtils.BigIntegerToIntegerMap(list);
     for(int i=0; i<list.size(); i++){
       BigInteger bigInteger = (BigInteger)list.get(i)[1];
       assertEquals(bigInteger.intValue(), (int)map.get(list.get(i)[0]));

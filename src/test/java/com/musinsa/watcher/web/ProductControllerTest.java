@@ -110,11 +110,11 @@ public class ProductControllerTest {
     String category = "001";
     Page<DiscountedProductDto> mockPage = mock(Page.class);
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findDiscountedProduct(eq(category), any())).thenReturn(mockPage);
+    when(mockProductService.findDiscountedProduct(eq(category), any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "discount")
         .param("category", category))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findDiscountedProduct(eq(category), any());
+    verify(mockProductService, only()).findDiscountedProduct(eq(category), any(), any());
   }
 
   @Test

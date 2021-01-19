@@ -1,7 +1,6 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.price.Price;
-import com.musinsa.watcher.domain.price.master.PriceMasterRepository;
 import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import java.util.stream.Collectors;

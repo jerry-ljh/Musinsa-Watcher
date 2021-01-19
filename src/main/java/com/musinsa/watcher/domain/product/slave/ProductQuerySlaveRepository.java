@@ -10,10 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import lombok.NonNull;
+import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -29,6 +27,8 @@ public class ProductQuerySlaveRepository {
   @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
   private final ApplicationContext applicationContext;
+  @Qualifier("slaveEntityManager")
+  private final EntityManager em;
 
   private ProductQuerySlaveRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
@@ -126,4 +126,43 @@ public class ProductQuerySlaveRepository {
         .select(QProduct.product.brand, QProduct.product.brand.count())
         .fetch().stream().map(i -> i.toArray()).collect(Collectors.toList());
   }
+
+  public List<Object[]> findDiscountedProduct(String category, LocalDate date, long offset,
+      int limit, String sort) {
+    Query query = em.createNativeQuery(
+        "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.real_price) as price, p1.img, p1.modified_date, \n"
+            + "(CASE WHEN  p2.created_date <  '" + date
+            + "' THEN  p2.real_price END - min(p2.real_price)) as discount, \n"
+            + "((CASE WHEN  p2.created_date <  '" + date
+            + "'  THEN p2.real_price END) - min(p2.real_price))/max(real_price)*100 as percent\n"
+            + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
+            + "where p1.category = " + category + " and p1.modified_date > '" + date
+            + "' and p2.created_date >= '" + date + "' - INTERVAL 1 DAY \n"
+            + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1\n"
+            + "order by " + sort + ", product_name limit " + offset + ", " + limit);
+    List<Object[]> resultList = query.getResultList();
+    return resultList;
+  }
+
+  public List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset, int limit, String sort){
+    Query query = em.createNativeQuery(
+        "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price as price, avg_price,"
+            + "(avg_price - min_price)/avg_price as percent  from \n"
+            + "(SELECT p1.product_id,  p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
+            + "min(real_price) as min_price, avg(real_price) as avg_price\n"
+            + "FROM product p1 \n"
+            + "inner join price p2 on p1.product_id = p2.product_id\n"
+            + "where p1.category = "+category+"  and p1.modified_date > '"+date+"'\n"
+            + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5 order by null ) p1\n"
+            + "inner join \n"
+            + "(SELECT p1.product_id, p1.real_price as today_price\n"
+            + "FROM price p1 \n"
+            + "where p1.created_date > '"+date+"') p2\n"
+            + "on p1.product_id = p2.product_id\n"
+            + "where min_price = today_price and avg_price - min_price > avg_price/20\n"
+            + "order by " + sort +" limit "+offset+", "+limit);
+    List<Object[]> resultList = query.getResultList();
+    return resultList;
+  }
+
 }

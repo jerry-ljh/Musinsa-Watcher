@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: watcher-db-dp
+  name: watcher-db-dp1
 spec:
   replicas: 1
   selector:
@@ -19,16 +19,42 @@ spec:
           image: mariadb
           env:
             - name : MYSQL_ROOT_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: db-slave
+                  key: password
+            - name: SLAVE_PASSWARD
+              valueFrom:
+                secretKeyRef:
+                  name: db-slave
+                  key: password
+            - name : MASTER_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-master
+                  key: host
+            - name: MASTER_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-master
+                  key: user
+            - name: MASTER_PASSWARD
+              valueFrom:
+                secretKeyRef:
+                  name: db-master
+                  key: password
           ports:
             - containerPort: 3306
               name: watcher-db
           volumeMounts:
             - name: config-volume
               mountPath: /etc/mysql/conf.d
+            - name: script
+              mountPath: /script
       volumes:
         - name: config-volume
           configMap:
             name: slave04.cnf
-
-
+        - name: script
+          configMap:
+            name: slave.sh
