@@ -121,7 +121,7 @@
                 curSearchTopic: '',
                 curSort : '',
                 curSortText : '',
-                API: "http://localhost:8080/"
+                API: "https://www.musinsa.cf/"
             }
         },
         methods: {
