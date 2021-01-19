@@ -279,7 +279,7 @@
                 },
             goToDiscountList(category, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToDiscountList", category, page)
+                EventBus.$emit("goToDiscountList", category, page, "percent_desc")
                 this
                     .$router
                     .push({
@@ -287,14 +287,15 @@
                         query: {
                             "category": category,
                             "page": page,
-                            "type": 'discount'
+                            "type": 'discount',
+                            "sort": "percent_desc"
                         }
                     })
                     .catch(() => {})
                 },
             goToMinimumList(category, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToMinimumList", category, page)
+                EventBus.$emit("goToMinimumList", category, page, "percent_desc")
                 this
                     .$router
                     .push({
@@ -302,7 +303,8 @@
                         query: {
                             "category": category,
                             "page": page,
-                            "type": 'minimum'
+                            "type": 'minimum',
+                            "sort": "percent_desc"
                         }
                     })
                     .catch(() => {})
