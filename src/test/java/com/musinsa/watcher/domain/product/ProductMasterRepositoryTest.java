@@ -36,7 +36,6 @@ public class ProductMasterRepositoryTest {
   public void clear() {
     productSlaveRepository.deleteAll();
     productMasterRepository.deleteAll();
-
   }
 
   @Test

@@ -21,7 +21,7 @@ spec:
             httpGet:
               path: /api/v1/cache/sync
               port: 8081
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             timeoutSeconds: 5
             periodSeconds: 10
             failureThreshold: 5
@@ -29,7 +29,7 @@ spec:
             httpGet:
               path: /api/v1/cache/sync
               port: 8081
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             timeoutSeconds: 5
             periodSeconds: 10
             failureThreshold: 5
