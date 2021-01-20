@@ -61,10 +61,10 @@
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
-                        <h6 style="text-align : center">
+                        <h6 style="text-align : center; min-height:30px; margin-top:5px;">
                             <strong>{{product.brand}}</strong>
                         </h6>
-                        <div style="text-align : left; height : 48px; overflow:hidden">
+                        <div style="text-align : left; height : 48px; overflow:hidden; margin-bottom : 10px">
                             <span style="font-size : 13px;">{{truncateProductName(product.productName)}}</span>
                         </div>
 
@@ -80,6 +80,15 @@
                                 <strong>{{numberToPrice(product.today_price)}}원</strong>
                             </span>
                         </div>
+                        <div v-if="currentListTopic == 'brand' || currentListTopic == 'category'">
+                            <span v-if="isTodayUpdated(product.modifiedDate)" style="color:#ae0000">
+                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                            </span>
+                            <span v-if="!isTodayUpdated(product.modifiedDate)" style="color:#b2b2b2">
+                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                            </span>
+                        </div>
+                        <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}} updated</span>
                     </b-card-text>
 
                 </b-card>
@@ -124,6 +133,7 @@
                 API: "https://www.musinsa.cf/"
             }
         },
+        props: ['updatedAt'],
         methods: {
             goToDetail(product) {
                 this
@@ -136,6 +146,22 @@
                         params: product
                     })
                 window.scrollTo(0, 0)
+            },
+            isTodayUpdated(date) {
+                if (date == null || this.updatedAt == null) {
+                    return false
+                }
+                var lastUpdateArr = date.split('-')
+                var lastUpdate = new Date(
+                    lastUpdateArr[0],
+                    lastUpdateArr[1] - 1,
+                    lastUpdateArr[2]
+                ).toLocaleDateString()
+                var updatedAtArr = this
+                    .updatedAt
+                    .split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2]).toLocaleDateString()
+                return lastUpdate == updatedAt
             },
             truncateProductName(productName) {
                 return productName;
