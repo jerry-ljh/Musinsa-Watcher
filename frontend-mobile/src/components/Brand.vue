@@ -1,6 +1,15 @@
 <template>
     <div>
-        <table style="width:100%;text-align:center">
+        <b-navbar style="background-color:#FFFFFF; width:100%">
+        <b-form-input
+                size="md"
+                class="mr-sm-2"
+                placeholder="브랜드명을 입력해주세요"
+                v-on:keyup.enter="goToSearch(searchText)"
+                @update="goToSearch(searchText)"
+                v-model="searchText"></b-form-input>
+        </b-navbar>
+        <table style="width:100%;text-align:center; margin-bottom:20px">
             <tr >
                 <td class="brand">
                     <a href="javascript:void(0)" v-on:click="findBrandList(1)">ㄱ</a>
@@ -71,10 +80,28 @@
     export default {
         data() {
             return {
-                brands : []
+                brands : [],
+                searchText: ''
             }
         },
         methods: {
+            goToSearch(searchText) {
+                if (searchText.trim().length == 0) {
+                    return;
+                }
+                axios
+                    .get('https://www.musinsa.cf/api/v1/search/brand', {
+                        params: {
+                            "name": searchText
+                        }
+                    })
+                    .then((response) => {
+                        this.brands = response.data
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
             goToBrand(name, page) {
                 this.$emit('isLoading', true)
                 EventBus.$emit("goToBrand", name, page)
