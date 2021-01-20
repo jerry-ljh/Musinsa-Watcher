@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @EnableCaching
 @CrossOrigin({"http://www.musinsa.cf/", "http://api.musinsa.cf/, https://www.musinsa.cf/",
-    "https://api.musinsa.cf/"})
-@RequiredArgsConstructor
+    "https://api.musinsa.cf/"})@RequiredArgsConstructor
 @RestController
 public class ProductController {
 
@@ -44,6 +43,11 @@ public class ProductController {
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     return productService
         .findBrandByInitial(initial.getSTART(), initial.getEND());
+  }
+
+  @GetMapping("/api/v1/search/brand")
+  public Map<String, Integer> findBrand(String name) {
+    return productService.searchBrand(name);
   }
 
   @GetMapping("/api/v1/search")

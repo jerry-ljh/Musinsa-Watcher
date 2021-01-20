@@ -36,6 +36,11 @@ public class ProductService {
     return productQuerySlaveRepository.findByBrand(name, pageable);
   }
 
+  public Map<String, Integer> searchBrand(String brand){
+    List<Object[]> objectList = productQuerySlaveRepository.searchBrand(brand);
+    return objectList.size() > 0 ? MapperUtils.longToIntegerMapper(objectList) : null;
+  }
+
   @Cacheable(value = "productCache", key = "'category'+#category+#pageable.pageNumber+#pageable.pageSize", condition = "#pageable.pageNumber==0")
   public Page<ProductResponseDto> findByCategory(String category, Pageable pageable) {
     return productQuerySlaveRepository

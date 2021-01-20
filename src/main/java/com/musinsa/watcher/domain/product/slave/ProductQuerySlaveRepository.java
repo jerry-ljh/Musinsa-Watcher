@@ -4,6 +4,8 @@ import com.musinsa.watcher.domain.price.QPrice;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.QProduct;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,6 +48,15 @@ public class ProductQuerySlaveRepository {
         .stream()
         .map(ProductResponseDto::new)
         .collect(Collectors.toList()), pageable, this.getSpringProxy().countSearchItems(text));
+  }
+
+  public List<Object[]> searchBrand(String text) {
+    BooleanBuilder builder = new BooleanBuilder();
+    return queryFactory.from(QProduct.product)
+        .where(builder.and(Expressions.booleanTemplate("brand like '"+text+"%'")))
+        .select(QProduct.product.brand, QProduct.product.brand.count())
+        .groupBy(QProduct.product.brand)
+        .fetch().stream().map(i -> i.toArray()).collect(Collectors.toList());
   }
 
   @Cacheable(value = "productCache", key = "'search count'+#text")
@@ -144,7 +155,8 @@ public class ProductQuerySlaveRepository {
     return resultList;
   }
 
-  public List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset, int limit, String sort){
+  public List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset,
+      int limit, String sort) {
     Query query = em.createNativeQuery(
         "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price as price, avg_price,"
             + "(avg_price - min_price)/avg_price as percent  from \n"
@@ -152,15 +164,15 @@ public class ProductQuerySlaveRepository {
             + "min(real_price) as min_price, avg(real_price) as avg_price\n"
             + "FROM product p1 \n"
             + "inner join price p2 on p1.product_id = p2.product_id\n"
-            + "where p1.category = '"+category+"'  and p1.modified_date > '"+date+"'\n"
+            + "where p1.category = '" + category + "'  and p1.modified_date > '" + date + "'\n"
             + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5 order by null ) p1\n"
             + "inner join \n"
             + "(SELECT p1.product_id, p1.real_price as today_price\n"
             + "FROM price p1 \n"
-            + "where p1.created_date > '"+date+"') p2\n"
+            + "where p1.created_date > '" + date + "') p2\n"
             + "on p1.product_id = p2.product_id\n"
             + "where min_price = today_price and avg_price - min_price > avg_price/20\n"
-            + "order by " + sort +" limit "+offset+", "+limit);
+            + "order by " + sort + " limit " + offset + ", " + limit);
     List<Object[]> resultList = query.getResultList();
     return resultList;
   }
