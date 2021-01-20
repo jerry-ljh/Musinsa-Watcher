@@ -4,24 +4,24 @@
             <div class="grid-container">
                 <article @click="route('category')" id="3688" class="location-listing">
                     <span class="location-title">
-                        Rank
+                        무신사 일간 랭킹
                     </span>
                     <div class="location-image">
                         <img
                             width="300"
                             height="169"
                             src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/rank.png"
-                            alt="Rank"/>
+                            alt="무신사 일간 랭킹"/>
                     </div>
                 </article>
                 <article @click="goBrand()" id="3685" class="location-listing">
-                    <span class="location-title">Brand</span>
+                    <span class="location-title">브랜드 조회</span>
                     <div class="location-image">
                         <img
                             width="300"
                             height="169"
                             src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/brand.png"
-                            alt="Brand"/>
+                            alt="브랜드 조회"/>
                     </div>
                 </article>
                 <article @click="route('discount')" id="3691" class="location-listing">
@@ -59,6 +59,7 @@
         data() {
             return {}
         },
+        props: ['updatedAt'],
         methods: {
             route(type) {
                 window.scrollTo(0, 0);
