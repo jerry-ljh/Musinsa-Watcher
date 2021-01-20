@@ -19,7 +19,6 @@ public class ProductResponseDto implements Serializable {
   private String brandUrl;
   private LocalDate modifiedDate;
   private String category;
-  private int real_price;
 
   @Builder
   public ProductResponseDto(Product entity) {
@@ -32,6 +31,5 @@ public class ProductResponseDto implements Serializable {
     this.brandUrl = entity.getBrandUrl();
     this.modifiedDate = entity.getModifiedDate().toLocalDate();
     this.category = entity.getCategory();
-    this.real_price = entity.getReal_price();
   }
 }
