@@ -46,6 +46,8 @@ public class Product implements Serializable {
 
   private String category;
 
+  private int real_price;
+  
   @OneToMany(mappedBy = "product")
   @BatchSize(size = 100)
   List<Price> prices = new ArrayList<>();

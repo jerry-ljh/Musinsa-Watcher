@@ -20,7 +20,6 @@ public class MapperUtils {
 
   public static Map<String, Integer> longToIntegerMapper(List<Object[]> objectList) {
     Map<String, Integer> map = new TreeMap<>();
-    System.out.println(objectList.get(0)[1].getClass());
     objectList.stream()
         .forEach(object -> map.put((String) object[0], ((Long) object[1]).intValue()));
     return map;
