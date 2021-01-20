@@ -132,7 +132,6 @@
         transition: opacity 0.5s;
         background: rgba(68, 66, 66, 0.411);
         color: white;
-
         /* position the text in t’ middle*/
         display: flex;
         align-items: center;
@@ -141,7 +140,6 @@
 
     .location-listing:hover .location-title {
         opacity: 1;
-        filter: blur(2px) !important;
 
     }
     /* for touch screen devices */
