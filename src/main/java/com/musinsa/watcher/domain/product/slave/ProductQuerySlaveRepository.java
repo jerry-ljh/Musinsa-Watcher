@@ -145,7 +145,7 @@ public class ProductQuerySlaveRepository {
             + "(CASE WHEN  p2.created_date <  '" + date
             + "' THEN  p2.real_price END - min(p2.real_price)) as discount, \n"
             + "((CASE WHEN  p2.created_date <  '" + date
-            + "'  THEN p2.real_price END) - min(p2.real_price))/max(real_price)*100 as percent\n"
+            + "'  THEN p2.real_price END) - min(p2.real_price))/max(p2.real_price)*100 as percent\n"
             + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
             + "where p1.category = '" + category + "' and p1.modified_date > '" + date
             + "' and p2.created_date >= '" + date + "' - INTERVAL 1 DAY \n"
@@ -161,7 +161,7 @@ public class ProductQuerySlaveRepository {
         "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price as price, avg_price,"
             + "(avg_price - min_price)/avg_price as percent  from \n"
             + "(SELECT p1.product_id,  p1.product_name, p1.brand, p1.img, p1.modified_date,\n"
-            + "min(real_price) as min_price, avg(real_price) as avg_price\n"
+            + "min(p2.real_price) as min_price, avg(p2.real_price) as avg_price\n"
             + "FROM product p1 \n"
             + "inner join price p2 on p1.product_id = p2.product_id\n"
             + "where p1.category = '" + category + "'  and p1.modified_date > '" + date + "'\n"

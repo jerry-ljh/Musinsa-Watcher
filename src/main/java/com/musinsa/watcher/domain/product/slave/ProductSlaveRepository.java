@@ -38,7 +38,7 @@ public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
 
   @Cacheable(value = "productCache", key = "'minimum count'+#category")
   @Query(value = "select count(p1.product_id) from \n"
-      + "(SELECT p1.product_id, min(real_price) as min_price, avg(real_price) as avg_price\n"
+      + "(SELECT p1.product_id, min(p2.real_price) as min_price, avg(p2.real_price) as avg_price\n"
       + "FROM product p1 \n"
       + "inner join price p2 on p1.product_id = p2.product_id\n"
       + "where p1.category = ?1  and p1.modified_date > ?2\n"
