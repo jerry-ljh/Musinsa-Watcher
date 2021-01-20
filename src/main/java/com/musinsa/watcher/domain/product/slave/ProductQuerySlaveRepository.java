@@ -136,7 +136,7 @@ public class ProductQuerySlaveRepository {
             + "((CASE WHEN  p2.created_date <  '" + date
             + "'  THEN p2.real_price END) - min(p2.real_price))/max(real_price)*100 as percent\n"
             + "FROM product p1 inner join price p2 on p1.product_id = p2.product_id\n"
-            + "where p1.category = " + category + " and p1.modified_date > '" + date
+            + "where p1.category = '" + category + "' and p1.modified_date > '" + date
             + "' and p2.created_date >= '" + date + "' - INTERVAL 1 DAY \n"
             + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1\n"
             + "order by " + sort + ", product_name limit " + offset + ", " + limit);
@@ -152,7 +152,7 @@ public class ProductQuerySlaveRepository {
             + "min(real_price) as min_price, avg(real_price) as avg_price\n"
             + "FROM product p1 \n"
             + "inner join price p2 on p1.product_id = p2.product_id\n"
-            + "where p1.category = "+category+"  and p1.modified_date > '"+date+"'\n"
+            + "where p1.category = '"+category+"'  and p1.modified_date > '"+date+"'\n"
             + "group by p1.product_id having min_price != avg_price and count(p2.created_date) > 5 order by null ) p1\n"
             + "inner join \n"
             + "(SELECT p1.product_id, p1.real_price as today_price\n"
