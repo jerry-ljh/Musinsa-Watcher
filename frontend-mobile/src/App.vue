@@ -13,11 +13,11 @@
             <navigation
                 v-on:isLoading="isLoading"
                 style="width: 100%; position : fixed; top:0px; z-index:10"></navigation>
-            <sidebar v-on:isLoading="isLoading"></sidebar>
             <router-view
                 v-on:isLoading="isLoading"
                 :updatedAt="updatedAt"
                 style="width:100%; margin-top:75px"></router-view>
+            <div style="text-align:center; color :#b2b2b2; margin-top : 20px; margin-bottom:20px">contact : gurwns5580@gmail.com</div>
         </b-overlay>
     </div>
 </template>
@@ -25,13 +25,11 @@
 <script>
     import Chart from 'chart.js'
     import axios from 'axios'
-    import Sidebar from './components/SideBar'
     import Navigation from './components/Navigation.vue'
 
     export default {
         name: 'App',
         components: {
-            sidebar: Sidebar,
             navigation: Navigation
         },
         data() {

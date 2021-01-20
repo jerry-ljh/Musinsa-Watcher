@@ -1,0 +1,209 @@
+<template>
+    <div>
+        <ul class="category-nav">
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.top)">상의<small style="color : #b2b2b2">Top
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.top)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.outer)">아우터<small style="color : #b2b2b2">Outer
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.outer)}})</span>
+                </a>
+
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.onepiece)">원피스<small style="color : #b2b2b2">Onepiece
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.onepiece)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.pants)">바지<small style="color : #b2b2b2">Pants
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.pants)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.skirt)">스커트<small style="color : #b2b2b2">Skirt
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.skirt)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.bag)">가방<small style="color : #b2b2b2">Bag
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.bag)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.sneakers)">스니커즈<small style="color : #b2b2b2">Sneakers
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.sneakers)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.shoes)">신발<small style="color : #b2b2b2">Shoes
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.shoes)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.headwear)">모자<small style="color : #b2b2b2">HeadWear
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.headwear)}})</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" v-on:click="selector(category.socks)">양말/레그웨어<small style="color : #b2b2b2">Socks/Legwear
+                    </small>
+                    <span v-if="type=='discount'" style="color : #b2b2b2">({{keyToValue(discountCategory, category.socks)}})</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script>
+    import axios from 'axios'
+    import EventBus from "../utils/event-bus"
+    export default {
+        data() {
+            return {
+                category: {
+                    top: '001',
+                    outer: '002',
+                    pants: '003',
+                    bag: '004',
+                    sneakers: '018',
+                    shoes: '005',
+                    headwear: '007',
+                    skirt: '022',
+                    onepiece: '020',
+                    socks: '008'
+                },
+                numToCategory: {
+                    '001': 'Top',
+                    '002': 'Outer',
+                    '003': 'Pants',
+                    '004': 'Bag',
+                    '018': 'Sneakers',
+                    '005': 'Shoes',
+                    '007': 'Headwear',
+                    '022': 'Skirt',
+                    '020': 'Onepiece',
+                    '008': 'Socks/Legwear'
+                },
+                type: '',
+                discountCategory: {}
+            }
+        },
+        methods: {
+            selector(category) {
+                if (this.type == 'category') {
+                    this.goToCategory(category, 1)
+                } else if (this.type == 'discount') {
+                    this.goToDiscountList(category, 1)
+                } else if (this.type == 'minimum') {
+                    this.goToMinimumList(category, 1)
+                }
+            },
+            goToCategory(category, page) {
+                this.$emit('isLoading', true)
+                EventBus.$emit("goToCategory", category, page)
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page
+                        }
+                    })
+                    .catch(() => {})
+                },
+            goToDiscountList(category, page) {
+                this.$emit('isLoading', true)
+                EventBus.$emit("goToDiscountList", category, page, "percent_desc")
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page,
+                            "type": 'discount',
+                            "sort": "percent_desc"
+                        }
+                    })
+                    .catch(() => {})
+                },
+            goToMinimumList(category, page) {
+                this.$emit('isLoading', true)
+                EventBus.$emit("goToMinimumList", category, page, "percent_desc")
+                this
+                    .$router
+                    .push({
+                        name: 'ProductList',
+                        query: {
+                            "category": category,
+                            "page": page,
+                            "type": 'minimum',
+                            "sort": "percent_desc"
+                        }
+                    })
+                    .catch(() => {})
+                },
+            findDiscountList() {
+                axios
+                    .get('https://www.musinsa.cf/api/v1/product/discount/list')
+                    .then((response) => {
+                        this.discountCategory = response.data
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+            keyToValue(dict, key) {
+                return key in dict
+                    ? dict[key]
+                    : 0
+            }
+        },
+        created() {
+            this.findDiscountList();
+            this.type = this.$route.query.type
+        }
+    }
+</script>
+
+<style>
+    .category-nav {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .category-nav li {
+        text-indent: 2em;
+        line-height: 4em;
+        border-bottom: 1px solid #b2b2b260;
+    }
+
+    .category-nav li a {
+        display: block;
+        text-decoration: none;
+        color: #000;
+    }
+
+    .category-nav li:hover {
+        background: #b2b2b21c;
+    }
+
+    .category-nav > .category-brand {
+        font-size: 1.3em;
+        line-height: 3em;
+    }
+</style>

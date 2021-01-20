@@ -394,11 +394,6 @@
                 this.goToMinimumList(category, page, sort)
                 this.sortToText(sort)
             })
-            if (this.$route.path == '/') {
-                this.curCategory = '001'
-                this.goToCategory(this.curCategory, 1)
-                return
-            }
             if (this.$route.query.category != null) {
                 this.curCategory = this.$route.query.category
                 if (this.$route.query.type == 'discount') {
