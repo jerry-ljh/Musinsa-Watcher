@@ -100,7 +100,7 @@
     }
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
         grid-gap: 1em;
     }
 
@@ -120,7 +120,7 @@
     }
 
     .location-title {
-        font-size: 1.5em;
+        font-size: 2em;
         font-weight: bold;
         text-decoration: none;
         z-index: 1;
@@ -129,7 +129,7 @@
         width: 100%;
         top: 0;
         left: 0;
-        opacity: 0;
+        opacity: 1;
         transition: opacity 0.5s;
         background: rgba(68, 66, 66, 0.411);
         color: white;

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-navbar style="background-color:black; width:100%">
+        <b-navbar style="background-color:black;">
             <b-button   
                 @click="goBack()"
                 size="sm"

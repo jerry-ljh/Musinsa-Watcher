@@ -4,7 +4,8 @@
             <span
                 v-if="currentListTopic == 'minimum'"
                 style="color :#b2b2b2; margin-left:20px">
-                오늘 역대 최저가 <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                오늘 역대 최저가
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'minimum'"
                     target="question"
@@ -15,7 +16,8 @@
             <span
                 v-if="currentListTopic == 'discount'"
                 style="color :#b2b2b2; margin-left:20px">
-                오늘 깜짝 할인 <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                오늘 깜짝 할인
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'discount'"
                     target="question"
@@ -27,7 +29,12 @@
         <div
             style="text-align : right; margin-right :6%"
             v-if="currentListTopic == 'minimum' || currentListTopic == 'discount'">
-            <b-dropdown id="dropdown-1" right="right" variant="outline-dark " :text="curSortText" class="m-md-2">
+            <b-dropdown
+                id="dropdown-1"
+                right="right"
+                variant="outline-dark "
+                :text="curSortText"
+                class="m-md-2">
                 <b-dropdown-item v-on:click="changeSort('percent_desc')">할인율 높은 순</b-dropdown-item>
                 <b-dropdown-item v-on:click="changeSort('percent_asc')">할인율 낮은 순</b-dropdown-item>
                 <b-dropdown-item v-on:click="changeSort('price_desc')">높은 가격순</b-dropdown-item>
@@ -35,6 +42,28 @@
                 <b-dropdown-divider></b-dropdown-divider>
             </b-dropdown>
         </div>
+        <b-button
+            v-b-modal.modal-1
+            size="sm"
+            class="my-2 my-sm-0"
+            style="background-color : #FFFFFF">
+            <b-icon icon="filter" font-scale="1.2" color="#000000"></b-icon>
+        </b-button >
+        <b-modal id="modal-1" title="필터" size="sm">
+            <b-form-group>
+            <b-form-checkbox
+                v-model="filter_category"
+                @change="goToBrand(curBrand, 1)"
+                :value="value"
+                v-for="(value, idx) in category_dict"
+                v-bind:key="idx">{{numToCategory[value]}}</b-form-checkbox>
+            <b-form-checkbox
+                v-model="filter_updated"
+                @change="goToBrand(curBrand, 1)"
+                :value="filter_updated">today update</b-form-checkbox>
+        </b-form-group>
+        </b-modal>
+        
         <div v-if="products.length>0">
             <b-card-group
                 deck="deck"
@@ -57,14 +86,15 @@
                         v-if="currentListTopic == 'minimum' && product.today_price != null">{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
                         style="position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="product.discount ==null && currentListTopic == 'category'">
+                        v-if="product.discount ==null && currentListTopic == 'rank'">
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
                         <h6 style="text-align : center; min-height:30px; margin-top:5px;">
                             <strong>{{product.brand}}</strong>
                         </h6>
-                        <div style="text-align : left; height : 48px; overflow:hidden; margin-bottom : 10px">
+                        <div
+                            style="text-align : left; height : 48px; overflow:hidden; margin-bottom : 10px">
                             <span style="font-size : 13px;">{{truncateProductName(product.productName)}}</span>
                         </div>
 
@@ -80,7 +110,7 @@
                                 <strong>{{numberToPrice(product.today_price)}}원</strong>
                             </span>
                         </div>
-                        <div v-if="currentListTopic == 'brand' || currentListTopic == 'category'">
+                        <div v-if="currentListTopic == 'brand' || currentListTopic == 'rank'">
                             <span v-if="isTodayUpdated(product.modifiedDate)" style="color:#ae0000">
                                 <strong>{{numberToPrice(product.real_price)}}원</strong>
                             </span>
@@ -88,7 +118,8 @@
                                 <strong>{{numberToPrice(product.real_price)}}원</strong>
                             </span>
                         </div>
-                        <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}} updated</span>
+                        <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}}
+                            updated</span>
                     </b-card-text>
 
                 </b-card>
@@ -120,7 +151,7 @@
                 limit: 10,
                 bufferPage: 1,
                 currentPage: 1,
-                columnCount: 2,
+                columnCount: 4,
                 rows: 0,
                 perpage: 25,
                 currentListTopic: "",
@@ -128,9 +159,35 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                curSort : '',
-                curSortText : '',
-                API: "https://www.musinsa.cf/"
+                curSort: '',
+                curSortText: '',
+                filter_updated: false,
+                filter_category: [],
+                API: "https://www.musinsa.cf/",
+                category_dict: {
+                    top: '001',
+                    outer: '002',
+                    pants: '003',
+                    bag: '004',
+                    sneakers: '018',
+                    shoes: '005',
+                    headwear: '007',
+                    skirt: '022',
+                    onepiece: '020',
+                    socks: '008'
+                },
+                numToCategory: {
+                    '001': 'Top',
+                    '002': 'Outer',
+                    '003': 'Pants',
+                    '004': 'Bag',
+                    '018': 'Sneakers',
+                    '005': 'Shoes',
+                    '007': 'Headwear',
+                    '022': 'Skirt',
+                    '020': 'Onepiece',
+                    '008': 'Socks/Legwear'
+                }
             }
         },
         props: ['updatedAt'],
@@ -166,12 +223,17 @@
             truncateProductName(productName) {
                 return productName;
             },
-            sortToText(sort){
-                if(sort=='price_asc') this.curSortText = '낮은 가격순';
-                else if(sort =='price_desc') this.curSortText = '높은 가격순';
-                else if(sort=='percent_asc') this.curSortText = '할인율 낮은 순';
-                else if(sort=='percent_desc') this.curSortText = '할인율 높은 순';
-            },
+            sortToText(sort) {
+                if (sort == 'price_asc') 
+                    this.curSortText = '낮은 가격순';
+                else if (sort == 'price_desc') 
+                    this.curSortText = '높은 가격순';
+                else if (sort == 'percent_asc') 
+                    this.curSortText = '할인율 낮은 순';
+                else if (sort == 'percent_desc') 
+                    this.curSortText = '할인율 높은 순';
+                }
+            ,
             changeSort(sort) {
                 this.sortToText(sort)
                 this.$emit('isLoading', true)
@@ -187,8 +249,8 @@
                 if (this.bufferPage == page || page == null) 
                     return
                 this.$emit('isLoading', true)
-                if (this.currentListTopic == "category") {
-                    this.goToCategory(this.curCategory, page)
+                if (this.currentListTopic == "rank") {
+                    this.goToRank(this.curCategory, page)
                 } else if (this.currentListTopic == "brand") {
                     this.goToBrand(this.curBrand, page)
                 } else if (this.currentListTopic == "search") {
@@ -213,9 +275,9 @@
                 }
                 return productDeck
             },
-            goToCategory(category, page) {
+            goToRank(category, page) {
                 let self = this
-                self.currentListTopic = "category"
+                self.currentListTopic = "rank"
                 axios
                     .get(this.API + '/api/v1/product/list', {
                         params: {
@@ -234,6 +296,7 @@
                             .push({
                                 name: 'ProductList',
                                 query: {
+                                    "type": 'rank',
                                     "category": this.curCategory,
                                     "page": page
                                 }
@@ -331,7 +394,11 @@
                     .get(this.API + '/api/v1/product/brand', {
                         params: {
                             "name": name,
-                            "page": page - 1
+                            "page": page - 1,
+                            "updated": this.filter_updated,
+                            "category": this
+                                .filter_category
+                                .join(",")
                         }
                     })
                     .then((response) => {
@@ -348,7 +415,11 @@
                                 name: 'ProductList',
                                 query: {
                                     "brand": this.curBrand,
-                                    "page": page
+                                    "page": page,
+                                    "updated": this.filter_updated,
+                                    "category": this
+                                        .filter_category
+                                        .join(",")
                                 }
                             })
                             .catch(() => {});
@@ -403,15 +474,15 @@
         },
         created() {
             this.$emit('isLoading', true)
-            EventBus.$on("goToCategory", (category, page) => {
-                this.goToCategory(category, page)
+            EventBus.$on("goToRank", (category, page) => {
+                this.goToRank(category, page)
             })
             EventBus.$on("goToDiscountList", (category, page, sort) => {
                 this.goToDiscountList(category, page, sort)
                 this.sortToText(sort)
             })
-            EventBus.$on("goToBrand", (name, page) => {
-                this.goToBrand(name, page)
+            EventBus.$on("goToBrand", (name, page, updated, category) => {
+                this.goToBrand(name, page, updated, category)
             })
             EventBus.$on("goToSearch", (searchText, page) => {
                 this.goToSearch(searchText, page)
@@ -420,43 +491,45 @@
                 this.goToMinimumList(category, page, sort)
                 this.sortToText(sort)
             })
-            if (this.$route.query.category != null) {
-                this.curCategory = this.$route.query.category
-                if (this.$route.query.type == 'discount') {
-                    this.goToDiscountList(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1,
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                    this.sortToText(this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc");
-                } else if (this.$route.query.type == 'minimum') {
-                    this.goToMinimumList(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1,
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                    this.sortToText(this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc");
-                    this.curBrand = this.$route.query.brand
-                } else {
-                    this.goToCategory(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1
-                    )
-                }
+            this.curCategory = this.$route.query.category;
+            if (this.$route.query.type == 'rank') {
+                this.goToRank(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1
+                )
+            } else if (this.$route.query.type == 'discount') {
+                this.goToDiscountList(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1,
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                )
+                this.sortToText(
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                );
+            } else if (this.$route.query.type == 'minimum') {
+                this.goToMinimumList(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1,
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                )
+                this.sortToText(
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                );
+                this.curBrand = this.$route.query.brand
             }
             if (this.$route.query.search != null) {
                 this.goToSearch(
@@ -472,14 +545,14 @@
                     this.$route.query.brand,
                     this.$route.query.page
                         ? this.$route.query.page
-                        : 1
+                        : 1,
+                    this.$route.query.page
                 )
                 this.curBrand = this.$route.query.brand
             }
-
         },
         destroyed() {
-            EventBus.$off("goToCategory")
+            EventBus.$off("goToRank")
             EventBus.$off("goToDiscountList")
             EventBus.$off("goToMinimumList")
             EventBus.$off("goToBrand")

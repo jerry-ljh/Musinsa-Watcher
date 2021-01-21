@@ -1,10 +1,11 @@
 <template>
     <div>
-        <div style="float : left; margin-top : 13px">
+        <div style="float : left; margin-top : 8px">
             <span
                 v-if="currentListTopic == 'minimum'"
-                style="color :#b2b2b2; margin-left:20px; margin-bottom:50px">
-                오늘 역대 최저가<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                style="color :#b2b2b2; margin-left:20px">
+                오늘 역대 최저가
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'minimum'"
                     target="question"
@@ -14,8 +15,9 @@
             </span>
             <span
                 v-if="currentListTopic == 'discount'"
-                style="color :#b2b2b2; margin-left:20px; margin-bottom:50px">
-                오늘 깜짝 할인<b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                style="color :#b2b2b2; margin-left:20px">
+                오늘 깜짝 할인
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'discount'"
                     target="question"
@@ -25,7 +27,7 @@
             </span>
         </div>
         <div
-            style="text-align : right; margin-right : 5%"
+            style="text-align : right; margin-right :6%"
             v-if="currentListTopic == 'minimum' || currentListTopic == 'discount'">
             <b-dropdown
                 id="dropdown-1"
@@ -35,66 +37,72 @@
                 class="m-md-2">
                 <b-dropdown-item v-on:click="changeSort('percent_desc')">할인율 높은 순</b-dropdown-item>
                 <b-dropdown-item v-on:click="changeSort('percent_asc')">할인율 낮은 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price_desc')">높은 가격 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price_asc')">낮은 가격 순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price_desc')">높은 가격순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price_asc')">낮은 가격순</b-dropdown-item>
                 <b-dropdown-divider></b-dropdown-divider>
             </b-dropdown>
         </div>
         <div v-if="products.length>0">
             <b-card-group
                 deck="deck"
-                style="margin-bottom : 30px;"
+                style="margin : 5px; text-align:center!important;"
                 v-for="(productDeck, idx) in itemListToCardDeck(products)"
                 v-bind:key="idx">
                 <b-card
                     @click="goToDetail(product)"
-                    :img-src="product.img"
                     align="center"
                     v-for="product in productDeck"
-                    v-bind:key="product.productId">
+                    v-bind:key="product.productId"
+                    style="margin-bottom:30px; margin:10px; width:44%;">
+                    <b-card-img :src="product.img"></b-card-img>
+
                     <h6
-                        style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
-                        v-if="product.discount !=null">-{{Math.ceil(product.percent)}}% OFF</h6>
+                        style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
+                        v-if="product.discount !=null">{{Math.ceil(product.percent)}}% OFF</h6>
                     <h6
-                        style="color : rgb(234 7 7); position: absolute; top: 0px; left: 0px; background-color:#FFF"
-                        v-if="currentListTopic == 'minimum' && product.today_price != null">-{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
+                        style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
+                        v-if="currentListTopic == 'minimum' && product.today_price != null">{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
-                        style="position: absolute; top: 0; left: 5px; background-color:#FFF"
-                        v-if="product.discount ==null && currentListTopic == 'category'">
+                        style="position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
+                        v-if="product.discount ==null && currentListTopic == 'rank'">
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
-                        <h6 style="text-align : center">
+                        <h6 style="text-align : center; min-height:30px; margin-top:5px;">
                             <strong>{{product.brand}}</strong>
                         </h6>
-                        <div style="text-align : left">
+                        <div
+                            style="text-align : left; height : 48px; overflow:hidden; margin-bottom : 10px">
                             <span style="font-size : 13px;">{{truncateProductName(product.productName)}}</span>
                         </div>
+
+                        <div v-if="product.discount !=null">
+                            <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.discount + product.price)}}원</span><br/>
+                            <span style="color:#ae0000">
+                                <strong>{{numberToPrice(product.price)}}원</strong>
+                            </span>
+                        </div>
+                        <div v-if="currentListTopic == 'minimum' && product.today_price != null">
+                            <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.avgPrice)}}원</span><br/>
+                            <span style="color:#ae0000">
+                                <strong>{{numberToPrice(product.today_price)}}원</strong>
+                            </span>
+                        </div>
+                        <div v-if="currentListTopic == 'brand' || currentListTopic == 'rank'">
+                            <span v-if="isTodayUpdated(product.modifiedDate)" style="color:#ae0000">
+                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                            </span>
+                            <span v-if="!isTodayUpdated(product.modifiedDate)" style="color:#b2b2b2">
+                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                            </span>
+                        </div>
+                        <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}}
+                            updated</span>
                     </b-card-text>
-                    <template #footer>
-                        <em>
-                            <div v-if="product.discount !=null">
-                                <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.discount + product.price)}}원</span>
-                                <span style="color:#ae0000">
-                                    <strong>{{numberToPrice(product.price)}}원</strong>
-                                </span>
-                            </div>
-                            <div v-if="currentListTopic == 'minimum' && product.today_price != null">
-                                <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.avgPrice)}}원</span>
-                                <span style="color:#ae0000">
-                                    <strong>{{numberToPrice(product.today_price)}}원</strong>
-                                </span>
-                            </div>
-                            <small
-                                v-if="product.discount ==null && product.today_price == null"
-                                class="text-muted">updated
-                                {{product.modifiedDate}}</small>
-                        </em>
-                    </template>
+
                 </b-card>
             </b-card-group>
-
-            <div class="mt-3" style="margin-right:70px;">
+            <div class="mt-3">
                 <b-pagination
                     v-model="currentPage"
                     @input="newPage(currentPage)"
@@ -105,14 +113,9 @@
                     style="margin-bottom : 100px"></b-pagination>
             </div>
         </div>
-        <div
-            v-if="products.length==0 && $parent.loading == false"
-            style="margin-bottom:1000px">
+        <div v-if="products.length==0 && $parent.loading == false">
             <h2 style="text-align:center">일치하는 결과가 없습니다!</h2>
         </div>
-
-        <span style="text-align:center; color :#b2b2b2;">contact : gurwns5580@gmail.com
-        </span>
     </div>
 </template>
 
@@ -126,10 +129,9 @@
                 limit: 10,
                 bufferPage: 1,
                 currentPage: 1,
-                columnCount: 5,
+                columnCount: 4,
                 rows: 0,
                 perpage: 25,
-                productDeck: [],
                 currentListTopic: "",
                 products: [],
                 curCategory: '',
@@ -137,9 +139,36 @@
                 curSearchTopic: '',
                 curSort: '',
                 curSortText: '',
-                API: "https://www.musinsa.cf/"
+                filter_updated: false,
+                filter_category: [],
+                API: "https://www.musinsa.cf/",
+                category_dict: {
+                    top: '001',
+                    outer: '002',
+                    pants: '003',
+                    bag: '004',
+                    sneakers: '018',
+                    shoes: '005',
+                    headwear: '007',
+                    skirt: '022',
+                    onepiece: '020',
+                    socks: '008'
+                },
+                numToCategory: {
+                    '001': 'Top',
+                    '002': 'Outer',
+                    '003': 'Pants',
+                    '004': 'Bag',
+                    '018': 'Sneakers',
+                    '005': 'Shoes',
+                    '007': 'Headwear',
+                    '022': 'Skirt',
+                    '020': 'Onepiece',
+                    '008': 'Socks/Legwear'
+                }
             }
         },
+        props: ['updatedAt'],
         methods: {
             goToDetail(product) {
                 this
@@ -153,11 +182,24 @@
                     })
                 window.scrollTo(0, 0)
             },
+            isTodayUpdated(date) {
+                if (date == null || this.updatedAt == null) {
+                    return false
+                }
+                var lastUpdateArr = date.split('-')
+                var lastUpdate = new Date(
+                    lastUpdateArr[0],
+                    lastUpdateArr[1] - 1,
+                    lastUpdateArr[2]
+                ).toLocaleDateString()
+                var updatedAtArr = this
+                    .updatedAt
+                    .split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2]).toLocaleDateString()
+                return lastUpdate == updatedAt
+            },
             truncateProductName(productName) {
-                return productName.length > 40
-                    ? productName.substr(0, 37) + '...'
-                    : productName;
-
+                return productName;
             },
             sortToText(sort) {
                 if (sort == 'price_asc') 
@@ -175,9 +217,9 @@
                 this.$emit('isLoading', true)
                 this.curSort = sort
                 if (this.currentListTopic == "discount") {
-                    this.goToDiscountList(this.curCategory, 1, sort)
+                    this.goToDiscountList(this.curCategory, 1, this.curSort)
                 } else if (this.currentListTopic == "minimum") {
-                    this.goToMinimumList(this.curCategory, 1, sort);
+                    this.goToMinimumList(this.curCategory, 1, this.curSort);
                 }
                 this.bufferPage = 1
             },
@@ -185,8 +227,8 @@
                 if (this.bufferPage == page || page == null) 
                     return
                 this.$emit('isLoading', true)
-                if (this.currentListTopic == "category") {
-                    this.goToCategory(this.curCategory, page)
+                if (this.currentListTopic == "rank") {
+                    this.goToRank(this.curCategory, page)
                 } else if (this.currentListTopic == "brand") {
                     this.goToBrand(this.curBrand, page)
                 } else if (this.currentListTopic == "search") {
@@ -194,7 +236,7 @@
                 } else if (this.currentListTopic == "discount") {
                     this.goToDiscountList(this.curCategory, page, this.curSort)
                 } else if (this.currentListTopic == "minimum") {
-                    this.goToMinimumList(this.curCategory, page, this.curSort);
+                    this.goToMinimumList(this.curCategory, page, this.curSort)
                 }
                 this.bufferPage = page
             },
@@ -211,9 +253,9 @@
                 }
                 return productDeck
             },
-            goToCategory(category, page) {
+            goToRank(category, page) {
                 let self = this
-                self.currentListTopic = "category"
+                self.currentListTopic = "rank"
                 axios
                     .get(this.API + '/api/v1/product/list', {
                         params: {
@@ -232,6 +274,7 @@
                             .push({
                                 name: 'ProductList',
                                 query: {
+                                    "type": 'rank',
                                     "category": this.curCategory,
                                     "page": page
                                 }
@@ -329,7 +372,11 @@
                     .get(this.API + '/api/v1/product/brand', {
                         params: {
                             "name": name,
-                            "page": page - 1
+                            "page": page - 1,
+                            "updated": this.filter_updated,
+                            "category": this
+                                .filter_category
+                                .join(",")
                         }
                     })
                     .then((response) => {
@@ -346,7 +393,11 @@
                                 name: 'ProductList',
                                 query: {
                                     "brand": this.curBrand,
-                                    "page": page
+                                    "page": page,
+                                    "updated": this.filter_updated,
+                                    "category": this
+                                        .filter_category
+                                        .join(",")
                                 }
                             })
                             .catch(() => {});
@@ -401,15 +452,15 @@
         },
         created() {
             this.$emit('isLoading', true)
-            EventBus.$on("goToCategory", (category, page) => {
-                this.goToCategory(category, page)
+            EventBus.$on("goToRank", (category, page) => {
+                this.goToRank(category, page)
             })
             EventBus.$on("goToDiscountList", (category, page, sort) => {
                 this.goToDiscountList(category, page, sort)
                 this.sortToText(sort)
             })
-            EventBus.$on("goToBrand", (name, page) => {
-                this.goToBrand(name, page)
+            EventBus.$on("goToBrand", (name, page, updated, category) => {
+                this.goToBrand(name, page, updated, category)
             })
             EventBus.$on("goToSearch", (searchText, page) => {
                 this.goToSearch(searchText, page)
@@ -418,52 +469,45 @@
                 this.goToMinimumList(category, page, sort)
                 this.sortToText(sort)
             })
-            if (this.$route.path == '/') {
-                this.curCategory = '001'
-                this.goToCategory(this.curCategory, 1, "percent_desc")
-                return
-            }
-            if (this.$route.query.category != null) {
-                this.curCategory = this.$route.query.category
-                if (this.$route.query.type == 'discount') {
-                    this.goToDiscountList(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1,
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                    this.sortToText(
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                } else if (this.$route.query.type == 'minimum') {
-                    this.goToMinimumList(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1,
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                    this.sortToText(
-                        this.$route.query.sort
-                            ? this.$route.query.sort
-                            : "percent_desc"
-                    )
-                    this.curBrand = this.$route.query.brand
-                } else {
-                    this.goToCategory(
-                        this.curCategory,
-                        this.$route.query.page
-                            ? this.$route.query.page
-                            : 1
-                    )
-                }
+            this.curCategory = this.$route.query.category;
+            if (this.$route.query.type == 'rank') {
+                this.goToRank(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1
+                )
+            } else if (this.$route.query.type == 'discount') {
+                this.goToDiscountList(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1,
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                )
+                this.sortToText(
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                );
+            } else if (this.$route.query.type == 'minimum') {
+                this.goToMinimumList(
+                    this.curCategory,
+                    this.$route.query.page
+                        ? this.$route.query.page
+                        : 1,
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                )
+                this.sortToText(
+                    this.$route.query.sort
+                        ? this.$route.query.sort
+                        : "percent_desc"
+                );
+                this.curBrand = this.$route.query.brand
             }
             if (this.$route.query.search != null) {
                 this.goToSearch(
@@ -479,14 +523,14 @@
                     this.$route.query.brand,
                     this.$route.query.page
                         ? this.$route.query.page
-                        : 1
+                        : 1,
+                    this.$route.query.page
                 )
                 this.curBrand = this.$route.query.brand
             }
-
         },
         destroyed() {
-            EventBus.$off("goToCategory")
+            EventBus.$off("goToRank")
             EventBus.$off("goToDiscountList")
             EventBus.$off("goToMinimumList")
             EventBus.$off("goToBrand")
