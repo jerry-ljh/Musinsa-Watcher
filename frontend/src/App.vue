@@ -1,22 +1,24 @@
 <template>
-    <div style="min-width:1300px;">
+    <div>
         <b-overlay
             :show="loading"
             :no-fade=true
             spinner-type="null"
+            style="width: 75%; margin-left:12.5%;"
             @shown="onShown"
             @hidden="onHidden">
-            <div v-if="loading" style="position:fixed; top : 50%; left:50%; z-index: 1000;">
+            <div v-if="loading" style="position:fixed; top : 50%; left:42%; z-index: 1000;">
                 <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
                 <p id="cancel-label">Please wait...</p>
             </div>
-            <navigation v-on:isLoading="isLoading"></navigation>
-            <div id="page-wrapper">
-                <sidebar v-on:isLoading="isLoading"></sidebar>
-                <div id="page-content-wrapper">
-                    <router-view v-on:isLoading="isLoading" :updatedAt="updatedAt"></router-view>
-                </div>
-            </div>
+            <navigation
+                v-on:isLoading="isLoading"
+                style="width: 75%; position : fixed; top:0px; left:12.5%; z-index:10"></navigation>
+            <router-view
+                v-on:isLoading="isLoading"
+                :updatedAt="updatedAt"
+                style="margin-top:75px;  border: 1px solid #b2b2b260;"></router-view>
+            <div style="text-align:center; color :#b2b2b2; margin-top : 20px; margin-bottom:20px">contact : gurwns5580@gmail.com</div>
         </b-overlay>
     </div>
 </template>
@@ -24,13 +26,11 @@
 <script>
     import Chart from 'chart.js'
     import axios from 'axios'
-    import Sidebar from './components/SideBar'
     import Navigation from './components/Navigation.vue'
 
     export default {
         name: 'App',
         components: {
-            sidebar: Sidebar,
             navigation: Navigation
         },
         data() {
@@ -46,11 +46,9 @@
                 this.loading = value
             },
             onShown() {
-                // Focus the cancel button when the overlay is showing
                 this.loading = true;
             },
             onHidden() {
-                // Focus the show button when the overlay is removed
                 this.loading = false;
             }
         },

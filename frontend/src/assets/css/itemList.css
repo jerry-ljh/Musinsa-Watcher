@@ -1,7 +1,17 @@
-.card-img {
-  max-width: 125px !important;
-  max-height: 125px !important;
-  margin: 15px auto 0;
+.card img {
+  position: relataive;
+  width: auto; height: 125px; 
+  margin-right: 5px auto;
+  margin-left: 5px auto;
+  margin-top: 5px auto;
+}
+
+
+
+.card-footer {
+background-color:#FFF; background-color: rgba( 255, 255, 255, 0.0 );
+
+width: 100%;
 }
 
 .item-name {
@@ -10,11 +20,6 @@
 
 .text-right:not() {
   text-align: center;
-}
-
-.card {
-  max-width: 125px !important;
-  max-height: 300px !important;
 }
 
 .card:hover {
@@ -34,6 +39,16 @@
   text-align: center !important;
 }
 
-.card-deck .card {
-  max-width: 17% !important;;
+@media (min-width: 270px) {
+  .card-deck {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-flow: row wrap;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      flex-flow: row wrap;
+      margin-right: -15px;
+      margin-left: -15px;
+  }
 }
