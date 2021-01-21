@@ -160,7 +160,6 @@
                         this.dateList.push(this.prices[end - 1 - i].createdDate)
                     }
                     this.chartRender();
-                this.order = this.computeOrder(this.realPriceList);
             },
             chartRender() {
                 this.datasets[0].data = this.priceList
@@ -310,6 +309,7 @@
                     }    
                     self.avgPrice = self.computeAvg(realPriceList)
                     self.minPrice = self.computeMin(realPriceList)
+                    self.order = self.computeOrder(realPriceList);
                 })
                 .catch(function (error) {
                     console.log(error);
