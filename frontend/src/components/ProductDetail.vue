@@ -1,7 +1,7 @@
 <template>
     <div style="margin-top:50px; margin-bottom:50px">
         <b-container class="bv-example-row">
-            <h3 style="text-align : left">
+            <h3 style="text-align : left; margin-top:50px;">
                 <a :href="'/product/list?brand='+product.brand" style="color : #000000"><strong>{{product.brand}}</strong></a>
             </h3>
             <div style="text-align : left">
@@ -22,7 +22,9 @@
                     style="color: #007bff;"
                     v-on:click="outbound(product.productId, product.brandUrl)">브랜드 링크</span>
             </div>
-            <img v-bind:src="product.bigImg" style="width: 100%;"/>
+            <div style=" text-align : center">
+            <img v-bind:src="product.bigImg" style="max-width: 500px;"/>
+            </div>
             <div style="margin-bottom: 10px">
                 <b-icon icon="trophy"></b-icon>
                 Ranking :
