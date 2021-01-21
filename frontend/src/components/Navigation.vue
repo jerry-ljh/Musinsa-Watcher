@@ -13,7 +13,7 @@
                     @click="goHome()"
                     style="color :#FFFFFF; text-decoration:none !important; text-align:center !important; margin-left:5px; margin-right:5px;"
                     v-if="!searchClicked">
-                    <h5 style="color :#FFFFFF; margin-top:6px">MUSINSA WATCHER</h5>
+                    <h3 style="color :#FFFFFF; margin-top:6px">MUSINSA WATCHER</h3>
                 </a>
             </b-navbar-nav>
             <b-form-input
