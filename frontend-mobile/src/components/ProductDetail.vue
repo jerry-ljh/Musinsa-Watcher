@@ -54,9 +54,9 @@
                 추가 쿠폰 :
                 {{numberToPrice(lastPrice.coupon)}}원</div>
             <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
-                {{numberToPrice(computeMin(this.realPriceList))}}원</span><br/>
+                {{numberToPrice(minPrice)}}원</span><br/>
             <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
-                {{numberToPrice(computeAvg(this.realPriceList))}}원</span><br/>
+                {{numberToPrice(avgPrice)}}원</span><br/>
             <span style="color:rgb(234 7 7)" v-if="order==100  && isTodayUpdated()">
                 <strong>오늘은 역대 최고가입니다.</strong>
             </span>
@@ -67,7 +67,7 @@
                 style="color:rgb(234 7 7) "
                 v-if="order!=0 &&order!=100 && isTodayUpdated()">오늘은 역대 상위
                 {{numberToPrice(order)}}%로 낮은 가격입니다.</span><br/>
-            <div style="vertical-align : middle">
+            <div>
                 <b-form-rating
                     id="rating-inline"
                     inline="inline"
@@ -75,8 +75,9 @@
                     :readonly="true"
                     :show-value="true"
                     :no-border="true"></b-form-rating>
-                <small style="vertical-align : middle">({{lastPrice.ratingCount}}개의 평가)</small>
+                <small >({{lastPrice.ratingCount}}개의 평가)</small>
             </div>
+            <b-form-select v-model="selected" :options="date_selector" @change="generatePriceData(selected)"></b-form-select>
             <line-chart ref="chart" :datacollection="datacollection" :options="options"></line-chart>
             <div style=" margin-top: 10px">
                 <small class="text-muted">
@@ -98,10 +99,18 @@
         props: ['updatedAt'],
         data() {
             return {
+                selected: 30,
+                date_selector: [
+                    { value: 7, text: '최근 일주일 데이터조회' },
+                    { value: 30, text: '최근 한 달 데이터조회' },
+                    { value: 365, text: '전체 데이터조회'}
+                ],
                 product: Object,
                 prices: [],
                 category: this.$parent.curCategory,
                 lastPrice: Object,
+                avgPrice : 0,
+                minPrice : 0,
                 dateList: [],
                 priceList: [],
                 realPriceList: [],
@@ -133,30 +142,26 @@
             }
         },
         methods: {
-            generatePriceData() {
-                var end = this
-                    .prices
-                    .length
+            generatePriceData(range) {
+                this.dateList= []
+                this.priceList= []
+                this.realPriceList= []
+                var end = this.prices.length
+                var updatedAtArr = this.updatedAt.split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2] - range)
                     for (var i = 0; i < end; i++) {
-                        this
-                            .priceList
-                            .push(this.prices[end - 1 - i].price)
-                        this
-                            .realPriceList
-                            .push(this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
-                        this
-                            .dateList
-                            .push(this.prices[end - 1 - i].createdDate)
+                        if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
+                            continue;
+                        }
+                        this.priceList.push(this.prices[end - 1 - i].price)
+                        this.realPriceList.push(this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
+                        this.dateList.push(this.prices[end - 1 - i].createdDate)
                     }
-                    this
-                    .chartRender();
+                    this.chartRender();
                 this.order = this.computeOrder(this.realPriceList);
             },
             chartRender() {
-                this
-                    .datasets[0]
-                    .data = this
-                    .priceList
+                this.datasets[0].data = this.priceList
                 this.datacollection = {
                     labels: this.dateList,
                     datasets: [
@@ -202,14 +207,7 @@
                                 },
                                 ticks: {
                                     callback: function (value, index, values) {
-                                        if (values.length <= 7) {
                                             return value
-                                        } else {
-                                            var label = index % (parseInt(values.length / 7)) == 0
-                                                ? value
-                                                : ''
-                                            return label
-                                        }
                                     }
                                 }
                             }
@@ -225,10 +223,7 @@
                     responsive: true,
                     maintainAspectRatio: false
                 }
-                this
-                    .$refs
-                    .chart
-                    .renderChart(this.datacollection, this.options)
+                this.$refs.chart.renderChart(this.datacollection, this.options)
             },
             numberToPrice(number) {
                 if (number == null) {
@@ -240,9 +235,7 @@
                 if (list.length == 1) {
                     return list[0]
                 }
-                return Math
-                    .min
-                    .apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1))
+                return Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1))
             },
             computeAvg(list) {
                 if (list.length == 1) {
@@ -262,9 +255,7 @@
                 var count = 0;
                 var max = 0;
                 for (var i = 0; i < list.length - 1; i++) {
-                    max = max <= list[i]
-                        ? list[i]
-                        : max;
+                    max = max <= list[i] ? list[i] : max;
                     if (list[list.length - 1] > list[i]) {
                         count += 1
                     }
@@ -278,18 +269,9 @@
                 if (this.lastPrice.createdDate == null || this.updatedAt == null) {
                     return false
                 }
-                var lastUpdateArr = this
-                    .lastPrice
-                    .createdDate
-                    .split('-')
-                var lastUpdate = new Date(
-                    lastUpdateArr[0],
-                    lastUpdateArr[1] - 1,
-                    lastUpdateArr[2]
-                ).toLocaleDateString()
-                var updatedAtArr = this
-                    .updatedAt
-                    .split('-')
+                var lastUpdateArr = this.lastPrice.createdDate.split('-')
+                var lastUpdate = new Date(lastUpdateArr[0], lastUpdateArr[1] - 1, lastUpdateArr[2]).toLocaleDateString()
+                var updatedAtArr = this.updatedAt.split('-')
                 var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2]).toLocaleDateString()
                 return lastUpdate == updatedAt
             },
@@ -307,7 +289,7 @@
             }
         },
         created() {
-            let self = this
+            let self = this;
             axios
                 .get('https://www.musinsa.cf/api/v1/product', {
                     params: {
@@ -318,11 +300,14 @@
                     self.prices = response.data.prices
                     self.product = response.data
                     self.lastPrice = self.prices[0]
-                    self.curCategory = self
-                        .product
-                        .category
-                        self
-                        .generatePriceData()
+                    self.curCategory = self.product.category
+                    self.generatePriceData(30)
+                    var realPriceList = []
+                    for (var i = 0; i < self.prices.length; i++) {
+                        realPriceList.push(self.prices[i].price + self.prices[i].coupon)
+                    }    
+                    self.avgPrice = self.computeAvg(realPriceList)
+                    self.minPrice = self.computeMin(realPriceList)
                 })
                 .catch(function (error) {
                     console.log(error);
