@@ -159,7 +159,7 @@
                 curCategory: '',
                 curBrand: '',
                 curSearchTopic: '',
-                curSort: '',
+                curSort: 'percent_desc',
                 curSortText: '',
                 filter_updated: false,
                 filter_category: [],
