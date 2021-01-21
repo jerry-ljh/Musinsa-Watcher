@@ -202,14 +202,8 @@
                                 },
                                 ticks: {
                                     callback: function (value, index, values) {
-                                        if (values.length <= 7) {
                                             return value
-                                        } else {
-                                            var label = index % (parseInt(values.length / 7)) == 0
-                                                ? value
-                                                : ''
-                                            return label
-                                        }
+                                
                                     }
                                 }
                             }
@@ -307,7 +301,7 @@
             }
         },
         created() {
-            let self = this
+            let self = this;
             axios
                 .get('https://www.musinsa.cf/api/v1/product', {
                     params: {
