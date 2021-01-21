@@ -42,28 +42,6 @@
                 <b-dropdown-divider></b-dropdown-divider>
             </b-dropdown>
         </div>
-        <b-button
-            v-b-modal.modal-1
-            size="sm"
-            class="my-2 my-sm-0"
-            style="background-color : #FFFFFF">
-            <b-icon icon="filter" font-scale="1.2" color="#000000"></b-icon>
-        </b-button >
-        <b-modal id="modal-1" title="필터" size="sm">
-            <b-form-group>
-            <b-form-checkbox
-                v-model="filter_category"
-                @change="goToBrand(curBrand, 1)"
-                :value="value"
-                v-for="(value, idx) in category_dict"
-                v-bind:key="idx">{{numToCategory[value]}}</b-form-checkbox>
-            <b-form-checkbox
-                v-model="filter_updated"
-                @change="goToBrand(curBrand, 1)"
-                :value="filter_updated">today update</b-form-checkbox>
-        </b-form-group>
-        </b-modal>
-        
         <div v-if="products.length>0">
             <b-card-group
                 deck="deck"
