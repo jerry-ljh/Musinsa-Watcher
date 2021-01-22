@@ -257,11 +257,11 @@
                 var max = 0;
                 for (var i = 0; i < list.length - 1; i++) {
                     max = max <= list[i] ? list[i] : max;
-                    if (list[list.length - 1] > list[i]) {
+                    if (list[0] > list[i]) {
                         count += 1
                     }
                 }
-                if (max == list[list.length - 1]) {
+                if (max == list[0]) {
                     return 100;
                 }
                 return Math.ceil(count / (list.length - 1) * 100)
