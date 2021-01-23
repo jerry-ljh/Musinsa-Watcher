@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @RequiredArgsConstructor
 @Repository
 public class ProductQuerySlaveRepository {
@@ -29,8 +32,8 @@ public class ProductQuerySlaveRepository {
   @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
   private final ApplicationContext applicationContext;
-  @Qualifier("slaveEntityManager")
-  private final EntityManager em;
+  @PersistenceContext(unitName = "slaveEntityManager")
+  private EntityManager em;
 
   private ProductQuerySlaveRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
@@ -53,7 +56,7 @@ public class ProductQuerySlaveRepository {
   public List<Object[]> searchBrand(String text) {
     BooleanBuilder builder = new BooleanBuilder();
     return queryFactory.from(QProduct.product)
-        .where(builder.and(Expressions.booleanTemplate("brand like '"+text+"%'")))
+        .where(builder.and(Expressions.booleanTemplate("brand like '" + text + "%'")))
         .select(QProduct.product.brand, QProduct.product.brand.count())
         .groupBy(QProduct.product.brand)
         .fetch().stream().map(i -> i.toArray()).collect(Collectors.toList());
