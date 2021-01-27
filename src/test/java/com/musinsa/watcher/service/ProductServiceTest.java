@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.musinsa.watcher.web.Filter;
 import com.musinsa.watcher.MapperUtils;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
@@ -16,6 +17,7 @@ import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
+import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class ProductServiceTest {
 
   private static MockedStatic<DiscountedProductDto> mockDiscountedProductDto;
   private static MockedStatic<MinimumPriceProductDto> mockMinimumPriceProductDto;
+  private static MockedStatic<ProductResponseDto> mockProductResponseDto;
   private static MockedStatic<MapperUtils> mockMapperUtils;
 
 
@@ -52,12 +55,14 @@ public class ProductServiceTest {
     mockDiscountedProductDto = mockStatic(DiscountedProductDto.class);
     mockMinimumPriceProductDto = mockStatic(MinimumPriceProductDto.class);
     mockMapperUtils = mockStatic(MapperUtils.class);
+    mockProductResponseDto = mockStatic(ProductResponseDto.class);
   }
 
   @AfterClass
   public static void afterClass() {
     mockDiscountedProductDto.close();
     mockMinimumPriceProductDto.close();
+    mockProductResponseDto.close();
     mockMapperUtils.close();
   }
 
@@ -79,18 +84,20 @@ public class ProductServiceTest {
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
     when(pageable.getOffset()).thenReturn(offset);
     when(pageable.getPageSize()).thenReturn(pagesize);
-    when(productQuerySlaveRepository.findDiscountedProduct(eq(category),
+    when(productQuerySlaveRepository.findDiscountByCategoryAndDate(eq(category),
         eq(mockLocalDate), eq(offset), eq(pagesize), eq(sort))).thenReturn(mockList);
-    when(productSlaveRepository.countDiscountedProduct(eq(category), eq(mockLocalDate)))
+    when(productSlaveRepository.countDiscountByCategoryAndDate(eq(category), eq(mockLocalDate)))
         .thenReturn(100L);
-    when(DiscountedProductDto.objectsToDtoList(any())).thenReturn(list);
+    when(DiscountedProductDto.convertList(any())).thenReturn(list);
     //when
     productService.findDiscountedProduct(category, pageable, sort);
     //then
     verify(cacheService, times(2)).getLastUpdatedDate();
-    verify(productSlaveRepository, times(1)).countDiscountedProduct(eq(category), eq(mockLocalDate));
+    verify(productSlaveRepository, times(1))
+        .countDiscountByCategoryAndDate(eq(category), eq(mockLocalDate));
     verify(productQuerySlaveRepository, times(1))
-        .findDiscountedProduct(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize), eq(sort));
+        .findDiscountByCategoryAndDate(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize),
+            eq(sort));
   }
 
   @Test
@@ -113,18 +120,20 @@ public class ProductServiceTest {
     when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
     when(pageable.getOffset()).thenReturn(offset);
     when(pageable.getPageSize()).thenReturn(pagesize);
-    when(productQuerySlaveRepository.findProductByMinimumPrice(eq(category),
+    when(productQuerySlaveRepository.findMinimumByCategoryAndDate(eq(category),
         eq(mockLocalDate), eq(offset), eq(pagesize), eq(sort))).thenReturn(mockList);
-    when(productSlaveRepository.countMinimumPrice(eq(category), eq(mockLocalDate)))
+    when(productSlaveRepository.countMinimumByCategoryAndDate(eq(category), eq(mockLocalDate)))
         .thenReturn(100L);
-    when(MinimumPriceProductDto.objectsToDtoList(eq(mockList))).thenReturn(list);
+    when(MinimumPriceProductDto.convertList(eq(mockList))).thenReturn(list);
     //when
     productService.findMinimumPriceProduct(category, pageable, sort);
     //then
     verify(cacheService, times(2)).getLastUpdatedDate();
-    verify(productSlaveRepository, times(1)).countMinimumPrice(eq(category), eq(mockLocalDate));
+    verify(productSlaveRepository, times(1))
+        .countMinimumByCategoryAndDate(eq(category), eq(mockLocalDate));
     verify(productQuerySlaveRepository, times(1))
-        .findProductByMinimumPrice(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize), eq(sort));
+        .findMinimumByCategoryAndDate(eq(category), eq(mockLocalDate), eq(offset), eq(pagesize),
+            eq(sort));
   }
 
   @Test
@@ -134,19 +143,27 @@ public class ProductServiceTest {
     ProductService productService = new ProductService(productSlaveRepository,
         productQuerySlaveRepository,
         cacheService);
-    Page mockPage = mock(Page.class);
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    List mockList = mock(List.class);
+    Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
     LocalDate mockLocalDate = mock(LocalDate.class);
-    String category = "001";
     when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(productQuerySlaveRepository.findByCategory(eq(category), eq(mockLocalDate), eq(pageable)))
-        .thenReturn(mockPage);
-    when(mockPage.getTotalElements()).thenReturn(100L);
+    when(productQuerySlaveRepository
+        .findByCategoryAndDate(eq(filter), eq(mockLocalDate), eq(pageable)))
+        .thenReturn(mockList);
+    when(productQuerySlaveRepository.countByCategoryAndDate(eq(filter), eq(mockLocalDate)))
+        .thenReturn(100L);
+    when(ProductResponseDto.convertPage(eq(mockList), eq(pageable), eq(100L))).thenReturn(mockPage);
+    when(mockList.size()).thenReturn(100);
     //when
-    productService.findByCategory(category, pageable);
+    Page<ProductResponseDto> page = productService.findByCategory(filter, pageable);
     //then
     verify(productQuerySlaveRepository, times(1))
-        .findByCategory(eq(category), eq(mockLocalDate), eq(pageable));
+        .findByCategoryAndDate(eq(filter), eq(mockLocalDate), eq(pageable));
+    verify(productQuerySlaveRepository, times(1))
+        .countByCategoryAndDate(eq(filter), eq(mockLocalDate));
+    assertEquals(page, mockPage);
   }
 
   @Test
@@ -156,16 +173,20 @@ public class ProductServiceTest {
     ProductService productService = new ProductService(productSlaveRepository,
         productQuerySlaveRepository,
         cacheService);
-    Page mockPage = mock(Page.class);
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    List mockList = mock(List.class);
+    Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
-    String category = "001";
-    when(productQuerySlaveRepository.findByBrand(eq(category), eq(pageable))).thenReturn(mockPage);
-    when(mockPage.getTotalElements()).thenReturn(100L);
+    when(productQuerySlaveRepository.findByBrand(eq(filter), eq(pageable))).thenReturn(mockList);
+    when(productQuerySlaveRepository.countByBrand(eq(filter))).thenReturn(100L);
+    when(ProductResponseDto.convertPage(eq(mockList), eq(pageable), eq(100L))).thenReturn(mockPage);
     //when
-    productService.findByBrand(category, pageable);
+    Page<ProductResponseDto> page = productService.findByBrand(filter, pageable);
     //then
-    verify(productQuerySlaveRepository, times(1))
-        .findByBrand(eq(category), eq(pageable));
+    verify(productQuerySlaveRepository, times(1)).findByBrand(eq(filter), eq(pageable));
+    verify(productQuerySlaveRepository, times(1)).countByBrand(eq(filter));
+    assertEquals(page, mockPage);
+
   }
 
   @Test
@@ -175,16 +196,24 @@ public class ProductServiceTest {
     ProductService productService = new ProductService(productSlaveRepository,
         productQuerySlaveRepository,
         cacheService);
-    Page mockPage = mock(Page.class);
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    List mockList = mock(List.class);
+    Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
-    String category = "001";
-    when(productQuerySlaveRepository.searchItems(eq(category), eq(pageable))).thenReturn(mockPage);
-    when(mockPage.getTotalElements()).thenReturn(100L);
+    String topic = "001";
+    when(productQuerySlaveRepository.searchItems(eq(topic), eq(filter), eq(pageable)))
+        .thenReturn(mockList);
+    when(productQuerySlaveRepository.countSearchItems(eq(topic), eq(filter))).thenReturn(100L);
+    when(ProductResponseDto.convertPage(eq(mockList), eq(pageable), eq(100L))).thenReturn(mockPage);
     //when
-    productService.searchItems(category, pageable);
+    Page<ProductResponseDto> page = productService.searchItems(topic, filter, pageable);
     //then
     verify(productQuerySlaveRepository, times(1))
-        .searchItems(eq(category), eq(pageable));
+        .searchItems(eq(topic), eq(filter), eq(pageable));
+    verify(productQuerySlaveRepository, times(1))
+        .countSearchItems(eq(topic), eq(filter));
+    assertEquals(page, mockPage);
+
   }
 
   @Test
@@ -220,13 +249,13 @@ public class ProductServiceTest {
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productSlaveRepository.countDiscountProductEachCategory(localDate)).thenReturn(list);
+    when(productSlaveRepository.countDiscountEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
     when(MapperUtils.BigIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countDiscountProductEachCategory();
     //then
-    verify(productSlaveRepository, times(1)).countDiscountProductEachCategory(localDate);
+    verify(productSlaveRepository, times(1)).countDiscountEachCategory(localDate);
     assertEquals(resultMap, map);
   }
 
@@ -240,13 +269,13 @@ public class ProductServiceTest {
     LocalDate localDate = mock(LocalDate.class);
     List<Object[]> list = mock(List.class);
     Map<String, Integer> map = mock(Map.class);
-    when(productSlaveRepository.countMinimumPriceProductEachCategory(localDate)).thenReturn(list);
+    when(productSlaveRepository.countMinimumEachCategory(localDate)).thenReturn(list);
     when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
     when(MapperUtils.BigIntegerToIntegerMap(list)).thenReturn(map);
     //when
     Map<String, Integer> resultMap = productService.countMinimumPriceProductEachCategory();
     //then
-    verify(productSlaveRepository, times(1)).countMinimumPriceProductEachCategory(localDate);
+    verify(productSlaveRepository, times(1)).countMinimumEachCategory(localDate);
     assertEquals(resultMap, map);
   }
 

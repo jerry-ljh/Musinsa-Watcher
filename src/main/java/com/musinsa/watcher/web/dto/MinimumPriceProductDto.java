@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
 public class MinimumPriceProductDto implements Serializable {
@@ -32,7 +35,7 @@ public class MinimumPriceProductDto implements Serializable {
     this.modifiedDate = modifiedDate.toLocalDateTime().toLocalDate();
   }
 
-  public static MinimumPriceProductDto objectToDto(Object[] object) {
+  public static MinimumPriceProductDto convertDto(Object[] object) {
     return MinimumPriceProductDto
         .builder()
         .productId((int) object[0])
@@ -45,9 +48,19 @@ public class MinimumPriceProductDto implements Serializable {
         .build();
   }
 
-  public static List<MinimumPriceProductDto> objectsToDtoList(List<Object[]> objectList) {
+  public static List<MinimumPriceProductDto> convertList(List<Object[]> objectList) {
     return objectList.stream()
-        .map(product -> MinimumPriceProductDto.objectToDto(product))
+        .map(product -> MinimumPriceProductDto.convertDto(product))
         .collect(Collectors.toList());
   }
+
+  public static Page<MinimumPriceProductDto> convertPage(List<Object[]> objectList,
+      Pageable pageable, long count) {
+    return new PageImpl<MinimumPriceProductDto>(
+        MinimumPriceProductDto.convertList(objectList),
+        pageable,
+        count);
+  }
+
+
 }

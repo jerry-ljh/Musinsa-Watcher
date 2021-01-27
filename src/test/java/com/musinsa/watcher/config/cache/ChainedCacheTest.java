@@ -185,7 +185,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시에 값이 없으면 동기화가 필요 없다1")
-  public void cacheSynchronized1(){
+  public void cacheSynchronized1() {
     ///given
     String key = "key";
     String value = "value";
@@ -203,7 +203,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시에 값이 없으면 동기화가 필요 없다2")
-  public void cacheSynchronized2(){
+  public void cacheSynchronized2() {
     ///given
     String key = "key";
     String value = "value";
@@ -222,7 +222,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시가 있고 글로벌 캐시가 없으면 동기화가 필요하다1")
-  public void cacheSynchronized3(){
+  public void cacheSynchronized3() {
     ///given
     String key = "key";
     String value = "value";
@@ -246,7 +246,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시가 있고 글로벌 캐시가 없으면 동기화가 필요하다2")
-  public void cacheSynchronized4(){
+  public void cacheSynchronized4() {
     ///given
     String key = "key";
     String value = "value";
@@ -268,7 +268,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시와 글로벌 캐시와 값이 같으면 동기화가 필요 없다.")
-  public void cacheSynchronized5(){
+  public void cacheSynchronized5() {
     ///given
     String key = "key";
     String value = "value";
@@ -289,7 +289,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("로컬 캐시와 글로벌 캐시의 값이 다르면 동기화가 필요하다.")
-  public void cacheSynchronized6(){
+  public void cacheSynchronized6() {
     ///given
     String key = "key";
     String value = "value";
@@ -309,7 +309,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("글로벌 캐시에 장애가 발생하면 동기화가 필요없다.")
-  public void cacheSynchronized7(){
+  public void cacheSynchronized7() {
     ///given
     String key = "key";
     String value = "value";
@@ -329,7 +329,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시를 초기화하지 않는다.")
-  public void clearLocalCache1(){
+  public void clearLocalCache1() {
     ///given
     String key = "key";
     String value = "value";
@@ -348,7 +348,7 @@ public class ChainedCacheTest {
 
   @Test
   @DisplayName("글로벌 캐시에 값이 없으면 로컬 캐시를 초기화하지 않는다.")
-  public void clearLocalCache2(){
+  public void clearLocalCache2() {
     ///given
     String key = "key";
     String value = "value";

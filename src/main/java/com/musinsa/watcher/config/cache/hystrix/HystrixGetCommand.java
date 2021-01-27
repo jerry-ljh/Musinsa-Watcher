@@ -7,10 +7,10 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
-import org.springframework.context.annotation.Bean;
 
 @Slf4j
 public class HystrixGetCommand extends HystrixCommand<ValueWrapper> {
+
   private final Cache globalCache;
   private final Object key;
 

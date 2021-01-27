@@ -29,7 +29,7 @@ public class MinimumPriceProductDtoTest {
         .productName((String) productName)
         .brand((String) brand)
         .avgPrice(((BigDecimal) avgPrice).intValue())
-        .today_price((int)today_price)
+        .today_price((int) today_price)
         .img((String) img)
         .modifiedDate((Timestamp) modifiedDate)
         .build();
@@ -40,7 +40,7 @@ public class MinimumPriceProductDtoTest {
     list.add(objects);
     //when
     List<MinimumPriceProductDto> minimumPriceProductDtoList = MinimumPriceProductDto
-        .objectsToDtoList(list);
+        .convertList(list);
     //then
     MinimumPriceProductDto minimumPriceProductDto = minimumPriceProductDtoList.get(0);
     assertEquals(testDto.getAvgPrice(), minimumPriceProductDto.getAvgPrice());

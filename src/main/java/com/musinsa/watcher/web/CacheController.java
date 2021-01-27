@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin({"http://www.musinsa.cf/", "http://api.musinsa.cf/, https://www.musinsa.cf/",
-    "https://api.musinsa.cf/"})
+@CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
 public class CacheController {
@@ -25,7 +24,7 @@ public class CacheController {
   }
 
   @GetMapping("/api/v1/cache/sync")
-  public String sycnCache(){
+  public String sycnCache() {
     return cacheService.doSynchronize() ? "동기화되었습니다." : "이미 동기화되었습니다.";
   }
 }

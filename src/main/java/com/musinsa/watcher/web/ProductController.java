@@ -1,5 +1,8 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.webparameter.PageParameter;
+import com.musinsa.watcher.config.webparameter.Parameter;
+import com.musinsa.watcher.config.webparameter.ParameterFilter;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
@@ -13,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,21 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @EnableCaching
-@CrossOrigin({"http://www.musinsa.cf/", "http://api.musinsa.cf/, https://www.musinsa.cf/",
-    "https://api.musinsa.cf/"})@RequiredArgsConstructor
+@CrossOrigin("*")
+@RequiredArgsConstructor
 @RestController
 public class ProductController {
 
   private final ProductService productService;
-  private final String DEFAULT_PAGE = "0";
-  private final String DEFAULT_PAGE_SIZE = "100";
   private final String DEFAULT_SORT = "percent";
 
   @GetMapping("/api/v1/search/brands/list")
   public Page<String> findBrandList(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
-    return productService.findAllBrand(PageRequest.of(page, pagesize, Sort.by("brand")));
+      @PageParameter PageRequest pageRequest) {
+    return productService.findAllBrand(pageRequest);
   }
 
   @GetMapping("/api/v1/search/brands")
@@ -51,28 +50,26 @@ public class ProductController {
   }
 
   @GetMapping("/api/v1/search")
-  public Page<ProductResponseDto> searchItem(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String topic,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
-    return productService
-        .searchItems(topic, PageRequest.of(page, pagesize, Sort.by("modifiedDate").descending()));
+  public Page<ProductResponseDto> searchItem(String topic, @PageParameter PageRequest pageRequest,
+      @ParameterFilter Filter filter) {
+    return productService.searchItems(topic, filter, pageRequest);
   }
 
   @GetMapping("/api/v1/product/discount")
   public Page<DiscountedProductDto> findDiscountedProduct(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize,
+      String category,
+      @PageParameter PageRequest pageRequest,
       @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return productService.findDiscountedProduct(category, PageRequest.of(page, pagesize),
+    return productService.findDiscountedProduct(category, pageRequest,
         String.join(" ", sort.split("_")));
   }
 
   @GetMapping("/api/v1/product/minimum")
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize,
+      @PageParameter PageRequest pageRequest,
+      String category,
       @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return productService.findMinimumPriceProduct(category, PageRequest.of(page, pagesize),
+    return productService.findMinimumPriceProduct(category, pageRequest,
         String.join(" ", sort.split("_")));
   }
 
@@ -87,19 +84,15 @@ public class ProductController {
   }
 
   @GetMapping("/api/v1/product/brand")
-  public Page<ProductResponseDto> findProductByBrand(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String name,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
-    return productService
-        .findByBrand(name, PageRequest.of(page, pagesize, Sort.by("modifiedDate").descending()));
+  public Page<ProductResponseDto> findProductByBrand(@PageParameter PageRequest pageRequest,
+      @ParameterFilter(necessary = Parameter.BRAND) Filter filter) {
+    return productService.findByBrand(filter, pageRequest);
   }
 
   @GetMapping("/api/v1/product/list")
-  public Page<ProductResponseDto> findProductByCategory(
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page, String category,
-      @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pagesize) {
-    return productService
-        .findByCategory(category, PageRequest.of(page, pagesize));
+  public Page<ProductResponseDto> findProductByCategory(@PageParameter PageRequest pageRequest,
+      @ParameterFilter(necessary = Parameter.CATEGORY) Filter filter) {
+    return productService.findByCategory(filter, pageRequest);
   }
 
   @GetMapping("/api/v1/product")

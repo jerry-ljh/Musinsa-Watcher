@@ -5,11 +5,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
 public class DiscountedProductDto implements Serializable {
@@ -36,7 +38,7 @@ public class DiscountedProductDto implements Serializable {
     this.percent = percent;
   }
 
-  public static DiscountedProductDto objectToDto(Object[] object) {
+  public static DiscountedProductDto convertDto(Object[] object) {
     return DiscountedProductDto
         .builder()
         .productId((int) object[0])
@@ -50,9 +52,18 @@ public class DiscountedProductDto implements Serializable {
         .build();
   }
 
-  public static List<DiscountedProductDto> objectsToDtoList(List<Object[]> objectList) {
+  public static List<DiscountedProductDto> convertList(List<Object[]> objectList) {
     return objectList.stream()
-        .map(product -> DiscountedProductDto.objectToDto(product))
+        .map(product -> DiscountedProductDto.convertDto(product))
         .collect(Collectors.toList());
   }
+
+  public static Page<DiscountedProductDto> convertPage(List<Object[]> objectList, Pageable pageable,
+      long count) {
+    return new PageImpl<DiscountedProductDto>(
+        DiscountedProductDto.convertList(objectList),
+        pageable,
+        count);
+  }
+
 }
