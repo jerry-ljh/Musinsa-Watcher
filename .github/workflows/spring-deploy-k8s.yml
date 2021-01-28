@@ -1,11 +1,11 @@
-#name: k8s backend deploy
+name: k8s backend deploy
 
-#on:
-  #pull_request:
-  #  types: [ closed ]
-  #  branches: [ backend-release ]
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ master ]
 
-#jobs:
+jobs:
   build:
     name: Spring Boot Builder
     runs-on: ubuntu-18.04
