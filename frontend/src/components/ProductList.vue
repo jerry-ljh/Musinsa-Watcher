@@ -666,6 +666,7 @@
                 this.goToBrand(name, page, updated, category)
             })
             EventBus.$on("goToSearch", (searchText, page) => {
+                this.filterClear()
                 this.goToSearch(searchText, page)
             })
             EventBus.$on("goToMinimumList", (category, page, sort) => {

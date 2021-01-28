@@ -46,6 +46,7 @@ jobs:
           port: ${{ secrets.AWS_SERVER1_PORT  }}
           script: |
             cd ~/deploy/
+            sudo docker-compose pull
             sudo docker-compose restart front
         
       - name: action-slack
