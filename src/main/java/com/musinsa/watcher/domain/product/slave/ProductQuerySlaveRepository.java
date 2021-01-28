@@ -216,7 +216,6 @@ public class ProductQuerySlaveRepository {
       }
       if (date != null) {
         filter.and(QProduct.product.modifiedDate.after(date.atStartOfDay()));
-        log.info(date.toString());
       }
       filter.and(QProduct.product.real_price.goe(minPrice));
       filter.and(QProduct.product.real_price.loe(maxPrice));
