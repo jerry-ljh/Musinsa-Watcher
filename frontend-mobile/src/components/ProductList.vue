@@ -51,27 +51,10 @@
                         id="checkbox-group-1"
                         v-model="curCategory"
                         @change="addFilter"
-                        :options="category_options.slice(0,4)"
+                        :options="category_options"
                         name="flavour-1"
                     >
                     </b-form-checkbox-group>
-                    </b-col>
-                        <b-col><b-form-checkbox-group
-                        id="checkbox-group-2"
-                        v-model="curCategory"
-                        @change="addFilter"
-                        :options="category_options.slice(4, 8)"
-                        name="flavour-2"
-                    ></b-form-checkbox-group>
-                    </b-col>
-                    <b-col>
-                    <b-form-checkbox-group
-                        id="checkbox-group-3"
-                        v-model="curCategory"
-                        @change="addFilter"
-                        :options="category_options.slice(8, 11)"
-                        name="flavour-3"
-                    ></b-form-checkbox-group>
                     </b-col>
                     </b-row>
                     </b-container>
@@ -158,7 +141,7 @@
                         name="some-radios" 
                         :value=curPriceRange.A>2만원 이하
                     </b-form-radio>
-                    <b-form-radio style="float:right; margin-right:60px" 
+                    <b-form-radio style="float:right; margin-right:40px" 
                         v-model="price_selected" 
                         @change="addFilter" 
                         :aria-describedby="ariaDescribedby" 
@@ -173,7 +156,7 @@
                         name="some-radios" 
                         :value=curPriceRange.C>4만원 ~ 6만원
                     </b-form-radio>
-                    <b-form-radio style="float:right; margin-right:60px" 
+                    <b-form-radio style="float:right; margin-right:40px" 
                         v-model="price_selected" 
                         @change="addFilter" 
                         :aria-describedby="ariaDescribedby" 
@@ -691,6 +674,7 @@
                 this.goToBrand(name, page, updated, category)
             })
             EventBus.$on("goToSearch", (searchText, page) => {
+                this.filterClear()
                 this.goToSearch(searchText, page)
             })
             EventBus.$on("goToMinimumList", (category, page, sort) => {
