@@ -3,9 +3,13 @@ package com.musinsa.watcher.web.dto;
 import com.musinsa.watcher.domain.product.Product;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
 public class ProductResponseDto implements Serializable {
@@ -34,4 +38,13 @@ public class ProductResponseDto implements Serializable {
     this.category = entity.getCategory();
     this.real_price = entity.getReal_price();
   }
+
+  public static Page<ProductResponseDto> convertPage(List<Product> list, Pageable pageable,
+      long count) {
+    return new PageImpl<ProductResponseDto>(list
+        .stream()
+        .map(ProductResponseDto::new)
+        .collect(Collectors.toList()), pageable, count);
+  }
+
 }

@@ -20,7 +20,7 @@ public class CacheService {
   private final ProductQuerySlaveRepository productRepository;
 
   public LocalDate updateCacheByDate() {
-    LocalDateTime localDateTime = productRepository.findLastUpdateDate();
+    LocalDateTime localDateTime = productRepository.findLastUpdatedDate();
     cacheManager.getCache(CACHE_NAME).putIfAbsent(DATE_KEY, localDateTime);
     LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
         .get(DATE_KEY).get();
@@ -40,16 +40,16 @@ public class CacheService {
           .get(DATE_KEY).get();
       return cachedLocalDateTime.toLocalDate();
     }
-    LocalDateTime localDateTime = productRepository.findLastUpdateDate();
+    LocalDateTime localDateTime = productRepository.findLastUpdatedDate();
     cacheManager.getCache(CACHE_NAME).putIfAbsent(DATE_KEY, localDateTime);
     return localDateTime.toLocalDate();
   }
 
-  public boolean doSynchronize(){
-    ChainedCache cache = (ChainedCache)cacheManager.getCache(CACHE_NAME);
-    if(cache.isSynchronized(DATE_KEY)){
+  public boolean doSynchronize() {
+    ChainedCache cache = (ChainedCache) cacheManager.getCache(CACHE_NAME);
+    if (cache.isSynchronized(DATE_KEY)) {
       return false;
-    }else{
+    } else {
       cache.clearLocalCache();
       log.info("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
       return true;

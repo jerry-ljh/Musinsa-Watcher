@@ -1,16 +1,19 @@
 package com.musinsa.watcher.web.dto;
 
+import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.product.Product;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
-public class ProductWithPriceResponseDto {
+public class ProductWithPriceResponseDto implements Serializable{
 
   private int rank;
   private int productId;
@@ -38,4 +41,10 @@ public class ProductWithPriceResponseDto {
         .collect(Collectors.toList());
   }
 
+  public static Page<PriceResponseDto> convertPage(Page<Price> page, Pageable pageable) {
+    return new PageImpl<PriceResponseDto>(page.getContent()
+        .stream()
+        .map(PriceResponseDto::new)
+        .collect(Collectors.toList()), pageable, page.getTotalElements());
+  }
 }

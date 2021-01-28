@@ -41,7 +41,7 @@ public class CacheServiceTest {
     LocalDateTime today = LocalDateTime.now();
     Cache cache = mock(Cache.class);
     ValueWrapper valueWrapper = mock(ValueWrapper.class);
-    when(productRepository.findLastUpdateDate()).thenReturn(today);
+    when(productRepository.findLastUpdatedDate()).thenReturn(today);
     when(cacheManager.getCache(eq("productCache"))).thenReturn(cache);
     when(cache.putIfAbsent(eq(DATE_KEY), eq(today))).thenReturn(valueWrapper);
     when(cache.get(eq(DATE_KEY))).thenReturn(valueWrapper);
@@ -63,7 +63,7 @@ public class CacheServiceTest {
     LocalDateTime today = LocalDateTime.now();
     Cache cache = mock(Cache.class);
     ValueWrapper valueWrapper = mock(ValueWrapper.class);
-    when(productRepository.findLastUpdateDate()).thenReturn(today);
+    when(productRepository.findLastUpdatedDate()).thenReturn(today);
     when(cacheManager.getCache(eq("productCache"))).thenReturn(cache);
     when(cache.putIfAbsent(eq(DATE_KEY), eq(today))).thenReturn(valueWrapper);
     when(cache.get(eq(DATE_KEY))).thenReturn(valueWrapper);
@@ -104,7 +104,7 @@ public class CacheServiceTest {
     ValueWrapper valueWrapper = mock(ValueWrapper.class);
     when(cacheManager.getCache(eq("productCache"))).thenReturn(cache);
     when(cache.get(eq(DATE_KEY))).thenReturn(null);
-    when(productRepository.findLastUpdateDate()).thenReturn(now);
+    when(productRepository.findLastUpdatedDate()).thenReturn(now);
     when(cache.putIfAbsent(eq(DATE_KEY), eq(now))).thenReturn(valueWrapper);
     //when
     LocalDate result = cacheService.getLastUpdatedDate();
@@ -114,7 +114,7 @@ public class CacheServiceTest {
 
   @Test
   @DisplayName("글로벌 캐시와 로컬 캐시가 다르면 동기화를 진행한다.")
-  public void cacheSynchronized(){
+  public void cacheSynchronized() {
     //given
     CacheService cacheService = new CacheService(cacheManager, productRepository);
     ChainedCache chainedCache = mock(ChainedCache.class);
@@ -129,7 +129,7 @@ public class CacheServiceTest {
 
   @Test
   @DisplayName("글로벌 캐시와 로컬 캐시가 같으면 동기화를 진행하지 않는다.")
-  public void cacheNotSynchronized(){
+  public void cacheNotSynchronized() {
     //given
     CacheService cacheService = new CacheService(cacheManager, productRepository);
     ChainedCache chainedCache = mock(ChainedCache.class);

@@ -39,7 +39,7 @@ public class HystrixClearCommand extends HystrixCommand {
 
   @Override
   protected ValueWrapper getFallback() {
-    log.warn("cache clear fallback called, circuit is {}",super.circuitBreaker.isOpen());
+    log.warn("cache clear fallback called, circuit is {}", super.circuitBreaker.isOpen());
     localCache.clear();
     log.info("로컬 clear");
     return null;
