@@ -43,7 +43,7 @@ public class ProductQuerySlaveRepository {
         .fetch();
   }
 
-  @Cacheable(value = "productCache", key = "'search count'+#text")
+  @Cacheable(value = "productCache", key = "'search count'+#text + #filter.toString()")
   public long countSearchItems(String text, Filter filter) {
     BooleanBuilder builder = new BooleanFilter(filter).build();
     return queryFactory.selectFrom(QProduct.product)
