@@ -112,22 +112,20 @@
             },
             goToRank(category, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToRank", category, page)
                 this
                     .$router
                     .push({
                         name: 'ProductList',
                         query: {
-                            "type" : 'rank',
                             "category": category,
-                            "page": page
+                            "page": page,
+                            "type" : 'rank',
                         }
                     })
                     .catch(() => {})
                 },
             goToDiscountList(category, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToDiscountList", category, page, "percent_desc")
                 this
                     .$router
                     .push({
@@ -143,7 +141,6 @@
                 },
             goToMinimumList(category, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToMinimumList", category, page, "percent_desc")
                 this
                     .$router
                     .push({

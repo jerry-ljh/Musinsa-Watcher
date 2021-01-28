@@ -5,8 +5,8 @@
                 size="md"
                 class="mr-sm-2"
                 placeholder="브랜드명을 입력해주세요"
-                v-on:keyup.enter="goToSearch(searchText)"
-                @update="goToSearch(searchText)"
+                v-on:keyup.enter="searchBrand(searchText)"
+                @update="searchBrand(searchText)"
                 v-model="searchText"></b-form-input>
         </b-navbar>
         <table style="width:100%;text-align:center; margin-bottom:20px">
@@ -85,7 +85,7 @@
             }
         },
         methods: {
-            goToSearch(searchText) {
+            searchBrand(searchText) {
                 if (searchText.trim().length == 0) {
                     return;
                 }
@@ -104,7 +104,6 @@
             },
             goToBrand(name, page) {
                 this.$emit('isLoading', true)
-                EventBus.$emit("goToBrand", name, page)
                 this
                     .$router
                     .push({
@@ -112,6 +111,7 @@
                         query: {
                             "brand": name,
                             "page": page,
+                            "type" : 'brand'
                         }
                     })
                     .catch(() => {})
