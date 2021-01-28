@@ -12,6 +12,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.lang.NonNull;
 
 public class ChainedCacheManager implements CacheManager {
+
   private final List<CacheManager> cacheManagers;
   private final Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
@@ -28,7 +29,8 @@ public class ChainedCacheManager implements CacheManager {
   }
 
   private List<Cache> getCaches(String name) {
-    return cacheManagers.stream().map(manager -> manager.getCache(name)).collect(Collectors.toList());
+    return cacheManagers.stream().map(manager -> manager.getCache(name))
+        .collect(Collectors.toList());
   }
 
   @Override

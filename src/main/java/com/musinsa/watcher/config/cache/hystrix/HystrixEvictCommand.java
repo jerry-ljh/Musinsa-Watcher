@@ -39,7 +39,7 @@ public class HystrixEvictCommand extends HystrixCommand {
 
   @Override
   protected ValueWrapper getFallback() {
-    log.warn("cache evict fallback called, circuit is {}",super.circuitBreaker.isOpen());
+    log.warn("cache evict fallback called, circuit is {}", super.circuitBreaker.isOpen());
     localCache.evict(key);
     return null;
   }

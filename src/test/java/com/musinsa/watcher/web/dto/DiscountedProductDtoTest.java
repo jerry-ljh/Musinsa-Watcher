@@ -3,9 +3,7 @@ package com.musinsa.watcher.web.dto;
 import static org.junit.Assert.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,7 +42,7 @@ public class DiscountedProductDtoTest {
     list.add(objects);
     //when
     List<DiscountedProductDto> discountedProductDtoList = DiscountedProductDto
-        .objectsToDtoList(list);
+        .convertList(list);
     //then
     DiscountedProductDto discountedProductDto = discountedProductDtoList.get(0);
     assertEquals(testDto.getDiscount(), discountedProductDto.getDiscount());

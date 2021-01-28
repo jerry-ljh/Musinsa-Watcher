@@ -63,11 +63,36 @@ public class ProductControllerTest {
     String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findByBrand(eq(brandName), any())).thenReturn(mockPage);
+    when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand")
-        .param("name", brandName))
+        .param("brand", brandName))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findByBrand(eq(brandName), any());
+    verify(mockProductService, only()).findByBrand(any(), any());
+  }
+
+  @Test(expected = Exception.class)
+  @DisplayName("브랜드 상품 리스트를 조회할 때 brand 파라미터가 없으면 예외가 발생한다.")
+  public void 브랜드_상품_리스트_조회_예외1() throws Exception {
+    String brandName = "good brand";
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "brand"))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).findByBrand(any(), any());
+  }
+
+  @Test(expected = Exception.class)
+  @DisplayName("브랜드 상품 리스트를 조회할 때 brand 파라미터가 있어도 값이 없다면 예외가 발생한다.")
+  public void 브랜드_상품_리스트_조회_예외2() throws Exception {
+    String brandName = "good brand";
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "brand")
+        .param("brand", ""))
+        .andExpect(status().isOk());
+    verify(mockProductService, only()).findByBrand(any(), any());
   }
 
   @Test
@@ -77,31 +102,55 @@ public class ProductControllerTest {
     Map<String, Integer> map = new HashMap<>();
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()))).thenReturn(map);
-    mvc.perform(get( "/api/v1/search/brands")
+    when(mockProductService.findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
+        .thenReturn(map);
+    mvc.perform(get("/api/v1/search/brands")
         .param("type", type))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
+    verify(mockProductService, only())
+        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
   }
 
   @Test
-  @DisplayName("카테고리별 상품 리스트 조회")
+  @DisplayName("카테고리 상품 리스트 조회")
   public void 카테고리별_상품_리스트_조회() throws Exception {
     String category1 = "001";
-    String category2 = "002";
-    Page<ProductResponseDto> mockPage1 = mock(Page.class);
-    Page<ProductResponseDto> mockPage2 = mock(Page.class);
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findByCategory(eq(category1), any())).thenReturn(mockPage1);
-    when(mockProductService.findByCategory(eq(category2), any())).thenReturn(mockPage2);
+    when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "list")
         .param("category", category1))
         .andExpect(status().isOk());
-    mvc.perform(get(API + "list")
-        .param("category", category2))
+
+    verify(mockProductService, times(1)).findByCategory(any(), any());
+  }
+
+  @Test(expected = Exception.class)
+  @DisplayName("카테고리 상품 리스트를 조회할 때 카테고리 파라미터가 없으면 오류가 발생한다.")
+  public void 카테고리별_상품_리스트_조회_예외1() throws Exception {
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "list"))
         .andExpect(status().isOk());
-    verify(mockProductService, times(1)).findByCategory(eq(category1), any());
-    verify(mockProductService, times(1)).findByCategory(eq(category2), any());
+
+    verify(mockProductService, times(1)).findByCategory(any(), any());
+  }
+
+  @Test(expected = Exception.class)
+  @DisplayName("카테고리 상품 리스트를 조회할 때 카테고리 파라미터가 있어도 값이 없다면 오류가 발생한다.")
+  public void 카테고리별_상품_리스트_조회_예외2() throws Exception {
+    Page<ProductResponseDto> mockPage = mock(Page.class);
+
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "list")
+        .param("category", ""))
+        .andExpect(status().isOk());
+
+    verify(mockProductService, times(1)).findByCategory(any(), any());
   }
 
   @Test
@@ -123,11 +172,11 @@ public class ProductControllerTest {
     String topic = "셔츠";
     Page<ProductResponseDto> mockPage = mock(Page.class);
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.searchItems(eq(topic), any())).thenReturn(mockPage);
+    when(mockProductService.searchItems(eq(topic), any(), any())).thenReturn(mockPage);
     mvc.perform(get("/api/v1/search")
         .param("topic", topic))
         .andExpect(status().isOk());
-    verify(mockProductService, only()).searchItems(eq(topic), any());
+    verify(mockProductService, only()).searchItems(eq(topic), any(), any());
   }
 
   @Test

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: watcher-api-dp
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: watcher-api
@@ -35,7 +35,7 @@ spec:
             failureThreshold: 5
           env:
             - name: PROPERTIES
-              value: config/application-real.properties
+              value: config/application-real1.properties
             - name: PROFILE
               value: real1
           volumeMounts:
@@ -44,10 +44,16 @@ spec:
           ports:
             - containerPort: 8081
               name: watcher-api
+          resources:
+            limits:
+              cpu: 2000m
+            requests:
+              cpu: 1000m
+
       volumes:
         - name: config-volume
           configMap:
-            name: application-real.properties
+            name: application-real1.properties
       imagePullSecrets:
         - name: regcred
 ---

@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
 
-  @Query("SELECT distinct p.brand FROM Product p ")
+  @Query("SELECT distinct p.brand FROM Product p order by p.brand")
   Page<String> findAllBrand(Pageable pageable);
 
   @Cacheable(value = "productCache", key = "'distcount count'+#category")
@@ -23,7 +23,7 @@ public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
       + "      where p1.category = ?1 and p1.modified_date > ?2 and p2.created_date  >=  ?2 - INTERVAL 1 DAY \n"
       + "      group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t",
       nativeQuery = true)
-  Long countDiscountedProduct(String category, LocalDate date);
+  Long countDiscountByCategoryAndDate(String category, LocalDate date);
 
   @Query(value =
       "select category, count(category) as count from (SELECT category,\n"
@@ -34,7 +34,7 @@ public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
           + "where p2.created_date  >=   ?1 - INTERVAL 1 DAY \n"
           + "group by p1.product_id having count(p2.created_date) > 1 and percent > 1) t group by category order by null",
       nativeQuery = true)
-  List<Object[]> countDiscountProductEachCategory(LocalDate date);
+  List<Object[]> countDiscountEachCategory(LocalDate date);
 
   @Cacheable(value = "productCache", key = "'minimum count'+#category")
   @Query(value = "select count(p1.product_id) from \n"
@@ -50,7 +50,7 @@ public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
       + "on p1.product_id = p2.product_id\n"
       + "where min_price = today_price and avg_price - min_price > avg_price/20;",
       nativeQuery = true)
-  long countMinimumPrice(String category, LocalDate date);
+  long countMinimumByCategoryAndDate(String category, LocalDate date);
 
   @Query(value =
       "select category, count(category) from \n"
@@ -68,5 +68,5 @@ public interface ProductSlaveRepository extends JpaRepository<Product, Long> {
           + "where min_price = today_price and avg_price - min_price > avg_price/20 \n"
           + "group by category",
       nativeQuery = true)
-  List<Object[]> countMinimumPriceProductEachCategory(LocalDate date);
+  List<Object[]> countMinimumEachCategory(LocalDate date);
 }

@@ -1,10 +1,11 @@
 package com.musinsa.watcher.domain.product.slave;
 
+import com.musinsa.watcher.web.Filter;
 import com.musinsa.watcher.domain.price.QPrice;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.QProduct;
-import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
@@ -18,9 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -31,26 +29,27 @@ public class ProductQuerySlaveRepository {
 
   @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
-  private final ApplicationContext applicationContext;
   @PersistenceContext(unitName = "slaveEntityManager")
   private EntityManager em;
 
-  private ProductQuerySlaveRepository getSpringProxy() {
-    return applicationContext.getBean(this.getClass());
+  public List<Product> searchItems(String text, Filter filter, Pageable pageable) {
+    BooleanBuilder builder = new BooleanFilter(filter).build();
+    return queryFactory.selectFrom(QProduct.product)
+        .where(builder.and(QProduct.product.brand.contains(text)
+            .or(QProduct.product.productName.contains(text))))
+        .orderBy(QProduct.product.modifiedDate.desc(), QProduct.product.productName.asc())
+        .limit(pageable.getPageSize())
+        .offset(pageable.getOffset())
+        .fetch();
   }
 
-  public Page<ProductResponseDto> searchItems(String text, Pageable pageable) {
-    List<Product> results =
-        queryFactory.selectFrom(QProduct.product)
-            .where(QProduct.product.brand.contains(text)
-                .or(QProduct.product.productName.contains(text)))
-            .limit(pageable.getPageSize())
-            .offset(pageable.getOffset())
-            .fetch();
-    return new PageImpl<>(results
-        .stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable, this.getSpringProxy().countSearchItems(text));
+  @Cacheable(value = "productCache", key = "'search count'+#text")
+  public long countSearchItems(String text, Filter filter) {
+    BooleanBuilder builder = new BooleanFilter(filter).build();
+    return queryFactory.selectFrom(QProduct.product)
+        .where(builder.and(QProduct.product.brand.contains(text)
+            .or(QProduct.product.productName.contains(text))))
+        .fetchCount();
   }
 
   public List<Object[]> searchBrand(String text) {
@@ -62,15 +61,7 @@ public class ProductQuerySlaveRepository {
         .fetch().stream().map(i -> i.toArray()).collect(Collectors.toList());
   }
 
-  @Cacheable(value = "productCache", key = "'search count'+#text")
-  public long countSearchItems(String text) {
-    return queryFactory.selectFrom(QProduct.product)
-        .where(QProduct.product.brand.contains(text)
-            .or(QProduct.product.productName.contains(text)))
-        .fetchCount();
-  }
-
-  public Product findProductWithPrice(int productId) {
+  public Product findByProductIdWithPrice(int productId) {
     return queryFactory.selectFrom(QProduct.product)
         .leftJoin(QProduct.product.prices, QPrice.price1)
         .fetchJoin()
@@ -79,57 +70,26 @@ public class ProductQuerySlaveRepository {
         .fetchOne();
   }
 
-  public Page<ProductResponseDto> findByCategory(String category, LocalDate updateDate,
-      Pageable pageable) {
-    List<Product> results =
-        queryFactory.selectFrom(QProduct.product)
-            .where(QProduct.product.category.eq(category),
-                QProduct.product.modifiedDate.after(updateDate.atStartOfDay()),
-                QProduct.product.modifiedDate.before(updateDate.plusDays(1).atStartOfDay()))
-            .orderBy(QProduct.product.rank.asc())
-            .limit(pageable.getPageSize())
-            .offset(pageable.getOffset())
-            .fetch();
-    return new PageImpl<>(results
-        .stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countFindByCategory(category, updateDate));
-  }
-
-  @Cacheable(value = "productCache", key = "'category count'+#category")
-  public long countFindByCategory(String category, LocalDate updateDate) {
-    return queryFactory.from(QProduct.product)
-        .where(QProduct.product.category.eq(category),
-            QProduct.product.modifiedDate.after(updateDate.atStartOfDay()),
-            QProduct.product.modifiedDate.before(updateDate.plusDays(1).atStartOfDay()))
-        .fetchCount();
-  }
-
-  public Page<ProductResponseDto> findByBrand(String brand, Pageable pageable) {
-    List<Product> results = queryFactory.selectFrom(QProduct.product)
-        .where(QProduct.product.brand.eq(brand))
-        .orderBy(QProduct.product.modifiedDate.desc())
+  public List<Product> findByCategoryAndDate(Filter filter, LocalDate date, Pageable pageable) {
+    BooleanBuilder builder = new BooleanFilter(filter)
+        .date(date)
+        .build();
+    return queryFactory.selectFrom(QProduct.product)
+        .where(builder)
+        .orderBy(QProduct.product.rank.asc())
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
         .fetch();
-    return new PageImpl<>(results.stream()
-        .map(ProductResponseDto::new)
-        .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countFindByBrand(brand));
   }
 
-  @Cacheable(value = "productCache", key = "'brand count'+#brand")
-  public long countFindByBrand(String brand) {
+  @Cacheable(value = "productCache", key = "'category count'+#filter.toString()")
+  public long countByCategoryAndDate(Filter filter, LocalDate date) {
+    BooleanBuilder builder = new BooleanFilter(filter)
+        .date(date)
+        .build();
     return queryFactory.from(QProduct.product)
-        .where(QProduct.product.brand.eq(brand))
+        .where(builder)
         .fetchCount();
-  }
-
-  public LocalDateTime findLastUpdateDate() {
-    return queryFactory.selectFrom(QProduct.product)
-        .orderBy(QProduct.product.modifiedDate.desc())
-        .fetchFirst().getModifiedDate();
   }
 
   public List<Object[]> findBrandByInitial(String initial1, String initial2) {
@@ -138,10 +98,35 @@ public class ProductQuerySlaveRepository {
         .groupBy(QProduct.product.brand)
         .orderBy(QProduct.product.brand.asc())
         .select(QProduct.product.brand, QProduct.product.brand.count())
-        .fetch().stream().map(i -> i.toArray()).collect(Collectors.toList());
+        .fetch().stream().map(Tuple::toArray).collect(Collectors.toList());
   }
 
-  public List<Object[]> findDiscountedProduct(String category, LocalDate date, long offset,
+  public List<Product> findByBrand(Filter filter, Pageable pageable) {
+    BooleanBuilder builder = new BooleanFilter(filter).build();
+    return queryFactory.selectFrom(QProduct.product)
+        .where(builder)
+        .orderBy(QProduct.product.modifiedDate.desc(), QProduct.product.brand.asc())
+        .limit(pageable.getPageSize())
+        .offset(pageable.getOffset())
+        .fetch();
+  }
+
+  @Cacheable(value = "productCache", key = "'brand count'+#builder")
+  public long countByBrand(Filter filter) {
+    BooleanBuilder builder = new BooleanFilter(filter).build();
+    return queryFactory.from(QProduct.product)
+        .where(builder)
+        .fetchCount();
+  }
+
+  public LocalDateTime findLastUpdatedDate() {
+    return queryFactory.selectFrom(QProduct.product)
+        .orderBy(QProduct.product.modifiedDate.desc())
+        .fetchFirst().getModifiedDate();
+  }
+
+
+  public List<Object[]> findDiscountByCategoryAndDate(String category, LocalDate date, long offset,
       int limit, String sort) {
     Query query = em.createNativeQuery(
         "SELECT p1.product_id, p1.product_name, p1.brand, min(p2.real_price) as price, p1.img, p1.modified_date, \n"
@@ -158,7 +143,7 @@ public class ProductQuerySlaveRepository {
     return resultList;
   }
 
-  public List<Object[]> findProductByMinimumPrice(String category, LocalDate date, long offset,
+  public List<Object[]> findMinimumByCategoryAndDate(String category, LocalDate date, long offset,
       int limit, String sort) {
     Query query = em.createNativeQuery(
         "select p1.product_id, p1.product_name, p1.brand, p1.img, p1.modified_date, today_price as price, avg_price,"
@@ -180,4 +165,61 @@ public class ProductQuerySlaveRepository {
     return resultList;
   }
 
+  private static class BooleanFilter {
+
+    private String[] brand;
+    private String[] category;
+    private int minPrice;
+    private int maxPrice;
+    private LocalDate date;
+
+    private BooleanFilter(Filter filter) {
+      this.brand = filter.getBrand();
+      this.category = filter.getCategory();
+      this.minPrice = filter.getMinPrice();
+      this.maxPrice = filter.getMaxPrice();
+    }
+
+    private BooleanFilter brand(String[] brand) {
+      this.brand = brand;
+      return this;
+    }
+
+    private BooleanFilter category(String[] category) {
+      this.category = category;
+      return this;
+    }
+
+    private BooleanFilter minPrice(int minPrice) {
+      this.minPrice = minPrice;
+      return this;
+    }
+
+    private BooleanFilter maxPrice(int maxPrice) {
+      this.maxPrice = maxPrice;
+      return this;
+    }
+
+    private BooleanFilter date(LocalDate date) {
+      this.date = date;
+      return this;
+    }
+
+    private BooleanBuilder build() {
+      BooleanBuilder filter = new BooleanBuilder();
+
+      if (brand != null && brand.length > 0) {
+        filter.and(QProduct.product.brand.in(brand));
+      }
+      if (category != null && category.length > 0) {
+        filter.and(QProduct.product.category.in(category));
+      }
+      if (date != null) {
+        filter.and(QProduct.product.modifiedDate.after(date.atStartOfDay()));
+      }
+      filter.and(QProduct.product.real_price.goe(minPrice));
+      filter.and(QProduct.product.real_price.loe(maxPrice));
+      return filter;
+    }
+  }
 }

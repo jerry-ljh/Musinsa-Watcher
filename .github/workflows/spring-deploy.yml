@@ -1,9 +1,9 @@
-name: k8s backend deploy
+name: spring boot deploy
 
 on:
   pull_request:
     types: [ closed ]
-    branches: [ master ]
+    branches: [ backend-release ]
 
 jobs:
   build:
@@ -23,40 +23,52 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-      
+
+      - name: Make Directory deploy
+        run: mkdir -p deploy
+
+      - name: Move deploy script
+        run: cp scripts/*.sh ./deploy/
+
+      - name: Move nginx.conf
+        run: cp nginx-release.conf ./deploy/nginx.conf
+
+      - name: Move docker-compose.yml
+        run: cp docker-compose.yml ./deploy/
+
       - name: Copy Jar
         run: cp build/libs/*.jar ./app.jar
-    
+
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
           push: true
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_REPOSITORY }}
+          repository: ${{ secrets.DOCKER_DEV_REPOSITORY }}
           tags: latest
 
-      - name: scp k8s folder
+      - name: sever scp deploy folder
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
-          source: "./kubernetes/*"
+          host: ${{ secrets.AWS_SERVER1_HOST }}
+          username: ${{ secrets.AWS_SERVER1_USERNAME }}
+          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER1_PORT }}
+          source: "./deploy/*"
           target: "~/"
           overwrite: true
 
-      - name: k8s image update
+      - name: sever deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCP_SERVER1_HOST }}
-          username: ${{ secrets.NCP_SERVER1_USERNAME }}
-          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER1_PORT }}
+          host: ${{ secrets.AWS_SERVER1_HOST }}
+          username: ${{ secrets.AWS_SERVER1_USERNAME }}
+          password: ${{ secrets.AWS_SERVER1_PASSWORD }}
+          port: ${{ secrets.AWS_SERVER1_PORT }}
           script: |
-            cd ~/kubernetes/
-            bash deploy.sh
+            cd deploy
+            sudo bash deploy.sh
 
       - name: action-slack
         uses: 8398a7/action-slack@v3
@@ -64,5 +76,5 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_URL_DEPLOY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_URL_DEPLOY }} # required
         if: ${{ always() }}
