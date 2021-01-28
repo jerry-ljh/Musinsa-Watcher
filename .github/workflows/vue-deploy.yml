@@ -28,27 +28,25 @@ jobs:
         run: npm run build
         working-directory: frontend-mobile
 
-      - name: Load balancer scp dist folder
-        uses: appleboy/scp-action@master
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
         with:
-          host: ${{ secrets.LOAD_BALANCER_HOST }}
-          username: ${{ secrets.LOAD_BALANCER_USERNAME }}
-          password: ${{ secrets.LOAD_BALANCER_PASSWORD }}
-          port: ${{ secrets.LOAD_BALANCER_PORT }}
-          source: "./frontend/dist/*"
-          target: "~/"
-          overwrite: true
+          push: true
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_FRONT_REPOSITORY }}
+          tags: latest
 
-      - name: Load balancer scp dist folder
-        uses: appleboy/scp-action@master
+      - name: front image update
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.LOAD_BALANCER_HOST }}
-          username: ${{ secrets.LOAD_BALANCER_USERNAME }}
-          password: ${{ secrets.LOAD_BALANCER_PASSWORD }}
-          port: ${{ secrets.LOAD_BALANCER_PORT }}
-          source: "./frontend-mobile/dist/*"
-          target: "~/mobile/"
-          overwrite: true
+          host: ${{ secrets.NCP_SERVER1_HOST }}
+          username: ${{ secrets.NCP_SERVER1_USERNAME }}
+          password: ${{ secrets.NCP_SERVER1_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER1_PORT }}
+          script: |
+            cd ~/deploy/
+            sudo docker-compose restart front
         
       - name: action-slack
         uses: 8398a7/action-slack@v3
