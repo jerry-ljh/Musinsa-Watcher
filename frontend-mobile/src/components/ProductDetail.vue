@@ -234,7 +234,7 @@
                 if (list.length == 1) {
                     return list[0]
                 }
-                return Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1))
+                return Math.min.apply(null, list.slice(0, list.length - 1))
             },
             computeAvg(list) {
                 if (list.length == 1) {
