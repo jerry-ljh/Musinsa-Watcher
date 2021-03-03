@@ -236,7 +236,8 @@
                 if (list.length == 1) {
                     return list[0]
                 }
-                return Math.min.apply(null, this.realPriceList.slice(0, this.realPriceList.length - 1))
+                console.log(Math.min.apply(null, list));
+                return Math.min.apply(null, list.slice(0, list.length - 1))
             },
             computeAvg(list) {
                 if (list.length == 1) {
@@ -307,6 +308,7 @@
                     for (var i = 0; i < self.prices.length; i++) {
                         realPriceList.push(self.prices[i].price + self.prices[i].coupon)
                     }    
+                    console.log(realPriceList);
                     self.avgPrice = self.computeAvg(realPriceList)
                     self.minPrice = self.computeMin(realPriceList)
                     self.order = self.computeOrder(realPriceList);
