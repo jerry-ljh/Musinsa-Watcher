@@ -220,7 +220,7 @@
                         v-if="product.discount !=null">{{Math.ceil(product.percent)}}% OFF</h6>
                     <h6
                         style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="currentListTopic == 'minimum' && product.today_price != null">{{Math.ceil((product.avgPrice - product.today_price) * 100/product.avgPrice)}}% OFF</h6>
+                        v-if="currentListTopic == 'minimum' && product.todayPrice != null">{{Math.ceil((product.avgPrice - product.todayPrice) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
                         style="position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
                         v-if="product.discount ==null && currentListTopic == 'rank'">
@@ -241,18 +241,18 @@
                                 <strong>{{numberToPrice(product.price)}}원</strong>
                             </span>
                         </div>
-                        <div v-if="currentListTopic == 'minimum' && product.today_price != null">
+                        <div v-if="currentListTopic == 'minimum' && product.todayPrice != null">
                             <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.avgPrice)}}원</span><br/>
                             <span style="color:#ae0000">
-                                <strong>{{numberToPrice(product.today_price)}}원</strong>
+                                <strong>{{numberToPrice(product.todayPrice)}}원</strong>
                             </span>
                         </div>
                         <div v-if="currentListTopic != 'minimum' && currentListTopic != 'discount'">
                             <span v-if="isTodayUpdated(product.modifiedDate)" style="color:#ae0000">
-                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                                <strong>{{numberToPrice(product.realPrice)}}원</strong>
                             </span>
                             <span v-if="!isTodayUpdated(product.modifiedDate)" style="color:#b2b2b2">
-                                <strong>{{numberToPrice(product.real_price)}}원</strong>
+                                <strong>{{numberToPrice(product.realPrice)}}원</strong>
                             </span>
                         </div>
                         <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}}

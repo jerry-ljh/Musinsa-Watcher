@@ -308,7 +308,6 @@
                     self.avgPrice = self.computeAvg(realPriceList)
                     self.minPrice = self.computeMin(realPriceList)
                     self.order = self.computeOrder(realPriceList);
-                    console.log(self.order)
                 })
                 .catch(function (error) {
                     console.log(error);
