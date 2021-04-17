@@ -8,14 +8,17 @@ import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
+import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -105,9 +108,9 @@ public class ProductQuerySlaveRepositoryTest {
     }
     assertEquals(productSlaveRepository.findAll().size(), 30);
 
-    List<Product> productList = productQuerySlaveRepository
+    Page<ProductResponseDto> productList = productQuerySlaveRepository
         .searchItems(searchText, Filter.builder().build(), PageRequest.of(0, 20));
-    assertEquals(productList.size(), 20);
+    assertEquals(productList.getContent().size(), 20);
     productList.stream().forEach(i -> assertTrue(
         i.getProductName().contains(searchText) || i.getBrand().contains(searchText)));
 
@@ -144,10 +147,10 @@ public class ProductQuerySlaveRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    List<Product> productList = productQuerySlaveRepository
+    Page<ProductResponseDto> productList = productQuerySlaveRepository
         .searchItems(searchText, Filter.builder().build(), PageRequest.of(0, 10));
-    assertEquals(productList.size(), 0);
-    assertEquals(productList.size(), 0);
+    assertEquals(productList.toList().size(), 0);
+    assertEquals(productList.toList().size(), 0);
   }
 
   @Test
@@ -182,7 +185,8 @@ public class ProductQuerySlaveRepositoryTest {
     }
 
     long totalElement = productQuerySlaveRepository
-        .countByCategoryAndDate(Filter.builder().category(new String[]{category}).build(),
+        .countByCategoryAndDate(
+            Filter.builder().categories(new Category[]{Category.getCategory(category)}).build(),
             LocalDateTime.now().toLocalDate());
     assertEquals(totalElement, 10);
   }
@@ -217,10 +221,11 @@ public class ProductQuerySlaveRepositoryTest {
           .modifiedDate(LocalDateTime.now())
           .build());
     }
-    List<Product> productList = productQuerySlaveRepository
-        .findByCategoryAndDate(Filter.builder().category(new String[]{category}).build(),
+    Page<ProductResponseDto> productList = productQuerySlaveRepository
+        .findByCategoryAndDate(
+            Filter.builder().categories(new Category[]{Category.getCategory(category)}).build(),
             LocalDateTime.now().toLocalDate(), PageRequest.of(0, 10));
-    assertEquals(productList.size(), 10);
+    assertEquals(productList.getContent().size(), 10);
     productList.stream().forEach(i -> assertTrue(i.getCategory().equals(category)));
   }
 
@@ -327,12 +332,12 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    List<Product> productList = productQuerySlaveRepository
-        .findByBrand(Filter.builder().brand(new String[]{findBrand}).build(),
+    Page<ProductResponseDto> productList = productQuerySlaveRepository
+        .findByBrand(Filter.builder().brands(new String[]{findBrand}).build(),
             PageRequest.of(0, 25));
     long size = productQuerySlaveRepository
-        .countByBrand(Filter.builder().brand(new String[]{findBrand}).build());
-    assertEquals(productList.size(), 20);
+        .countByBrand(Filter.builder().brands(new String[]{findBrand}).build());
+    assertEquals(productList.getContent().size(), 20);
     assertEquals(size, 20);
     productList.stream().forEach(i -> assertEquals(i.getBrand(), findBrand));
   }
@@ -371,10 +376,8 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    List<Object[]> list = productQuerySlaveRepository.searchBrand(searchText);
-    assertEquals(list.get(0)[0], brand1);
-    assertEquals(list.get(0)[1], 10L);
-
+    Map<String, Integer> result = productQuerySlaveRepository.searchBrand(searchText);
+    assertEquals((int) result.get(brand1), 10);
   }
 
   @Test
@@ -408,12 +411,13 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    List<Product> productList = productQuerySlaveRepository
+    Page<ProductResponseDto> productList = productQuerySlaveRepository
         .findByBrand(
-            Filter.builder().brand(new String[]{findBrand}).category(new String[]{"001", "003"})
+            Filter.builder().brands(new String[]{findBrand}).categories(
+                new Category[]{Category.getCategory("001"), Category.getCategory("003")})
                 .build(),
             PageRequest.of(0, 25));
-    assertEquals(productList.size(), 20);
+    assertEquals(productList.getContent().size(), 20);
     productList.stream().forEach(i -> assertEquals(i.getBrand(), findBrand));
   }
 
@@ -445,11 +449,9 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    List<Object[]> brandList = productQuerySlaveRepository
+    Map<String, Integer> result = productQuerySlaveRepository
         .findBrandByInitial(initial.getSTART(), initial.getEND());
 
-    assertEquals(brandList.size(), 1);
-    assertEquals(brandList.get(0)[0], "고급 브랜드");
-    assertEquals(brandList.get(0)[1], 10L);
+    assertEquals((int) result.get("고급 브랜드"), 10);
   }
 }

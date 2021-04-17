@@ -19,7 +19,7 @@ public class AccessLogRepositoryTest {
   private AccessLogRepository accessLogRepository;
 
   @Test
-  @DisplayName("log 저장")
+  @DisplayName("log를 저장한다")
   public void save() {
     String ip = "15.123.116.10";
     String url = "/api/test";

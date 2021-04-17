@@ -1,7 +1,9 @@
 package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.config.LogInterceptor;
+import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.PriceService;
+import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -17,6 +19,7 @@ import org.junit.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,7 +43,7 @@ public class PriceControllerTest {
   private final String API = "/api/v1/product/";
 
   @Test
-  @DisplayName("일자별 상품 상세정보 조회")
+  @DisplayName("일자별 상품 상세정보를 조회한다")
   public void 상품_상세정보_조회() throws Exception {
     int productId = 1234;
     Page<PriceResponseDto> mockPage = mock(Page.class);
@@ -51,4 +54,18 @@ public class PriceControllerTest {
         .andExpect(status().isOk());
     verify(priceService, times(1)).findByProductId(eq(productId), any());
   }
+
+  @Test
+  @DisplayName("할인 품목을 조회한다")
+  public void 할인_품목_조회() throws Exception {
+    Category category = Category.TOP;
+    Page<DiscountedProductDto> mockPage = mock(Page.class);
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(priceService.findDiscountedProduct(eq(category), any(), any())).thenReturn(mockPage);
+    mvc.perform(get(API + "discount")
+        .param("category", category.getCategory()))
+        .andExpect(status().isOk());
+    verify(priceService, only()).findDiscountedProduct(eq(category), any(), any());
+  }
+
 }

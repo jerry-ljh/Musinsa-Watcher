@@ -25,7 +25,7 @@ public class PriceSlaveRepositoryTest {
   private ProductSlaveRepository productSlaveRepository;
 
   @Test
-  @DisplayName("가격이 조회 된다.")
+  @DisplayName("가격이 조회된다.")
   public void 가격이_조회된다() {
     String productName = "고급 신발";
     String brand = "고급 브랜드";
