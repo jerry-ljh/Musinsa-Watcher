@@ -37,14 +37,14 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
-                    exclude: ["**/QA*", "**/QP*", "**/QB*"])
+                    exclude: ["**/QA*", "**/QP*", "**/QB*", "**/QT*"])
         }))
     }
 }
 jacocoTestCoverageVerification {
     def Qdomains = []
 
-    for (qPattern in '*.QA'..'*.QZ') { // qPattern = '*.QA', '*.QB', ... '*.QZ'
+    for (qPattern in '*.QA'..'*.QZ') {
         Qdomains.add(qPattern + '*')
     }
 
@@ -89,9 +89,9 @@ repositories {
 }
 
 dependencies {
-    compile("com.querydsl:querydsl-core") // querydsl
-    compile("com.querydsl:querydsl-jpa") // querydsl
-    annotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa") // querydsl JPAAnnotationProcessor 사용 지정
+    compile("com.querydsl:querydsl-core")
+    compile("com.querydsl:querydsl-jpa")
+    annotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.1.0.RELEASE")
