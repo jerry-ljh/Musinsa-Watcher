@@ -70,6 +70,7 @@ public class ProductQuerySlaveRepository {
         .where(Expressions.booleanTemplate("brand like '" + text + "%'"))
         .select(QProduct.product.brand, QProduct.product.brand.count())
         .groupBy(QProduct.product.brand)
+        .orderBy(QProduct.product.brand.asc())
         .select(Projections
             .constructor(BrandCountDto.class, QProduct.product.brand,
                 QProduct.product.count().as("count")))
