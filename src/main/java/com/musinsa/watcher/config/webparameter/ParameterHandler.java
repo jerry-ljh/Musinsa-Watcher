@@ -1,6 +1,8 @@
 package com.musinsa.watcher.config.webparameter;
 
+import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.web.Filter;
+import java.util.Arrays;
 import java.util.Iterator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -32,12 +34,20 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
     String minPrice = webRequest.getParameter(Parameter.MIN_PRICE.getParameter());
     String maxPrice = webRequest.getParameter(Parameter.MAX_PRICE.getParameter());
     Filter filter = Filter.builder()
-        .brand(brand != null && !brand.isEmpty() ? brand.split(",") : null)
-        .category(category != null && !category.isEmpty() ? category.split(",") : null)
+        .brands(brand != null && !brand.isEmpty() ? brand.split(",") : null)
+        .categories(splitCategory(category))
         .minPrice(minPrice != null ? Integer.parseInt(minPrice) : DEFAULT_MIN_PRICE)
         .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : DEFAULT_MAX_PRICE)
         .build();
     filter.necessary(parameter.getParameterAnnotation(ParameterFilter.class).necessary());
     return filter;
+  }
+
+  private Category[] splitCategory(String category) {
+    if (category == null) {
+      return null;
+    }
+    String[] categories = category.split(",");
+    return Arrays.stream(categories).map(Category::getCategory).toArray(Category[]::new);
   }
 }

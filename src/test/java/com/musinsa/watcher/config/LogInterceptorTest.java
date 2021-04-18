@@ -43,7 +43,7 @@ public class LogInterceptorTest {
   }
 
   @Test
-  @DisplayName("무신사 사이트로 유입되는 log기록")
+  @DisplayName("무신사 사이트로 유입되는 log를 기록한다")
   public void 무신사로_유입된다() throws Exception {
     //given
     String OUTBOUND_URI = "/api/product/link";
@@ -57,12 +57,11 @@ public class LogInterceptorTest {
   }
 
   @Test
-  @DisplayName("요청 log 저장")
+  @DisplayName("요청 log 저장한다")
   public void request_log가_저장된다() throws Exception {
     //given
     String[] urlArr = new String[]{
         "/api/product/link",
-        "/api/v1/search/brands/list",
         "/api/profile"
     };
     //when

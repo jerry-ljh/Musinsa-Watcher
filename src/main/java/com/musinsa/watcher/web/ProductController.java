@@ -6,8 +6,6 @@ import com.musinsa.watcher.config.webparameter.ParameterFilter;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.Map;
@@ -29,13 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
   private final ProductService productService;
-  private final String DEFAULT_SORT = "percent";
-
-  @GetMapping("/api/v1/search/brands/list")
-  public Page<String> findBrandList(
-      @PageParameter PageRequest pageRequest) {
-    return productService.findAllBrand(pageRequest);
-  }
 
   @GetMapping("/api/v1/search/brands")
   public Map<String, Integer> findBrandByInitial(String type) {
@@ -53,34 +44,6 @@ public class ProductController {
   public Page<ProductResponseDto> searchItem(String topic, @PageParameter PageRequest pageRequest,
       @ParameterFilter Filter filter) {
     return productService.searchItems(topic, filter, pageRequest);
-  }
-
-  @GetMapping("/api/v1/product/discount")
-  public Page<DiscountedProductDto> findDiscountedProduct(
-      String category,
-      @PageParameter PageRequest pageRequest,
-      @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return productService.findDiscountedProduct(category, pageRequest,
-        String.join(" ", sort.split("_")));
-  }
-
-  @GetMapping("/api/v1/product/minimum")
-  public Page<MinimumPriceProductDto> findMinimumPriceProduct(
-      @PageParameter PageRequest pageRequest,
-      String category,
-      @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return productService.findMinimumPriceProduct(category, pageRequest,
-        String.join(" ", sort.split("_")));
-  }
-
-  @GetMapping("/api/v1/product/discount/list")
-  public Map<String, Integer> findDiscountedProduct() {
-    return productService.countDiscountProductEachCategory();
-  }
-
-  @GetMapping("/api/v1/product/minimum/list")
-  public Map<String, Integer> findMinimumPriceProduct() {
-    return productService.countMinimumPriceProductEachCategory();
   }
 
   @GetMapping("/api/v1/product/brand")

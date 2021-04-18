@@ -1,10 +1,10 @@
 package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.config.LogInterceptor;
+import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.HashMap;
@@ -47,18 +47,7 @@ public class ProductControllerTest {
   private final String API = "/api/v1/product/";
 
   @Test
-  @DisplayName("브랜드 리스트 조회")
-  public void 브랜드_리스트_조회() throws Exception {
-    Page<String> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findAllBrand(any())).thenReturn(mockPage);
-    mvc.perform(get("/api/v1/search/brands/list"))
-        .andExpect(status().isOk());
-    verify(mockProductService, only()).findAllBrand(any());
-  }
-
-  @Test
-  @DisplayName("브랜드 상품 리스트 조회")
+  @DisplayName("브랜드 상품 리스트 조회한다.")
   public void 브랜드_상품_리스트_조회() throws Exception {
     String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
@@ -96,7 +85,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  @DisplayName("브랜드 초성 조회")
+  @DisplayName("브랜드 초성 조회한다.")
   public void 브랜드_초성_조회() throws Exception {
     String type = "1";
     Map<String, Integer> map = new HashMap<>();
@@ -112,18 +101,17 @@ public class ProductControllerTest {
   }
 
   @Test
-  @DisplayName("카테고리 상품 리스트 조회")
+  @DisplayName("카테고리 상품 리스트 조회한다.")
   public void 카테고리별_상품_리스트_조회() throws Exception {
-    String category1 = "001";
-    Page<ProductResponseDto> mockPage = mock(Page.class);
-
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
-    mvc.perform(get(API + "list")
-        .param("category", category1))
-        .andExpect(status().isOk());
-
-    verify(mockProductService, times(1)).findByCategory(any(), any());
+    for (Category category : Category.values()) {
+      when(mockProductService.findByCategory(any(), any())).thenReturn(mock(Page.class));
+      mvc.perform(get(API + "list")
+          .param("category", category.getCategory())
+          .param("maxprice", "10000"))
+          .andExpect(status().isOk());
+    }
+    verify(mockProductService, times(Category.values().length)).findByCategory(any(), any());
   }
 
   @Test(expected = Exception.class)
@@ -154,20 +142,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  @DisplayName("할인 품목 조회")
-  public void 할인_품목_조회() throws Exception {
-    String category = "001";
-    Page<DiscountedProductDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(mockProductService.findDiscountedProduct(eq(category), any(), any())).thenReturn(mockPage);
-    mvc.perform(get(API + "discount")
-        .param("category", category))
-        .andExpect(status().isOk());
-    verify(mockProductService, only()).findDiscountedProduct(eq(category), any(), any());
-  }
-
-  @Test
-  @DisplayName("검색 품목 조회")
+  @DisplayName("검색 품목 조회한다.")
   public void 검색_품목_조회() throws Exception {
     String topic = "셔츠";
     Page<ProductResponseDto> mockPage = mock(Page.class);
@@ -180,7 +155,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  @DisplayName("품목 상세 정보 조회")
+  @DisplayName("품목 상세 정보 조회한다.")
   public void 품목_상세_정보_조회() throws Exception {
     int productId = 1;
     ProductWithPriceResponseDto mockDto = mock(ProductWithPriceResponseDto.class);

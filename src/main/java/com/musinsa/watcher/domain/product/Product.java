@@ -46,7 +46,7 @@ public class Product implements Serializable {
 
   private String category;
 
-  private int real_price;
+  private int realPrice;
 
   @OneToMany(mappedBy = "product")
   @BatchSize(size = 100)
@@ -59,7 +59,7 @@ public class Product implements Serializable {
 
   @Builder
   public Product(int productId, String productName, String brand, String category, int rank,
-      String img, LocalDateTime modifiedDate) {
+      String img, LocalDateTime modifiedDate, int realPrice) {
     this.productId = productId;
     this.productName = productName;
     this.brand = brand;
@@ -67,6 +67,7 @@ public class Product implements Serializable {
     this.rank = rank;
     this.img = img;
     this.modifiedDate = modifiedDate;
+    this.realPrice = realPrice;
   }
 
 }
