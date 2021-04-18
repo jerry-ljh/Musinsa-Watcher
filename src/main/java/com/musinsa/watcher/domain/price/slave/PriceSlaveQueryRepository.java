@@ -49,7 +49,7 @@ public class PriceSlaveQueryRepository {
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
-            .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
+            .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
         .innerJoin(todayMinimumPriceProduct.product)
         .fetchJoin()
         .offset(pageable.getOffset())
@@ -73,7 +73,7 @@ public class PriceSlaveQueryRepository {
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
-            .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
+            .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
         .innerJoin(todayMinimumPriceProduct.product)
         .fetchJoin()
         .fetchCount();
@@ -86,7 +86,7 @@ public class PriceSlaveQueryRepository {
             .and(todayMinimumPriceProduct.count.goe(5))
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
-            .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
+            .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
         .innerJoin(todayMinimumPriceProduct.product)
         .groupBy(todayMinimumPriceProduct.product.category)
         .select(Projections
@@ -120,7 +120,7 @@ public class PriceSlaveQueryRepository {
   public long countTodayDiscountProducts(Category category, LocalDate localDate) {
     return queryFactory.selectFrom(todayDiscountProduct)
         .where(todayDiscountProduct.product.category.eq(category.getCategory())
-            .and(todayDiscountProduct.createdDate.after(localDate.atStartOfDay())))
+            .and(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())))
         .innerJoin(todayDiscountProduct.product)
         .fetchJoin()
         .fetchCount();
@@ -128,7 +128,7 @@ public class PriceSlaveQueryRepository {
 
   public Map<String, Integer> countDiscountProductEachCategory(LocalDate localDate) {
     List<CountEachCategoryDto> results = queryFactory.from(todayDiscountProduct)
-        .where(todayDiscountProduct.createdDate.after(localDate.atStartOfDay()))
+        .where(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay()))
         .innerJoin(todayDiscountProduct.product)
         .groupBy(todayDiscountProduct.product.category)
         .select(Projections
