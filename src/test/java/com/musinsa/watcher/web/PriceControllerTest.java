@@ -19,7 +19,6 @@ import org.junit.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,16 +55,38 @@ public class PriceControllerTest {
   }
 
   @Test
-  @DisplayName("할인 품목을 조회한다")
-  public void 할인_품목_조회() throws Exception {
+  @DisplayName("오늘 할인 품목을 조회한다")
+  public void 오늘할인_품목_조회() throws Exception {
     Category category = Category.TOP;
-    Page<DiscountedProductDto> mockPage = mock(Page.class);
     when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
-    when(priceService.findDiscountedProduct(eq(category), any(), any())).thenReturn(mockPage);
-    mvc.perform(get(API + "discount")
-        .param("category", category.getCategory()))
-        .andExpect(status().isOk());
-    verify(priceService, only()).findDiscountedProduct(eq(category), any(), any());
+    String[] sorts = new String[]{"percent_desc", "percent_asc", "price_asc", "price_desc"};
+    for (String sort : sorts) {
+      when(priceService.findDiscountedProduct(eq(category), any(), eq(sort.replace("_", " "))))
+          .thenReturn(mock(Page.class));
+      mvc.perform(get(API + "discount")
+          .param("category", category.getCategory())
+          .param("sort", sort))
+          .andExpect(status().isOk());
+      verify(priceService, times(1))
+          .findDiscountedProduct(eq(category), any(), eq(sort.replace("_", " ")));
+    }
   }
 
+  @Test
+  @DisplayName("오늘 역대 최저가 품목을 조회한다")
+  public void 오늘역대최저가_품목_조회() throws Exception {
+    Category category = Category.TOP;
+    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    String[] sorts = new String[]{"percent_desc", "percent_asc", "price_asc", "price_desc"};
+    for (String sort : sorts) {
+      when(priceService.findMinimumPriceProduct(eq(category), any(), eq(sort.replace("_", " "))))
+          .thenReturn(mock(Page.class));
+      mvc.perform(get(API + "minimum")
+          .param("category", category.getCategory())
+          .param("sort", sort))
+          .andExpect(status().isOk());
+      verify(priceService, times(1))
+          .findMinimumPriceProduct(eq(category), any(), eq(sort.replace("_", " ")));
+    }
+  }
 }

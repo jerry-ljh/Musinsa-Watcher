@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,13 @@ public class TodayDiscountProduct extends BaseTimeEntity {
   private float percent;
 
   private LocalDateTime modifiedDate;
+
+  @Builder
+  public TodayDiscountProduct(Product product, int discount, float percent,
+      LocalDateTime modifiedDate) {
+    this.product = product;
+    this.discount = discount;
+    this.percent = percent;
+    this.modifiedDate = modifiedDate;
+  }
 }

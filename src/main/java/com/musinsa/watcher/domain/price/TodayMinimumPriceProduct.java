@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +26,24 @@ public class TodayMinimumPriceProduct extends BaseTimeEntity {
   @JoinColumn(nullable = false, name = "product_id", referencedColumnName = "product_id")
   private Product product;
 
-  private int min_price;
+  private int minPrice;
 
-  private float avg_price;
+  private float avgPrice;
 
-  private int today_price;
+  private int todayPrice;
 
   private int count;
 
   private LocalDateTime modifiedDate;
+
+  @Builder
+  public TodayMinimumPriceProduct(Product product, int minPrice, float avgPrice, int todayPrice,
+      int count, LocalDateTime modifiedDate) {
+    this.product = product;
+    this.minPrice = minPrice;
+    this.avgPrice = avgPrice;
+    this.todayPrice = todayPrice;
+    this.count = count;
+    this.modifiedDate = modifiedDate;
+  }
 }

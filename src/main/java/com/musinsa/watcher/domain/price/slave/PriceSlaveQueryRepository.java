@@ -43,10 +43,10 @@ public class PriceSlaveQueryRepository {
       LocalDate localDate, Pageable pageable, String sort) {
     List<TodayMinimumPriceProduct> results = queryFactory
         .selectFrom(todayMinimumPriceProduct)
-        .where(todayMinimumPriceProduct.min_price.eq(todayMinimumPriceProduct.today_price)
-            .and(todayMinimumPriceProduct.avg_price.gt(todayMinimumPriceProduct.today_price))
+        .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
+            .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
             .and(todayMinimumPriceProduct.count.goe(5))
-            .and(todayMinimumPriceProduct.min_price.divide(todayMinimumPriceProduct.avg_price)
+            .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
             .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
@@ -67,10 +67,10 @@ public class PriceSlaveQueryRepository {
   public long countTodayMinimumPriceProducts(Category category, LocalDate localDate) {
     return queryFactory
         .selectFrom(todayMinimumPriceProduct)
-        .where(todayMinimumPriceProduct.min_price.eq(todayMinimumPriceProduct.today_price)
-            .and(todayMinimumPriceProduct.avg_price.gt(todayMinimumPriceProduct.today_price))
+        .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
+            .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
             .and(todayMinimumPriceProduct.count.goe(5))
-            .and(todayMinimumPriceProduct.min_price.divide(todayMinimumPriceProduct.avg_price)
+            .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
             .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
@@ -81,10 +81,10 @@ public class PriceSlaveQueryRepository {
 
   public Map<String, Integer> countMinimumPriceProductEachCategory(LocalDate localDate) {
     List<CountEachCategoryDto> results = queryFactory.from(todayMinimumPriceProduct)
-        .where(todayMinimumPriceProduct.min_price.eq(todayMinimumPriceProduct.today_price)
-            .and(todayMinimumPriceProduct.avg_price.gt(todayMinimumPriceProduct.today_price))
+        .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
+            .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
             .and(todayMinimumPriceProduct.count.goe(5))
-            .and(todayMinimumPriceProduct.min_price.divide(todayMinimumPriceProduct.avg_price)
+            .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
                 .loe(0.95))
             .and(todayMinimumPriceProduct.createdDate.after(localDate.atStartOfDay())))
         .innerJoin(todayMinimumPriceProduct.product)
@@ -138,7 +138,7 @@ public class PriceSlaveQueryRepository {
     return CountEachCategoryDto.toMap(results);
   }
 
-  private OrderSpecifier todayDiscountSort(String sort) {
+  OrderSpecifier todayDiscountSort(String sort) {
     if (sort.equals("percent desc") || sort.isEmpty()) {
       return todayDiscountProduct.percent.desc();
     }
@@ -154,12 +154,12 @@ public class PriceSlaveQueryRepository {
     throw new IllegalArgumentException("not allow sort column");
   }
 
-  private OrderSpecifier todayMinimumPriceSort(String sort) {
+  OrderSpecifier todayMinimumPriceSort(String sort) {
     if (sort.equals("percent desc") || sort.isEmpty()) {
-      return todayMinimumPriceProduct.min_price.divide(todayMinimumPriceProduct.avg_price).asc();
+      return todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice).asc();
     }
     if (sort.equals("percent asc")) {
-      return todayMinimumPriceProduct.min_price.divide(todayMinimumPriceProduct.avg_price).desc();
+      return todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice).desc();
     }
     if (sort.equals("price desc")) {
       return todayMinimumPriceProduct.product.realPrice.desc();
@@ -169,4 +169,5 @@ public class PriceSlaveQueryRepository {
     }
     throw new IllegalArgumentException("not allow sort column");
   }
+
 }

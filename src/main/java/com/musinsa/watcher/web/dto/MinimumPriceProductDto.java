@@ -21,8 +21,8 @@ public class MinimumPriceProductDto implements Serializable {
   public MinimumPriceProductDto(TodayMinimumPriceProduct entity) {
     this.productId = entity.getProduct().getProductId();
     this.productName = entity.getProduct().getProductName();
-    this.todayPrice = entity.getToday_price();
-    this.avgPrice = (int)entity.getAvg_price();
+    this.todayPrice = entity.getTodayPrice();
+    this.avgPrice = (int)entity.getAvgPrice();
     this.brand = entity.getProduct().getBrand();
     this.img = entity.getProduct().getImg();
     this.modifiedDate = entity.getProduct().getModifiedDate().toLocalDate();
