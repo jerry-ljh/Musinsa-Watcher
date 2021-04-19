@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "masterEntityManager", transactionManagerRef = "masterTransactionManager", basePackages = {
-    "com.musinsa.watcher.domain.product.master", "com.musinsa.watcher.domain.log.master"})
+    "com.musinsa.watcher.domain.product.master"})
 public class MasterDBConfig {
 
   private final Environment env;

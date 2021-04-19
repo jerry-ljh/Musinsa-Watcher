@@ -23,7 +23,7 @@ public class CacheService {
   public LocalDate updateCacheByDate() {
     LocalDateTime localDateTime = productRepository.findLastUpdatedDate();
     cacheManager.getCache(CACHE_NAME).putIfAbsent(DATE_KEY, localDateTime);
-    LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache("productCache")
+    LocalDateTime cachedLocalDateTime = (LocalDateTime) cacheManager.getCache(CACHE_NAME)
         .get(DATE_KEY).get();
     if (localDateTime.isAfter(cachedLocalDateTime)) {
       log.info(localDateTime.toString());
@@ -53,7 +53,6 @@ public class CacheService {
     } else {
       cache.clearLocalCache();
       log.info("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
-      SlackTarget.send("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
       return true;
     }
   }

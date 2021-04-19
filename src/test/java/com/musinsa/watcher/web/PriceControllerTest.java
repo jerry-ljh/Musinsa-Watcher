@@ -1,9 +1,7 @@
 package com.musinsa.watcher.web;
 
-import com.musinsa.watcher.config.LogInterceptor;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.PriceService;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -36,9 +34,6 @@ public class PriceControllerTest {
   @MockBean
   private PriceService priceService;
 
-  @MockBean
-  private LogInterceptor logInterceptor;
-
   private final String API = "/api/v1/product/";
 
   @Test
@@ -46,7 +41,6 @@ public class PriceControllerTest {
   public void 상품_상세정보_조회() throws Exception {
     int productId = 1234;
     Page<PriceResponseDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(priceService.findByProductId(eq(productId), any())).thenReturn(mockPage);
     mvc.perform(get(API + "price")
         .param("id", Integer.toString(productId)))
@@ -58,7 +52,6 @@ public class PriceControllerTest {
   @DisplayName("오늘 할인 품목을 조회한다")
   public void 오늘할인_품목_조회() throws Exception {
     Category category = Category.TOP;
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     String[] sorts = new String[]{"percent_desc", "percent_asc", "price_asc", "price_desc"};
     for (String sort : sorts) {
       when(priceService.findDiscountedProduct(eq(category), any(), eq(sort.replace("_", " "))))
@@ -76,7 +69,6 @@ public class PriceControllerTest {
   @DisplayName("오늘 역대 최저가 품목을 조회한다")
   public void 오늘역대최저가_품목_조회() throws Exception {
     Category category = Category.TOP;
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     String[] sorts = new String[]{"percent_desc", "percent_asc", "price_asc", "price_desc"};
     for (String sort : sorts) {
       when(priceService.findMinimumPriceProduct(eq(category), any(), eq(sort.replace("_", " "))))
