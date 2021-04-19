@@ -95,6 +95,8 @@ dependencies {
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.1.0.RELEASE")
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.projectlombok:lombok')
