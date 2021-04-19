@@ -37,9 +37,7 @@ public class ProductServiceTest {
   @DisplayName("카테고리 상품 조회")
   public void 카테고리조회() {
     //given
-    ProductService productService = new ProductService(productSlaveRepository,
-        productQuerySlaveRepository,
-        cacheService);
+    ProductService productService = new ProductService(productQuerySlaveRepository, cacheService);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
@@ -60,9 +58,7 @@ public class ProductServiceTest {
   @DisplayName("브랜드 상품 조회")
   public void 브랜드상품조회() {
     //given
-    ProductService productService = new ProductService(productSlaveRepository,
-        productQuerySlaveRepository,
-        cacheService);
+    ProductService productService = new ProductService(productQuerySlaveRepository, cacheService);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
@@ -79,9 +75,7 @@ public class ProductServiceTest {
   @DisplayName("검색 조회")
   public void 검색조회() {
     //given
-    ProductService productService = new ProductService(productSlaveRepository,
-        productQuerySlaveRepository,
-        cacheService);
+    ProductService productService = new ProductService(productQuerySlaveRepository, cacheService);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
@@ -101,9 +95,7 @@ public class ProductServiceTest {
   @DisplayName("브랜드 이니셜 조회")
   public void 브랜드이니셜조회() {
     //given
-    ProductService productService = new ProductService(productSlaveRepository,
-        productQuerySlaveRepository,
-        cacheService);
+    ProductService productService = new ProductService(productQuerySlaveRepository, cacheService);
     Initial initial = InitialWord.type1.getInitials();
     Map<String, Integer> map = mock(Map.class);
     when(productQuerySlaveRepository

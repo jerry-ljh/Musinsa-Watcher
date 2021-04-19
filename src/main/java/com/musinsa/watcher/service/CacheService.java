@@ -1,6 +1,7 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.config.cache.ChainedCache;
+import com.musinsa.watcher.domain.notify.SlackTarget;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class CacheService {
     } else {
       cache.clearLocalCache();
       log.info("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
+      SlackTarget.send("동기화를 위해 로컬 캐시 초기화가 되었습니다.");
       return true;
     }
   }

@@ -2,7 +2,6 @@ package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.web.Filter;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
-import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductService {
 
-  private final ProductSlaveRepository productSlaveRepository;
   private final ProductQuerySlaveRepository productQuerySlaveRepository;
   private final CacheService cacheService;
 
