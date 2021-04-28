@@ -53,20 +53,18 @@
                 <b-icon icon="sticky"></b-icon>
                 추가 쿠폰 :
                 {{numberToPrice(lastPrice.coupon)}}원</div>
-            <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
-                {{numberToPrice(minPrice)}}원</span><br/>
+            <span style="color:rgb(234 7 7)">최근 한달 평균가(쿠폰 포함) :
+                {{numberToPrice(getAvgPriceForMonth())}}원</span><br/>
             <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
                 {{numberToPrice(avgPrice)}}원</span><br/>
+            <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
+                {{numberToPrice(minPrice)}}원</span><br/>
             <span style="color:rgb(234 7 7)" v-if="order==100  && isTodayUpdated()">
                 <strong>오늘은 역대 최고가입니다.</strong>
             </span>
             <span style="color:rgb(234 7 7)" v-if="order==0  && isTodayUpdated()">
                 <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
-            </span>
-            <span
-                style="color:rgb(234 7 7) "
-                v-if="order!=0 &&order!=100 && isTodayUpdated()">오늘은 역대 상위
-                {{numberToPrice(order)}}%로 낮은 가격입니다.</span><br/>
+            </span><br/>
             <div>
                 <b-form-rating
                     id="rating-inline"
@@ -224,6 +222,21 @@
                 }
                 this.$refs.chart.renderChart(this.datacollection, this.options)
             },
+            getAvgPriceForMonth() {
+                var sum = 0;
+                var count = 0;
+                var end = this.prices.length
+                var updatedAtArr = this.updatedAt.split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2] - 30)
+                    for (var i = 0; i < end; i++) {
+                        if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
+                            continue;
+                        }
+                        sum += (this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
+                        count++
+                    }   
+                return Math.ceil(sum/count);
+            },
             numberToPrice(number) {
                 if (number == null) {
                     return number
@@ -234,7 +247,7 @@
                 if (list.length == 1) {
                     return list[0]
                 }
-                return Math.min.apply(null, list.slice(0, list.length - 1))
+                return Math.min.apply(null, list.slice(1, list.length))
             },
             computeAvg(list) {
                 if (list.length == 1) {
