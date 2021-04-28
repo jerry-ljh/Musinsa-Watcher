@@ -90,7 +90,7 @@
                     return;
                 }
                 axios
-                    .get('https://www.musinsa.cf/api/v1/search/brand', {
+                    .get('https://www.musinsa.info/api/v1/search/brand', {
                         params: {
                             "name": searchText
                         }
@@ -118,7 +118,7 @@
                 },
             findBrandList(typeNumber) {
                 axios
-                    .get('https://www.musinsa.cf/api/v1/search/brands', {
+                    .get('https://www.musinsa.info/api/v1/search/brands', {
                         params: {
                             "type": typeNumber
                         }

@@ -278,7 +278,7 @@
             },
             outbound(productId, href) {
                 axios
-                    .get('https://www.musinsa.cf/api/product/link', {
+                    .get('https://www.musinsa.info/api/product/link', {
                         params: {
                             'id': productId
                         }
@@ -292,7 +292,7 @@
         created() {
             let self = this;
             axios
-                .get('https://www.musinsa.cf/api/v1/product', {
+                .get('https://www.musinsa.info/api/v1/product', {
                     params: {
                         "id": this.$route.query.id
                     }

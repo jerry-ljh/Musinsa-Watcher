@@ -167,7 +167,7 @@
                 },
             findDiscountList() {
                 axios
-                    .get('https://www.musinsa.cf/api/v1/product/discount/list')
+                    .get('https://www.musinsa.info/api/v1/product/discount/list')
                     .then((response) => {
                         this.discountCategory = response.data
                     })
@@ -177,7 +177,7 @@
             },
             findMinimumList() {
                 axios
-                    .get('https://www.musinsa.cf/api/v1/product/minimum/list')
+                    .get('https://www.musinsa.info/api/v1/product/minimum/list')
                     .then((response) => {
                         this.minimumCategory = response.data
                     })
