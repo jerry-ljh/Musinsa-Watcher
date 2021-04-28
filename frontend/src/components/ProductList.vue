@@ -301,7 +301,7 @@
                 curSort: 'percent_desc',
                 curSortText: '',
                 filter_category: [],
-                API: "https://www.musinsa.cf/",
+                API: "https://www.musinsa.info/",
                 category_dict: {
                     top: '001',
                     outer: '002',
