@@ -1,10 +1,8 @@
 package com.musinsa.watcher.config.webparameter;
 
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.Filter;
+import com.musinsa.watcher.web.dto.Filter;
 import java.util.Arrays;
-import java.util.Iterator;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -12,7 +10,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-@Slf4j
 @Component
 public class ParameterHandler implements HandlerMethodArgumentResolver {
 
@@ -28,7 +25,7 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
 
   @Override
   public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
     String brand = webRequest.getParameter(Parameter.BRAND.getParameter());
     String category = webRequest.getParameter(Parameter.CATEGORY.getParameter());
     String minPrice = webRequest.getParameter(Parameter.MIN_PRICE.getParameter());

@@ -1,7 +1,7 @@
 package com.musinsa.watcher.domain.product.slave;
 
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.Filter;
+import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.domain.price.QPrice;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.QProduct;

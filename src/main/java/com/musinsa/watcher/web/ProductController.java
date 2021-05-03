@@ -6,6 +6,7 @@ import com.musinsa.watcher.config.webparameter.ParameterFilter;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.Map;
