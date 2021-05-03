@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -45,6 +46,7 @@ public class CacheService {
     return localDateTime.toLocalDate();
   }
 
+  @Scheduled(fixedRate = 5000)
   public boolean doSynchronize() {
     ChainedCache cache = (ChainedCache) cacheManager.getCache(CACHE_NAME);
     if (cache.isSynchronized(DATE_KEY)) {

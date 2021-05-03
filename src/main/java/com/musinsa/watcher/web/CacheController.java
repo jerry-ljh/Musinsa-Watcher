@@ -23,8 +23,4 @@ public class CacheController {
     return cacheService.getLastUpdatedDate().toString();
   }
 
-  @GetMapping("/api/v1/cache/sync")
-  public String sycnCache() {
-    return cacheService.doSynchronize() ? "동기화되었습니다." : "이미 동기화되었습니다.";
-  }
 }
