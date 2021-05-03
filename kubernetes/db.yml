@@ -57,4 +57,4 @@ spec:
             name: slave04.cnf
         - name: script
           configMap:
-            name: slave.sh
+            name: slaveDB.sh

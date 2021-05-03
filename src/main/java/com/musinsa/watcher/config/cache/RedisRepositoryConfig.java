@@ -1,4 +1,4 @@
-package com.musinsa.watcher.config;
+package com.musinsa.watcher.config.cache;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

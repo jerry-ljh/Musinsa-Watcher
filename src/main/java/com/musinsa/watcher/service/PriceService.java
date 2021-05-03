@@ -1,8 +1,7 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.price.Price;
-import com.musinsa.watcher.domain.price.slave.PriceSlaveQueryRepository;
-import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
+import com.musinsa.watcher.domain.price.PriceRepository;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.web.dto.DiscountedProductDto;
 import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
@@ -22,12 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PriceService {
 
-  private final PriceSlaveRepository priceSlaveRepository;
-  private final PriceSlaveQueryRepository priceSlaveQueryRepository;
+  private final PriceRepository priceRepository;
   private final CacheService cacheService;
 
   public Page<PriceResponseDto> findByProductId(int productId, Pageable pageable) {
-    Page<Price> page = priceSlaveRepository.findByProductId(productId, pageable);
+    Page<Price> page = priceRepository.findByProductId(productId, pageable);
     return new PageImpl<>(page.getContent()
         .stream()
         .map(PriceResponseDto::new)
@@ -37,26 +35,24 @@ public class PriceService {
   @Cacheable(value = "productCache", key = "'distcount'+#category+#pageable.pageNumber+#pageable.pageSize+#sort")
   public Page<DiscountedProductDto> findDiscountedProduct(Category category, Pageable pageable,
       String sort) {
-    return priceSlaveQueryRepository
+    return priceRepository
         .findTodayDiscountProducts(category, cacheService.getLastUpdatedDate(), pageable, sort);
   }
 
   @Cacheable(value = "productCache", key = "'distcount list'")
   public Map<String, Integer> countDiscountProductEachCategory() {
-    return priceSlaveQueryRepository
-        .countDiscountProductEachCategory(cacheService.getLastUpdatedDate());
+    return priceRepository.countDiscountProductEachCategory(cacheService.getLastUpdatedDate());
   }
 
   @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber+#pageable.pageSize+#sort")
   public Page<MinimumPriceProductDto> findMinimumPriceProduct(Category category, Pageable pageable,
       String sort) {
-    return priceSlaveQueryRepository
+    return priceRepository
         .findTodayMinimumPriceProducts(category, cacheService.getLastUpdatedDate(), pageable, sort);
   }
 
   @Cacheable(value = "productCache", key = "'minimum price list'")
   public Map<String, Integer> countMinimumPriceProductEachCategory() {
-    return priceSlaveQueryRepository
-        .countMinimumPriceProductEachCategory(cacheService.getLastUpdatedDate());
+    return priceRepository.countMinimumPriceProductEachCategory(cacheService.getLastUpdatedDate());
   }
 }

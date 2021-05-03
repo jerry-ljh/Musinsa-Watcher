@@ -22,22 +22,16 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 public class CacheConfig extends CachingConfigurerSupport {
 
   private final RedisConnectionFactory connectionFactory;
+  private final EhCacheManagerFactoryBean ehCacheManagerFactoryBean;
+
 
   @Bean
-  public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
-    EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-    ehCacheManagerFactoryBean.setConfigLocation(
-        new ClassPathResource("ehcache.xml"));
-    ehCacheManagerFactoryBean.setShared(true);
-    return ehCacheManagerFactoryBean;
-  }
-
-  @Bean
-  public EhCacheCacheManager localCacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
+  public CacheManager localCacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
     EhCacheCacheManager ehCacheCacheManager = new EhCacheCacheManager();
     ehCacheCacheManager.setCacheManager(ehCacheManagerFactoryBean.getObject());
     return ehCacheCacheManager;
   }
+
   @Bean
   public CacheManager globalCacheManager() {
     RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
@@ -50,6 +44,7 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Primary
   @Override
   public CacheManager cacheManager() {
-    return new ChainedCacheManager(localCacheManager(ehCacheManagerFactoryBean()), globalCacheManager());
+    return new ChainedCacheManager(localCacheManager(ehCacheManagerFactoryBean),
+        globalCacheManager());
   }
 }

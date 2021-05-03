@@ -1,6 +1,5 @@
 package com.musinsa.watcher.config;
 
-import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import redis.embedded.RedisServer;
 
-@Profile("local")
+@Profile({"local", "test"})
 @Configuration
 public class EmbeddedRedisConfig {
 
@@ -18,7 +17,7 @@ public class EmbeddedRedisConfig {
   private static RedisServer redisServer;
 
   @PostConstruct
-  public void redisServer() throws IOException {
+  public void redisServer() {
     if (redisServer == null) {
       redisServer = new RedisServer(redisPort);
       redisServer.start();

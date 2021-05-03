@@ -1,8 +1,6 @@
 package com.musinsa.watcher.config.cache;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +18,7 @@ public class ChainedCacheManager implements CacheManager {
     if (cacheManagers.length < 1) {
       throw new IllegalArgumentException();
     }
-    this.cacheManagers = Collections.unmodifiableList(Arrays.asList(cacheManagers));
+    this.cacheManagers = List.of(cacheManagers);
   }
 
   @Override

@@ -9,7 +9,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-@Slf4j
 @Component
 public class PageParameterHandler implements HandlerMethodArgumentResolver {
 
@@ -25,7 +24,7 @@ public class PageParameterHandler implements HandlerMethodArgumentResolver {
 
   @Override
   public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
     String page = webRequest.getParameter(Parameter.PAGE_NUM.getParameter());
     String pageSize = webRequest.getParameter(Parameter.PAGE_SIZE.getParameter());
     return PageRequest.of(page != null ? Integer.parseInt(page) : DEFAULT_PAGE_NUM,

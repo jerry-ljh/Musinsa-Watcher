@@ -1,10 +1,10 @@
 package com.musinsa.watcher.service;
 
-import com.musinsa.watcher.web.Filter;
-import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
-import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
+import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
+import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,36 +20,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductService {
 
-  private final ProductSlaveRepository productSlaveRepository;
-  private final ProductQuerySlaveRepository productQuerySlaveRepository;
+  private final ProductRepository productRepository;
   private final CacheService cacheService;
 
   public Page<ProductResponseDto> findByBrand(Filter filter, Pageable pageable) {
-    return productQuerySlaveRepository.findByBrand(filter, pageable);
+    return productRepository.findByBrand(filter, pageable);
   }
 
   public Map<String, Integer> searchBrand(String brand) {
-    return productQuerySlaveRepository.searchBrand(brand);
+    return productRepository.searchBrand(brand);
   }
 
-  @Cacheable(value = "productCache", key = "'category'+#filter.toString()+#pageable.pageNumber+#pageable.pageSize", condition = "#pageable.pageNumber==0")
+  @Cacheable(value = "productCache", key = "'category'+#filter.toString()+#pageable.pageNumber+#pageable.pageSize")
   public Page<ProductResponseDto> findByCategory(Filter filter, Pageable pageable) {
-    return productQuerySlaveRepository
-        .findByCategoryAndDate(filter, cacheService.getLastUpdatedDate(), pageable);
+    LocalDate lastUpdatedDate = cacheService.getLastUpdatedDate();
+    return productRepository.findByCategoryAndDate(filter, lastUpdatedDate, pageable);
   }
 
   public ProductWithPriceResponseDto findProductWithPrice(int productId) {
-    return new ProductWithPriceResponseDto(
-        productQuerySlaveRepository.findByProductIdWithPrice(productId));
+    return new ProductWithPriceResponseDto(productRepository.findByProductIdWithPrice(productId));
   }
 
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2")
   public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
-    return productQuerySlaveRepository.findBrandByInitial(initial1, initial2);
+    return productRepository.findBrandByInitial(initial1, initial2);
   }
 
   public Page<ProductResponseDto> searchItems(String text, Filter filter, Pageable pageable) {
-    return productQuerySlaveRepository.searchItems(text, filter, pageable);
+    return productRepository.searchItems(text, filter, pageable);
   }
 
 }

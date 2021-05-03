@@ -1,6 +1,5 @@
 package com.musinsa.watcher.web;
 
-import com.musinsa.watcher.config.LogInterceptor;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
@@ -41,9 +40,6 @@ public class ProductControllerTest {
   @MockBean
   private ProductService mockProductService;
 
-  @MockBean
-  private LogInterceptor logInterceptor;
-
   private final String API = "/api/v1/product/";
 
   @Test
@@ -51,7 +47,6 @@ public class ProductControllerTest {
   public void 브랜드_상품_리스트_조회() throws Exception {
     String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand")
         .param("brand", brandName))
@@ -62,9 +57,7 @@ public class ProductControllerTest {
   @Test(expected = Exception.class)
   @DisplayName("브랜드 상품 리스트를 조회할 때 brand 파라미터가 없으면 예외가 발생한다.")
   public void 브랜드_상품_리스트_조회_예외1() throws Exception {
-    String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand"))
         .andExpect(status().isOk());
@@ -76,7 +69,6 @@ public class ProductControllerTest {
   public void 브랜드_상품_리스트_조회_예외2() throws Exception {
     String brandName = "good brand";
     Page<ProductResponseDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByBrand(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "brand")
         .param("brand", ""))
@@ -90,7 +82,6 @@ public class ProductControllerTest {
     String type = "1";
     Map<String, Integer> map = new HashMap<>();
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
         .thenReturn(map);
     mvc.perform(get("/api/v1/search/brands")
@@ -103,7 +94,6 @@ public class ProductControllerTest {
   @Test
   @DisplayName("카테고리 상품 리스트 조회한다.")
   public void 카테고리별_상품_리스트_조회() throws Exception {
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     for (Category category : Category.values()) {
       when(mockProductService.findByCategory(any(), any())).thenReturn(mock(Page.class));
       mvc.perform(get(API + "list")
@@ -119,7 +109,6 @@ public class ProductControllerTest {
   public void 카테고리별_상품_리스트_조회_예외1() throws Exception {
     Page<ProductResponseDto> mockPage = mock(Page.class);
 
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "list"))
         .andExpect(status().isOk());
@@ -132,7 +121,6 @@ public class ProductControllerTest {
   public void 카테고리별_상품_리스트_조회_예외2() throws Exception {
     Page<ProductResponseDto> mockPage = mock(Page.class);
 
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findByCategory(any(), any())).thenReturn(mockPage);
     mvc.perform(get(API + "list")
         .param("category", ""))
@@ -146,7 +134,6 @@ public class ProductControllerTest {
   public void 검색_품목_조회() throws Exception {
     String topic = "셔츠";
     Page<ProductResponseDto> mockPage = mock(Page.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.searchItems(eq(topic), any(), any())).thenReturn(mockPage);
     mvc.perform(get("/api/v1/search")
         .param("topic", topic))
@@ -159,7 +146,6 @@ public class ProductControllerTest {
   public void 품목_상세_정보_조회() throws Exception {
     int productId = 1;
     ProductWithPriceResponseDto mockDto = mock(ProductWithPriceResponseDto.class);
-    when(logInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     when(mockProductService.findProductWithPrice(eq(productId))).thenReturn(mockDto);
     mvc.perform(get(API)
         .param("id", Integer.toString(productId)))
