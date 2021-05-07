@@ -1,4 +1,4 @@
-FROM java:11
+FROM adoptopenjdk/openjdk11:latest
 
 MAINTAINER JunHyeok Lee <j005580@naver.com>
 
