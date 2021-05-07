@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:11
 
 MAINTAINER JunHyeok Lee <j005580@naver.com>
 
