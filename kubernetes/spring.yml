@@ -19,7 +19,7 @@ spec:
           image: j005580/musinsa-watcher
           livenessProbe:
             httpGet:
-              path: /api/v1/cache/sync
+              path: /api/profile
               port: 8081
             initialDelaySeconds: 60
             timeoutSeconds: 5
@@ -27,7 +27,7 @@ spec:
             failureThreshold: 5
           readinessProbe:
             httpGet:
-              path: /api/v1/cache/sync
+              path: /api/profile
               port: 8081
             initialDelaySeconds: 60
             timeoutSeconds: 5
