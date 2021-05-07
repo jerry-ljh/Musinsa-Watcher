@@ -23,7 +23,7 @@ public class DiscountedProductDto implements Serializable {
     this.price = entity.getProduct().getRealPrice();
     this.brand = entity.getProduct().getBrand();
     this.img = entity.getProduct().getImg();
-    this.modifiedDate = entity.getCreatedDate().toLocalDate();
+    this.modifiedDate = entity.getModifiedDate().toLocalDate();
     this.discount = entity.getDiscount();
     this.percent = entity.getPercent();
   }
