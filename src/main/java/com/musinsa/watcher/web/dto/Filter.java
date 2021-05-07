@@ -1,4 +1,4 @@
-package com.musinsa.watcher.web;
+package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.config.webparameter.Parameter;
 import com.musinsa.watcher.domain.product.Category;

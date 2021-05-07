@@ -32,7 +32,6 @@ public class PriceController {
         .findByProductId(id, PageRequest.of(0, count, Sort.by("createdDate").descending()));
   }
 
-
   @GetMapping("/api/v1/product/discount")
   public Page<DiscountedProductDto> findDiscountedProduct(
       String category,

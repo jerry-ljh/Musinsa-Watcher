@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.musinsa.watcher.config.cache.ChainedCache;
+import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,9 +27,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CacheServiceTest {
 
   @Mock
-  CacheManager cacheManager;
+  private CacheManager cacheManager;
   @Mock
-  ProductQuerySlaveRepository productRepository;
+  private ProductRepository productRepository;
 
   public final String DATE_KEY = "current date";
 

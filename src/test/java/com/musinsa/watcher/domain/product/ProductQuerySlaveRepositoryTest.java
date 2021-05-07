@@ -3,7 +3,7 @@ package com.musinsa.watcher.domain.product;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.musinsa.watcher.web.Filter;
+import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;

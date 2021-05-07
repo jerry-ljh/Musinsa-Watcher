@@ -4,8 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-kubernetes/kubeconfig-2523.yaml
-kubernetes/db2.yml
 kubernetes/configmap.yml
 src/main/resources/application-real1.properties
 src/main/resources/application-real2.properties

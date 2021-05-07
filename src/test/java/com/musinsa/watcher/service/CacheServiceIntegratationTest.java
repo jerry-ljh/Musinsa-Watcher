@@ -1,6 +1,7 @@
 package com.musinsa.watcher.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
 import com.musinsa.watcher.domain.product.Product;
@@ -105,7 +106,7 @@ public class CacheServiceIntegratationTest {
         .get("current date").get();
 
     //then
-    assertEquals(cachedLocalDateTime, localDateTime2);
+    assertNotEquals(cachedLocalDateTime, localDateTime1);
   }
 
   @Test
