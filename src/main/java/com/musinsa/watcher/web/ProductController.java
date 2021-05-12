@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@EnableCaching
 @CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
@@ -68,4 +67,13 @@ public class ProductController {
   public void outboundLog() {
   }
 
+  @GetMapping("/api/v1/product/cache/last-modified")
+  public String updateDate() {
+    return productService.getCachedLastUpdatedDateTime().toString();
+  }
+
+  @GetMapping("/api/v1/product/last-modified")
+  public void updateCacheByDate() {
+    productService.clearCacheIfOld(productService.getLastUpdatedDateTime(), productService.getCachedLastUpdatedDateTime());
+  }
 }

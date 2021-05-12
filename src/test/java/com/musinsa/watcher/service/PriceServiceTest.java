@@ -33,12 +33,12 @@ public class PriceServiceTest {
   @Mock
   private PriceRepository priceRepository;
   @Mock
-  private CacheService cacheService;
+  private ProductService productService;
 
   @Test
   @DisplayName("가격 데이터를 조회한다.")
   public void 가격을_조회한다() {
-    PriceService priceService = new PriceService(priceRepository, cacheService);
+    PriceService priceService = new PriceService(priceRepository, productService);
     int product_id = 1;
     Page mockPage = mock(Page.class);
     Pageable pageable = mock(Pageable.class);
@@ -56,45 +56,43 @@ public class PriceServiceTest {
   @DisplayName("오늘 할인 폭이 큰 상품 조회")
   public void 오늘할인() {
     //given
-    PriceService priceService = new PriceService(priceRepository, cacheService);
-    LocalDate mockLocalDate = mock(LocalDate.class);
+    PriceService priceService = new PriceService(priceRepository, productService);
+    LocalDateTime localDateTime = LocalDateTime.now();
     Pageable pageable = mock(Pageable.class);
     String sort = "price_desc";
     Page<DiscountedProductDto> results = mock(Page.class);
     Category category = Category.BAG;
-    when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
+    when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     when(priceRepository.findTodayDiscountProducts(eq(category),
-        eq(mockLocalDate), eq(pageable), eq(sort))).thenReturn(results);
+        eq(localDateTime.toLocalDate()), eq(pageable), eq(sort))).thenReturn(results);
     //when
     priceService.findDiscountedProduct(category, pageable, sort);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(productService, times(1)).getCachedLastUpdatedDateTime();
 
     verify(priceRepository, times(1))
-        .findTodayDiscountProducts(eq(category), eq(mockLocalDate), eq(pageable), eq(sort));
+        .findTodayDiscountProducts(eq(category), eq(localDateTime.toLocalDate()), eq(pageable), eq(sort));
   }
 
   @Test
   @DisplayName("오늘 역대 최저가 상품 조회")
   public void 오늘최저가() {
     //given
-    PriceService priceService = new PriceService(priceRepository, cacheService);
-    LocalDateTime mockLocalDateTime = mock(LocalDateTime.class);
-    LocalDate mockLocalDate = mock(LocalDate.class);
+    PriceService priceService = new PriceService(priceRepository, productService);
+    LocalDateTime localDateTime = LocalDateTime.now();
     Pageable pageable = mock(Pageable.class);
     String sort = "price_desc";
     Page<MinimumPriceProductDto> results = mock(Page.class);
     Category category = Category.SNEAKERS;
-    when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
-    when(mockLocalDateTime.toLocalDate()).thenReturn(mockLocalDate);
+    when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     when(priceRepository.findTodayMinimumPriceProducts(eq(category),
-        eq(mockLocalDate), eq(pageable), eq(sort))).thenReturn(results);
+        eq(localDateTime.toLocalDate()), eq(pageable), eq(sort))).thenReturn(results);
     //when
     priceService.findMinimumPriceProduct(category, pageable, sort);
     //then
-    verify(cacheService, times(1)).getLastUpdatedDate();
+    verify(productService, times(1)).getCachedLastUpdatedDateTime();
     verify(priceRepository, times(1))
-        .findTodayMinimumPriceProducts(eq(category), eq(mockLocalDate), eq(pageable), eq(sort));
+        .findTodayMinimumPriceProducts(eq(category), eq(localDateTime.toLocalDate()), eq(pageable), eq(sort));
   }
 
 
@@ -102,16 +100,15 @@ public class PriceServiceTest {
   @DisplayName("오늘 할인 품목 수를 조회한다")
   public void 오늘할인_품목_수_조회() {
     //given
-    PriceService priceService = new PriceService(priceRepository, cacheService);
-    LocalDate localDate = mock(LocalDate.class);
-    List<Object[]> list = mock(List.class);
+    PriceService priceService = new PriceService(priceRepository, productService);
+    LocalDateTime localDateTime = LocalDateTime.now();
     Map<String, Integer> map = mock(Map.class);
-    when(priceRepository.countDiscountProductEachCategory(localDate)).thenReturn(map);
-    when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
+    when(priceRepository.countDiscountProductEachCategory(localDateTime.toLocalDate())).thenReturn(map);
+    when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     //when
     Map<String, Integer> resultMap = priceService.countDiscountProductEachCategory();
     //then
-    verify(priceRepository, times(1)).countDiscountProductEachCategory(localDate);
+    verify(priceRepository, times(1)).countDiscountProductEachCategory(localDateTime.toLocalDate());
     assertEquals(resultMap, map);
   }
 
@@ -119,15 +116,15 @@ public class PriceServiceTest {
   @DisplayName("오늘 역대 최저가 품목 수를 조회한다")
   public void 오늘_역대_최저가_품목_수_조회() {
     //given
-    PriceService priceService = new PriceService(priceRepository, cacheService);
-    LocalDate localDate = mock(LocalDate.class);
+    PriceService priceService = new PriceService(priceRepository, productService);
+    LocalDateTime localDateTime = LocalDateTime.now();
     Map<String, Integer> map = mock(Map.class);
-    when(priceRepository.countMinimumPriceProductEachCategory(localDate)).thenReturn(map);
-    when(cacheService.getLastUpdatedDate()).thenReturn(localDate);
+    when(priceRepository.countMinimumPriceProductEachCategory(localDateTime.toLocalDate())).thenReturn(map);
+    when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     //when
     Map<String, Integer> resultMap = priceService.countMinimumPriceProductEachCategory();
     //then
-    verify(priceRepository, times(1)).countMinimumPriceProductEachCategory(localDate);
+    verify(priceRepository, times(1)).countMinimumPriceProductEachCategory(localDateTime.toLocalDate());
     assertEquals(resultMap, map);
   }
 }

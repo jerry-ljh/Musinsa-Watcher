@@ -13,6 +13,7 @@ import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -27,27 +28,25 @@ public class ProductServiceTest {
 
   @Mock
   private ProductRepository productRepository;
-  @Mock
-  private CacheService cacheService;
 
   @Test
   @DisplayName("카테고리 상품 조회")
   public void 카테고리조회() {
     //given
-    ProductService productService = new ProductService(productRepository, cacheService);
+    ProductService productService = new ProductService(productRepository);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
-    LocalDate mockLocalDate = mock(LocalDate.class);
-    when(cacheService.getLastUpdatedDate()).thenReturn(mockLocalDate);
+    LocalDateTime localDateTime = LocalDateTime.now();
+    when(productRepository.findCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     when(productRepository
-        .findByCategoryAndDate(eq(filter), eq(mockLocalDate), eq(pageable)))
+        .findByCategoryAndDate(eq(filter), eq(localDateTime.toLocalDate()), eq(pageable)))
         .thenReturn(mockPage);
     //when
     Page<ProductResponseDto> page = productService.findByCategory(filter, pageable);
     //then
     verify(productRepository, times(1))
-        .findByCategoryAndDate(eq(filter), eq(mockLocalDate), eq(pageable));
+        .findByCategoryAndDate(eq(filter), eq(localDateTime.toLocalDate()), eq(pageable));
     assertEquals(page, mockPage);
   }
 
@@ -55,7 +54,7 @@ public class ProductServiceTest {
   @DisplayName("브랜드 상품 조회")
   public void 브랜드상품조회() {
     //given
-    ProductService productService = new ProductService(productRepository, cacheService);
+    ProductService productService = new ProductService(productRepository);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
@@ -72,7 +71,7 @@ public class ProductServiceTest {
   @DisplayName("검색 조회")
   public void 검색조회() {
     //given
-    ProductService productService = new ProductService(productRepository, cacheService);
+    ProductService productService = new ProductService(productRepository);
     Page<ProductResponseDto> mockPage = mock(Page.class);
     Filter filter = mock(Filter.class);
     Pageable pageable = mock(Pageable.class);
@@ -92,7 +91,7 @@ public class ProductServiceTest {
   @DisplayName("브랜드 이니셜 조회")
   public void 브랜드이니셜조회() {
     //given
-    ProductService productService = new ProductService(productRepository, cacheService);
+    ProductService productService = new ProductService(productRepository);
     Initial initial = InitialWord.type1.getInitials();
     Map<String, Integer> map = mock(Map.class);
     when(productRepository

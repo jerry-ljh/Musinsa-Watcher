@@ -5,9 +5,12 @@ import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
   private final ProductRepository productRepository;
-  private final CacheService cacheService;
 
   public Page<ProductResponseDto> findByBrand(Filter filter, Pageable pageable) {
     return productRepository.findByBrand(filter, pageable);
@@ -33,7 +35,7 @@ public class ProductService {
 
   @Cacheable(value = "productCache", key = "'category'+#filter.toString()+#pageable.pageNumber+#pageable.pageSize")
   public Page<ProductResponseDto> findByCategory(Filter filter, Pageable pageable) {
-    LocalDate lastUpdatedDate = cacheService.getLastUpdatedDate();
+    LocalDate lastUpdatedDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return productRepository.findByCategoryAndDate(filter, lastUpdatedDate, pageable);
   }
 
@@ -48,6 +50,19 @@ public class ProductService {
 
   public Page<ProductResponseDto> searchItems(String text, Filter filter, Pageable pageable) {
     return productRepository.searchItems(text, filter, pageable);
+  }
+
+  public LocalDateTime getLastUpdatedDateTime() {
+    return productRepository.findLastUpdatedDate();
+  }
+
+  public LocalDateTime getCachedLastUpdatedDateTime() {
+    return productRepository.findCachedLastUpdatedDateTime();
+  }
+
+  @CacheEvict(value = "productCache", condition = "#lastUpdatedDateTime.isAfter(#cachedDateTime)", allEntries = true)
+  public void clearCacheIfOld(LocalDateTime lastUpdatedDateTime, LocalDateTime cachedDateTime) {
+    log.debug(lastUpdatedDateTime.isAfter(cachedDateTime) + "");
   }
 
 }

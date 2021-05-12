@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -57,6 +58,11 @@ public class ProductRepository {
 
   public LocalDateTime findLastUpdatedDate() {
     return productQuerySlaveRepository.findLastUpdatedDate();
+  }
+
+  @Cacheable(value = "productCache", key = "'current date'")
+  public LocalDateTime findCachedLastUpdatedDateTime() {
+    return findLastUpdatedDate();
   }
 
   public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
