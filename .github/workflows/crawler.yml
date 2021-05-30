@@ -1,0 +1,66 @@
+name: crawler
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: crawler
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./crawler/requirements.txt
+
+      - name: crawling
+        env:
+          AWS_RDS_DB: ${{secrets.AWS_RDS_DB}}
+          AWS_RDS_HOST: ${{secrets.AWS_RDS_HOST}}
+          AWS_RDS_PASSWD: ${{secrets.AWS_RDS_PASSWD}}
+          AWS_RDS_PORT: ${{secrets.AWS_RDS_PORT}}
+          AWS_RDS_USER: ${{secrets.AWS_RDS_USER}}
+        run: |
+          python3 ./crawler/crawling.py
+
+      - name: batch
+        env:
+          AWS_RDS_DB: ${{secrets.AWS_RDS_DB}}
+          AWS_RDS_HOST: ${{secrets.AWS_RDS_HOST}}
+          AWS_RDS_PASSWD: ${{secrets.AWS_RDS_PASSWD}}
+          AWS_RDS_PORT: ${{secrets.AWS_RDS_PORT}}
+          AWS_RDS_USER: ${{secrets.AWS_RDS_USER}}
+        run: |
+          python3 ./crawler/batch.py
+
+      - name: clear cache
+        run: |
+          curl https://www.musinsa.info/api/v1/product/last-modified
+
+      - name: action-slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              username: 'action-slack',
+              icon_emoji: ':octocat:',
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} succeeded in ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_URL }}
+        if: ${{ always() }}

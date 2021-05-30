@@ -1,0 +1,4 @@
+beautifulsoup4==4.9.3
+PyMySQL==0.10.1
+requests==2.25.0
+pytz==2020.4
