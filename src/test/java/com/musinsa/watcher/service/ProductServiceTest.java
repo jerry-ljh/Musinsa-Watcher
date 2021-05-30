@@ -7,13 +7,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
+import com.musinsa.watcher.web.dto.ProductCountMapByBrandDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -84,26 +87,6 @@ public class ProductServiceTest {
     verify(productRepository, times(1))
         .searchItems(eq(topic), eq(filter), eq(pageable));
     assertEquals(page, mockPage);
-
-  }
-
-  @Test
-  @DisplayName("브랜드 이니셜 조회")
-  public void 브랜드이니셜조회() {
-    //given
-    ProductService productService = new ProductService(productRepository);
-    Initial initial = InitialWord.type1.getInitials();
-    Map<String, Integer> map = mock(Map.class);
-    when(productRepository
-        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
-        .thenReturn(map);
-    //when
-    Map<String, Integer> resultMap = productService
-        .findBrandByInitial(initial.getSTART(), initial.getEND());
-    //then
-    verify(productRepository, times(1))
-        .findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND()));
-    assertEquals(resultMap, map);
   }
 
 }

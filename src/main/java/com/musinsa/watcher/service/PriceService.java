@@ -3,11 +3,11 @@ package com.musinsa.watcher.service;
 import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.price.PriceRepository;
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
+import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
+import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +34,7 @@ public class PriceService {
   }
 
   @Cacheable(value = "productCache", key = "'distcount'+#category+#pageable.pageNumber+#pageable.pageSize+#sort")
-  public Page<DiscountedProductDto> findDiscountedProduct(Category category, Pageable pageable,
+  public Page<TodayDiscountedProductDto> findDiscountedProduct(Category category, Pageable pageable,
       String sort) {
     LocalDate cachedLastUpdatedDate = productService.getCachedLastUpdatedDateTime().toLocalDate();
     return priceRepository
@@ -42,13 +42,14 @@ public class PriceService {
   }
 
   @Cacheable(value = "productCache", key = "'distcount list'")
-  public Map<String, Integer> countDiscountProductEachCategory() {
+  public ProductCountMapByCategoryDto countDiscountProductEachCategory() {
     LocalDate cachedLastUpdatedDate = productService.getCachedLastUpdatedDateTime().toLocalDate();
-    return priceRepository.countDiscountProductEachCategory(cachedLastUpdatedDate);
+    return new ProductCountMapByCategoryDto(
+        priceRepository.countDiscountProductEachCategory(cachedLastUpdatedDate));
   }
 
   @Cacheable(value = "productCache", key = "'minimum'+#category+#pageable.pageNumber+#pageable.pageSize+#sort")
-  public Page<MinimumPriceProductDto> findMinimumPriceProduct(Category category, Pageable pageable,
+  public Page<TodayMinimumPriceProductDto> findMinimumPriceProduct(Category category, Pageable pageable,
       String sort) {
     LocalDate cachedLastUpdatedDate = productService.getCachedLastUpdatedDateTime().toLocalDate();
     return priceRepository
@@ -56,8 +57,9 @@ public class PriceService {
   }
 
   @Cacheable(value = "productCache", key = "'minimum price list'")
-  public Map<String, Integer> countMinimumPriceProductEachCategory() {
+  public ProductCountMapByCategoryDto countMinimumPriceProductEachCategory() {
     LocalDate cachedLastUpdatedDate = productService.getCachedLastUpdatedDateTime().toLocalDate();
-    return priceRepository.countMinimumPriceProductEachCategory(cachedLastUpdatedDate);
+    return new ProductCountMapByCategoryDto(
+        priceRepository.countMinimumPriceProductEachCategory(cachedLastUpdatedDate));
   }
 }

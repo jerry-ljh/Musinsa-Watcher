@@ -4,6 +4,7 @@ import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.ProductCountMapByBrandDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.util.HashMap;
@@ -80,10 +81,9 @@ public class ProductControllerTest {
   @DisplayName("브랜드 초성 조회한다.")
   public void 브랜드_초성_조회() throws Exception {
     String type = "1";
-    Map<String, Integer> map = new HashMap<>();
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
     when(mockProductService.findBrandByInitial(eq(initial.getSTART()), eq(initial.getEND())))
-        .thenReturn(map);
+        .thenReturn(mock(ProductCountMapByBrandDto.class));
     mvc.perform(get("/api/v1/search/brands")
         .param("type", type))
         .andExpect(status().isOk());

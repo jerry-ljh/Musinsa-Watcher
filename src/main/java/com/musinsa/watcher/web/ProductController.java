@@ -6,13 +6,12 @@ import com.musinsa.watcher.config.webparameter.ParameterFilter;
 import com.musinsa.watcher.domain.product.Initial;
 import com.musinsa.watcher.domain.product.InitialWord;
 import com.musinsa.watcher.service.ProductService;
+import com.musinsa.watcher.web.dto.ProductCountMapByBrandDto;
 import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,14 +28,13 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping("/api/v1/search/brands")
-  public Map<String, Integer> findBrandByInitial(String type) {
+  public ProductCountMapByBrandDto findBrandByInitial(String type) {
     Initial initial = InitialWord.valueOf(InitialWord.getType(type)).getInitials();
-    return productService
-        .findBrandByInitial(initial.getSTART(), initial.getEND());
+    return productService.findBrandByInitial(initial.getSTART(), initial.getEND());
   }
 
   @GetMapping("/api/v1/search/brand")
-  public Map<String, Integer> findBrand(String name) {
+  public ProductCountMapByBrandDto findBrand(String name) {
     return productService.searchBrand(name);
   }
 
@@ -74,6 +72,7 @@ public class ProductController {
 
   @GetMapping("/api/v1/product/last-modified")
   public void updateCacheByDate() {
-    productService.clearCacheIfOld(productService.getLastUpdatedDateTime(), productService.getCachedLastUpdatedDateTime());
+    productService.clearCacheIfOld(productService.getLastUpdatedDateTime(),
+        productService.getCachedLastUpdatedDateTime());
   }
 }

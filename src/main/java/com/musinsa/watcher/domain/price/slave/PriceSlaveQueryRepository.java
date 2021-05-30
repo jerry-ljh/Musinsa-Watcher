@@ -6,15 +6,14 @@ import static com.musinsa.watcher.domain.price.QTodayMinimumPriceProduct.todayMi
 import com.musinsa.watcher.domain.price.TodayDiscountProduct;
 import com.musinsa.watcher.domain.price.TodayMinimumPriceProduct;
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
-import com.musinsa.watcher.web.dto.CountEachCategoryDto;
+import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
+import com.musinsa.watcher.domain.price.dto.ProductCountByCategoryDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class PriceSlaveQueryRepository {
     return applicationContext.getBean(this.getClass());
   }
 
-  public Page<MinimumPriceProductDto> findTodayMinimumPriceProducts(Category category,
+  public Page<TodayMinimumPriceProductDto> findTodayMinimumPriceProducts(Category category,
       LocalDate localDate, Pageable pageable, String sort) {
     List<TodayMinimumPriceProduct> results = queryFactory
         .selectFrom(todayMinimumPriceProduct)
@@ -58,7 +57,7 @@ public class PriceSlaveQueryRepository {
         .fetch();
     return new PageImpl<>(results
         .stream()
-        .map(MinimumPriceProductDto::new)
+        .map(TodayMinimumPriceProductDto::new)
         .collect(Collectors.toList()), pageable,
         this.getSpringProxy().countTodayMinimumPriceProducts(category, localDate));
   }
@@ -79,8 +78,8 @@ public class PriceSlaveQueryRepository {
         .fetchCount();
   }
 
-  public Map<String, Integer> countMinimumPriceProductEachCategory(LocalDate localDate) {
-    List<CountEachCategoryDto> results = queryFactory.from(todayMinimumPriceProduct)
+  public List<ProductCountByCategoryDto> countMinimumPriceProductEachCategory(LocalDate localDate) {
+    return queryFactory.from(todayMinimumPriceProduct)
         .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
             .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
             .and(todayMinimumPriceProduct.count.goe(5))
@@ -90,14 +89,12 @@ public class PriceSlaveQueryRepository {
         .innerJoin(todayMinimumPriceProduct.product)
         .groupBy(todayMinimumPriceProduct.product.category)
         .select(Projections
-            .constructor(CountEachCategoryDto.class, todayMinimumPriceProduct.product.category,
+            .constructor(ProductCountByCategoryDto.class, todayMinimumPriceProduct.product.category,
                 todayMinimumPriceProduct.product.count().as("count")))
         .fetch();
-    return CountEachCategoryDto.toMap(results);
   }
 
-
-  public Page<DiscountedProductDto> findTodayDiscountProducts(Category category,
+  public Page<TodayDiscountedProductDto> findTodayDiscountProducts(Category category,
       LocalDate localDate, Pageable pageable, String sort) {
     List<TodayDiscountProduct> results = queryFactory
         .selectFrom(todayDiscountProduct)
@@ -111,7 +108,7 @@ public class PriceSlaveQueryRepository {
         .fetch();
     return new PageImpl<>(results
         .stream()
-        .map(DiscountedProductDto::new)
+        .map(TodayDiscountedProductDto::new)
         .collect(Collectors.toList()), pageable,
         this.getSpringProxy().countTodayDiscountProducts(category, localDate));
   }
@@ -126,16 +123,15 @@ public class PriceSlaveQueryRepository {
         .fetchCount();
   }
 
-  public Map<String, Integer> countDiscountProductEachCategory(LocalDate localDate) {
-    List<CountEachCategoryDto> results = queryFactory.from(todayDiscountProduct)
+  public List<ProductCountByCategoryDto> countDiscountProductEachCategory(LocalDate localDate) {
+    return queryFactory.from(todayDiscountProduct)
         .where(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay()))
         .innerJoin(todayDiscountProduct.product)
         .groupBy(todayDiscountProduct.product.category)
         .select(Projections
-            .constructor(CountEachCategoryDto.class, todayDiscountProduct.product.category,
+            .constructor(ProductCountByCategoryDto.class, todayDiscountProduct.product.category,
                 todayDiscountProduct.product.count().as("count")))
         .fetch();
-    return CountEachCategoryDto.toMap(results);
   }
 
   OrderSpecifier todayDiscountSort(String sort) {

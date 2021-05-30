@@ -3,10 +3,10 @@ package com.musinsa.watcher.web;
 import com.musinsa.watcher.config.webparameter.PageParameter;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.PriceService;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
+import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
-import java.util.Map;
+import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,7 @@ public class PriceController {
   }
 
   @GetMapping("/api/v1/product/discount")
-  public Page<DiscountedProductDto> findDiscountedProduct(
+  public Page<TodayDiscountedProductDto> findDiscountedProduct(
       String category,
       @PageParameter PageRequest pageRequest,
       @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
@@ -42,7 +42,7 @@ public class PriceController {
   }
 
   @GetMapping("/api/v1/product/minimum")
-  public Page<MinimumPriceProductDto> findMinimumPriceProduct(
+  public Page<TodayMinimumPriceProductDto> findMinimumPriceProduct(
       @PageParameter PageRequest pageRequest,
       String category,
       @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
@@ -51,12 +51,12 @@ public class PriceController {
   }
 
   @GetMapping("/api/v1/product/discount/list")
-  public Map<String, Integer> findDiscountedProduct() {
+  public ProductCountMapByCategoryDto findDiscountedProduct() {
     return priceService.countDiscountProductEachCategory();
   }
 
   @GetMapping("/api/v1/product/minimum/list")
-  public Map<String, Integer> findMinimumPriceProduct() {
+  public ProductCountMapByCategoryDto findMinimumPriceProduct() {
     return priceService.countMinimumPriceProductEachCategory();
   }
 }

@@ -4,13 +4,17 @@ import static org.junit.Assert.*;
 
 import com.musinsa.watcher.domain.price.TodayDiscountProduct;
 import com.musinsa.watcher.domain.price.TodayMinimumPriceProduct;
+import com.musinsa.watcher.domain.price.dto.ProductCountByCategoryDto;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Product;
+import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
+import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
+import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
@@ -33,6 +37,8 @@ public class PriceSlaveQueryRepositoryTest {
   @Autowired
   private ProductSlaveRepository productSlaveRepository;
   @Autowired
+  private ProductRepository productRepository;
+  @Autowired
   private TodayDiscountProductRepository todayDiscountProductRepository;
   @Autowired
   private TodayMinimumPriceRepository todayMinimumPriceRepository;
@@ -50,7 +56,7 @@ public class PriceSlaveQueryRepositoryTest {
     //given
     saveTodayDiscountProduct();
     //when
-    Page<DiscountedProductDto> result = priceSlaveQueryRepository
+    Page<TodayDiscountedProductDto> result = priceSlaveQueryRepository
         .findTodayDiscountProducts(Category.TOP, LocalDate.now(), PageRequest.of(0, 10),
             "percent desc");
     //then
@@ -63,13 +69,15 @@ public class PriceSlaveQueryRepositoryTest {
     //given
     saveTodayDiscountProduct();
     //when
-    Map<String, Integer> result = priceSlaveQueryRepository
+    List<ProductCountByCategoryDto> result = priceSlaveQueryRepository
         .countDiscountProductEachCategory(LocalDate.now());
+
     //then
-    assertEquals(result.keySet().size(), 3);
-    assertEquals((int) result.get(Category.TOP.getCategory()), 1);
-    assertEquals((int) result.get(Category.BAG.getCategory()), 1);
-    assertEquals((int) result.get(Category.SKIRTS.getCategory()), 1);
+    ProductCountMapByCategoryDto resultMap = new ProductCountMapByCategoryDto(result);;
+    assertEquals(resultMap.getCategoryProductMap().keySet().size(), 3);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.TOP.getCategory()), 1);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.BAG.getCategory()), 1);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.SKIRTS.getCategory()), 1);
   }
 
   @Test
@@ -78,7 +86,7 @@ public class PriceSlaveQueryRepositoryTest {
     //given
     saveTodayMinimumPriceProduct();
     //when
-    Page<MinimumPriceProductDto> result = priceSlaveQueryRepository
+    Page<TodayMinimumPriceProductDto> result = priceSlaveQueryRepository
         .findTodayMinimumPriceProducts(Category.TOP, LocalDate.now(), PageRequest.of(0, 10),
             "percent desc");
     //then
@@ -89,34 +97,33 @@ public class PriceSlaveQueryRepositoryTest {
   @Test
   @DisplayName("오늘 역대 최저가 상품의 카테고리별 수를 카운팅한다.")
   public void 오늘역대최저가상품을_카테고리별로_카운트한다() {
-    //given
     saveTodayMinimumPriceProduct();
-    //when
-    Map<String, Integer> result = priceSlaveQueryRepository
+
+    List<ProductCountByCategoryDto> result = priceSlaveQueryRepository
         .countMinimumPriceProductEachCategory(LocalDate.now());
-    //then
-    assertEquals(result.keySet().size(), 3);
-    assertEquals((int) result.get(Category.TOP.getCategory()), 1);
-    assertEquals((int) result.get(Category.BAG.getCategory()), 1);
-    assertEquals((int) result.get(Category.SKIRTS.getCategory()), 1);
+
+    ProductCountMapByCategoryDto resultMap = new ProductCountMapByCategoryDto(result);
+    assertEquals(resultMap.getCategoryProductMap().keySet().size(), 3);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.TOP.getCategory()), 1);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.BAG.getCategory()), 1);
+    assertEquals((int) resultMap.getCategoryProductMap().get(Category.SKIRTS.getCategory()), 1);
   }
 
   @Test
   @DisplayName("input에 따라 결과가 정렬된다.")
   public void input에_따라_결과가_정렬된다() {
-    //given
     String[] sorts = new String[]{"percent desc", "percent asc", "price asc", "price desc"};
     saveTodayDiscountProductForTopCategory();
     saveTodayMinimumPriceProductForTopCategory();
+
     for (String sort : sorts) {
-      //when
-      Page<DiscountedProductDto> discountResult = priceSlaveQueryRepository
+      Page<TodayDiscountedProductDto> discountResult = priceSlaveQueryRepository
           .findTodayDiscountProducts(Category.TOP, LocalDate.now(), PageRequest.of(0, 10),
               sort);
-      Page<MinimumPriceProductDto> minimumPriceResult = priceSlaveQueryRepository
+      Page<TodayMinimumPriceProductDto> minimumPriceResult = priceSlaveQueryRepository
           .findTodayMinimumPriceProducts(Category.TOP, LocalDate.now(), PageRequest.of(0, 10),
               sort);
-      //then
+
       if (sort.equals("percent desc")) {
         assertEquals("C product", discountResult.getContent().get(0).getProductName());
         assertEquals("B product", minimumPriceResult.getContent().get(0).getProductName());

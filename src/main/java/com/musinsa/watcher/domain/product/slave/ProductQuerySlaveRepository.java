@@ -5,7 +5,7 @@ import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.domain.price.QPrice;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.QProduct;
-import com.musinsa.watcher.web.dto.BrandCountDto;
+import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,17 +64,15 @@ public class ProductQuerySlaveRepository {
         .fetchCount();
   }
 
-  public Map<String, Integer> searchBrand(String text) {
-    List<BrandCountDto> results = queryFactory.from(QProduct.product)
+  public List<ProductCountByBrandDto> searchBrand(String text) {
+    return queryFactory.from(QProduct.product)
         .where(Expressions.booleanTemplate("brand like '" + text + "%'"))
         .select(QProduct.product.brand, QProduct.product.brand.count())
         .groupBy(QProduct.product.brand)
         .orderBy(QProduct.product.brand.asc())
-        .select(Projections
-            .constructor(BrandCountDto.class, QProduct.product.brand,
+        .select(Projections.constructor(ProductCountByBrandDto.class, QProduct.product.brand,
                 QProduct.product.count().as("count")))
         .fetch();
-    return BrandCountDto.toMap(results);
   }
 
   public Product findByProductIdWithPrice(int productId) {
@@ -142,15 +139,14 @@ public class ProductQuerySlaveRepository {
         .fetchFirst();
   }
 
-  public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
-    List<BrandCountDto> results = queryFactory.from(QProduct.product)
+  public List<ProductCountByBrandDto> findBrandByInitial(String initial1, String initial2) {
+    return queryFactory.from(QProduct.product)
         .where(QProduct.product.brand.goe(initial1).and(QProduct.product.brand.lt(initial2)))
         .groupBy(QProduct.product.brand)
         .orderBy(QProduct.product.brand.asc())
-        .select(Projections.constructor(BrandCountDto.class, QProduct.product.brand,
+        .select(Projections.constructor(ProductCountByBrandDto.class, QProduct.product.brand,
             QProduct.product.count().as("count")))
         .fetch();
-    return BrandCountDto.toMap(results);
   }
 
 

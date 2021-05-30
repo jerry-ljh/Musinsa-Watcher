@@ -1,15 +1,14 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.web.dto.ProductCountMapByBrandDto;
 import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -29,8 +28,8 @@ public class ProductService {
     return productRepository.findByBrand(filter, pageable);
   }
 
-  public Map<String, Integer> searchBrand(String brand) {
-    return productRepository.searchBrand(brand);
+  public ProductCountMapByBrandDto searchBrand(String brand) {
+    return new ProductCountMapByBrandDto(productRepository.searchBrand(brand));
   }
 
   @Cacheable(value = "productCache", key = "'category'+#filter.toString()+#pageable.pageNumber+#pageable.pageSize")
@@ -44,8 +43,8 @@ public class ProductService {
   }
 
   @Cacheable(value = "productCache", key = "'brand-initial'+#initial1+#initial2")
-  public Map<String, Integer> findBrandByInitial(String initial1, String initial2) {
-    return productRepository.findBrandByInitial(initial1, initial2);
+  public ProductCountMapByBrandDto findBrandByInitial(String initial1, String initial2) {
+    return new ProductCountMapByBrandDto(productRepository.findBrandByInitial(initial1, initial2));
   }
 
   public Page<ProductResponseDto> searchItems(String text, Filter filter, Pageable pageable) {

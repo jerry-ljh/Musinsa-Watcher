@@ -3,15 +3,16 @@ package com.musinsa.watcher.domain.product;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
 import com.musinsa.watcher.web.dto.Filter;
 import com.musinsa.watcher.domain.price.Price;
 import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
 import com.musinsa.watcher.domain.product.slave.ProductSlaveRepository;
+import com.musinsa.watcher.web.dto.ProductCountMapByBrandDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -376,8 +377,10 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    Map<String, Integer> result = productQuerySlaveRepository.searchBrand(searchText);
-    assertEquals((int) result.get(brand1), 10);
+    List<ProductCountByBrandDto> result = productQuerySlaveRepository.searchBrand(searchText);
+    ProductCountMapByBrandDto resultMap = new ProductCountMapByBrandDto(result);
+
+    assertEquals((int) resultMap.getBrandMap().get(brand1), 10);
   }
 
   @Test
@@ -449,9 +452,10 @@ public class ProductQuerySlaveRepositoryTest {
           .build());
     }
 
-    Map<String, Integer> result = productQuerySlaveRepository
+    List<ProductCountByBrandDto> result = productQuerySlaveRepository
         .findBrandByInitial(initial.getSTART(), initial.getEND());
+    ProductCountMapByBrandDto resultMap = new ProductCountMapByBrandDto(result);
 
-    assertEquals((int) result.get("고급 브랜드"), 10);
+    assertEquals((int) resultMap.getBrandMap().get("고급 브랜드"), 10);
   }
 }

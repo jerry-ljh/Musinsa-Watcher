@@ -36,7 +36,7 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
         .minPrice(minPrice != null ? Integer.parseInt(minPrice) : DEFAULT_MIN_PRICE)
         .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : DEFAULT_MAX_PRICE)
         .build();
-    filter.necessary(parameter.getParameterAnnotation(ParameterFilter.class).necessary());
+    filter.checkValidParameter(parameter.getParameterAnnotation(ParameterFilter.class).necessary());
     return filter;
   }
 

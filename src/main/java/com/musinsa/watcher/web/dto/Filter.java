@@ -8,13 +8,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class Filter {
 
-  private String[] brands;
-  private Category[] categories;
-  private int minPrice;
-  private int maxPrice;
+  private final String[] brands;
+  private final Category[] categories;
+  private final int minPrice;
+  private final int maxPrice;
 
   @Builder
   public Filter(String[] brands, Category[] categories, int minPrice, int maxPrice) {
@@ -24,7 +23,7 @@ public class Filter {
     this.maxPrice = maxPrice;
   }
 
-  public void necessary(Parameter parameter) {
+  public void checkValidParameter(Parameter parameter) {
     if (parameter.equals(Parameter.BRAND) && this.brands == null) {
       throw new RuntimeException("브랜드 정보가 입력되지 않았습니다.");
     }

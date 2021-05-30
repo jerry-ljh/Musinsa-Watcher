@@ -7,18 +7,18 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class MinimumPriceProductDto implements Serializable {
+public class TodayMinimumPriceProductDto implements Serializable {
 
-  private int productId;
-  private String productName;
-  private String brand;
-  private String img;
-  private LocalDate modifiedDate;
-  private int todayPrice;
-  private int avgPrice;
+  private final int productId;
+  private final String productName;
+  private final String brand;
+  private final String img;
+  private final LocalDate modifiedDate;
+  private final int todayPrice;
+  private final int avgPrice;
 
   @Builder
-  public MinimumPriceProductDto(TodayMinimumPriceProduct entity) {
+  public TodayMinimumPriceProductDto(TodayMinimumPriceProduct entity) {
     this.productId = entity.getProduct().getProductId();
     this.productName = entity.getProduct().getProductName();
     this.todayPrice = entity.getTodayPrice();

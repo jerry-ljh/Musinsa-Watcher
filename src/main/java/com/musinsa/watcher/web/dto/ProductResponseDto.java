@@ -9,16 +9,16 @@ import lombok.Getter;
 @Getter
 public class ProductResponseDto implements Serializable {
 
-  private int rank;
-  private int productId;
-  private String img;
-  private String productName;
-  private String productUrl;
-  private String brand;
-  private String brandUrl;
-  private LocalDate modifiedDate;
-  private String category;
-  private int realPrice;
+  private final int rank;
+  private final int productId;
+  private final String img;
+  private final String productName;
+  private final String productUrl;
+  private final String brand;
+  private final String brandUrl;
+  private final LocalDate modifiedDate;
+  private final String category;
+  private final int realPrice;
 
   @Builder
   public ProductResponseDto(Product entity) {

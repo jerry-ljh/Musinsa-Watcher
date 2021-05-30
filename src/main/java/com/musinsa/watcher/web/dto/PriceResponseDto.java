@@ -9,13 +9,13 @@ import lombok.Getter;
 @Getter
 public class PriceResponseDto implements Serializable {
 
-  private int rank;
-  private int price;
-  private int delPrice;
-  private int coupon;
-  private float rating;
-  private int ratingCount;
-  private LocalDate createdDate;
+  private final int rank;
+  private final int price;
+  private final int delPrice;
+  private final int coupon;
+  private final float rating;
+  private final int ratingCount;
+  private final LocalDate createdDate;
 
   @Builder
   public PriceResponseDto(Price entity) {

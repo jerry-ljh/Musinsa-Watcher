@@ -1,6 +1,5 @@
 package com.musinsa.watcher.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -8,13 +7,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.musinsa.watcher.domain.price.PriceRepository;
-import com.musinsa.watcher.domain.price.slave.PriceSlaveQueryRepository;
-import com.musinsa.watcher.domain.price.slave.PriceSlaveRepository;
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.dto.DiscountedProductDto;
-import com.musinsa.watcher.web.dto.MinimumPriceProductDto;
+import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
+import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
 import com.musinsa.watcher.web.dto.PriceResponseDto;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +57,7 @@ public class PriceServiceTest {
     LocalDateTime localDateTime = LocalDateTime.now();
     Pageable pageable = mock(Pageable.class);
     String sort = "price_desc";
-    Page<DiscountedProductDto> results = mock(Page.class);
+    Page<TodayDiscountedProductDto> results = mock(Page.class);
     Category category = Category.BAG;
     when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     when(priceRepository.findTodayDiscountProducts(eq(category),
@@ -82,7 +79,7 @@ public class PriceServiceTest {
     LocalDateTime localDateTime = LocalDateTime.now();
     Pageable pageable = mock(Pageable.class);
     String sort = "price_desc";
-    Page<MinimumPriceProductDto> results = mock(Page.class);
+    Page<TodayMinimumPriceProductDto> results = mock(Page.class);
     Category category = Category.SNEAKERS;
     when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     when(priceRepository.findTodayMinimumPriceProducts(eq(category),
@@ -102,14 +99,12 @@ public class PriceServiceTest {
     //given
     PriceService priceService = new PriceService(priceRepository, productService);
     LocalDateTime localDateTime = LocalDateTime.now();
-    Map<String, Integer> map = mock(Map.class);
-    when(priceRepository.countDiscountProductEachCategory(localDateTime.toLocalDate())).thenReturn(map);
+    when(priceRepository.countDiscountProductEachCategory(localDateTime.toLocalDate())).thenReturn(mock(List.class));
     when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     //when
-    Map<String, Integer> resultMap = priceService.countDiscountProductEachCategory();
+    ProductCountMapByCategoryDto resultMap = priceService.countDiscountProductEachCategory();
     //then
     verify(priceRepository, times(1)).countDiscountProductEachCategory(localDateTime.toLocalDate());
-    assertEquals(resultMap, map);
   }
 
   @Test
@@ -119,12 +114,11 @@ public class PriceServiceTest {
     PriceService priceService = new PriceService(priceRepository, productService);
     LocalDateTime localDateTime = LocalDateTime.now();
     Map<String, Integer> map = mock(Map.class);
-    when(priceRepository.countMinimumPriceProductEachCategory(localDateTime.toLocalDate())).thenReturn(map);
+    when(priceRepository.countMinimumPriceProductEachCategory(localDateTime.toLocalDate())).thenReturn(mock(List.class));
     when(productService.getCachedLastUpdatedDateTime()).thenReturn(localDateTime);
     //when
-    Map<String, Integer> resultMap = priceService.countMinimumPriceProductEachCategory();
+    ProductCountMapByCategoryDto resultMap = priceService.countMinimumPriceProductEachCategory();
     //then
     verify(priceRepository, times(1)).countMinimumPriceProductEachCategory(localDateTime.toLocalDate());
-    assertEquals(resultMap, map);
   }
 }
