@@ -25,7 +25,6 @@ public class ChainedCache implements Cache {
   public ValueWrapper get(Object key) {
     ValueWrapper cacheValue = localCache.get(key);
     if (!isEmpty(cacheValue)) {
-      log.debug(cacheValue + "");
       return cacheValue;
     }
     cacheValue = new HystrixGetCommand(globalCache, key).execute();

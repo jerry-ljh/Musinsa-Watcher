@@ -32,8 +32,6 @@ public class HystrixClearCommand extends HystrixCommand {
   protected Object run() {
     localCache.clear();
     globalCache.clear();
-    log.info("로컬 clear");
-    log.info("글로벌 clear");
     return null;
   }
 
@@ -41,7 +39,6 @@ public class HystrixClearCommand extends HystrixCommand {
   protected ValueWrapper getFallback() {
     log.warn("cache clear fallback called, circuit is {}", super.circuitBreaker.isOpen());
     localCache.clear();
-    log.info("로컬 clear");
     return null;
   }
 

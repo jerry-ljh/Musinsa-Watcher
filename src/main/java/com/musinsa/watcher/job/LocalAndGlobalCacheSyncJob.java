@@ -17,14 +17,13 @@ public class LocalAndGlobalCacheSyncJob {
   private static final String DATE_KEY = "current date";
 
   @Scheduled(fixedRate = 5000)
-  public boolean doSynchronize() {
+  public void doSynchronize() {
     ChainedCache cache = (ChainedCache) cacheManager.getCache(CACHE_NAME);
-    if (cache.isSynchronized(DATE_KEY)) {
-      return false;
+    if (cache == null || cache.isSynchronized(DATE_KEY)) {
+      return;
     }
     cache.clearLocalCache();
     log.debug("clear local cache for sync");
-    return true;
   }
 
 }
