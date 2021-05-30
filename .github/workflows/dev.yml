@@ -1,8 +1,7 @@
-name: spring boot deploy-dev
+name: Dev Push Action
 
-on:
-  push:
-    branches: [ backend-dev ]
+on: push
+
 
 jobs:
   build:

@@ -1,4 +1,4 @@
-name: k8s backend deploy
+name: PR Deploy Action
 
 on:
   pull_request:
