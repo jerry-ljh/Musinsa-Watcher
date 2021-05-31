@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +22,10 @@ public class CacheConfig extends CachingConfigurerSupport {
   private final RedisConnectionFactory connectionFactory;
   private final EhCacheManagerFactoryBean ehCacheManagerFactoryBean;
 
+  @Bean
+  public KeyGenerator keyGenerator() {
+    return new CustomKeyGenerator();
+  }
 
   @Bean
   public CacheManager localCacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
@@ -32,9 +37,10 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Bean
   public CacheManager globalCacheManager() {
     RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
-    RedisCacheManager redisCacheManager = RedisCacheManager.RedisCacheManagerBuilder
-        .fromConnectionFactory(connectionFactory).cacheDefaults(redisCacheConfiguration).build();
-    return redisCacheManager;
+    return RedisCacheManager.RedisCacheManagerBuilder
+        .fromConnectionFactory(connectionFactory)
+        .cacheDefaults(redisCacheConfiguration)
+        .build();
   }
 
   @Bean
