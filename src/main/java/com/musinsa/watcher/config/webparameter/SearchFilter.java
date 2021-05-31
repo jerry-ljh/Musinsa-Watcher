@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface PageParameter {
+public @interface SearchFilter {
+  Parameter required() default Parameter.NULL;
 }

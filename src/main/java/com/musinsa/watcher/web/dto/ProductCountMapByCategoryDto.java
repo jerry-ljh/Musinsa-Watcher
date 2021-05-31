@@ -1,7 +1,7 @@
 package com.musinsa.watcher.web.dto;
 
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.domain.product.dto.ProductCountByCategoryDto;
+import com.musinsa.watcher.domain.product.ProductCountByCategoryDto;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedHashMap;

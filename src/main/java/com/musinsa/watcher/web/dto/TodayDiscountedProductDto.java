@@ -1,6 +1,6 @@
 package com.musinsa.watcher.web.dto;
 
-import com.musinsa.watcher.domain.price.TodayDiscountProduct;
+import com.musinsa.watcher.domain.product.discount.TodayDiscountProduct;
 import java.io.Serializable;
 import java.time.LocalDate;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class TodayDiscountedProductDto implements Serializable {
   private final LocalDate modifiedDate;
   private final int price;
   private final long discount;
-  private final float percent;
+  private final double percent;
 
   public TodayDiscountedProductDto(TodayDiscountProduct entity) {
     this.productId = entity.getProduct().getProductId();

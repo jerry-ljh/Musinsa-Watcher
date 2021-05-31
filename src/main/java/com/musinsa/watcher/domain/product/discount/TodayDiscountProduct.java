@@ -1,10 +1,11 @@
-package com.musinsa.watcher.domain.price;
+package com.musinsa.watcher.domain.product.discount;
 
 import com.musinsa.watcher.domain.BaseTimeEntity;
 import com.musinsa.watcher.domain.product.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class TodayDiscountProduct extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(nullable = false, name = "product_id", referencedColumnName = "product_id")
   private Product product;
 
@@ -31,12 +32,12 @@ public class TodayDiscountProduct extends BaseTimeEntity {
   private int discount;
 
   @Column(nullable = false)
-  private float percent;
+  private double percent;
 
   private LocalDateTime modifiedDate;
 
   @Builder
-  public TodayDiscountProduct(Product product, int discount, float percent,
+  public TodayDiscountProduct(Product product, int discount, double percent,
       LocalDateTime modifiedDate) {
     this.product = product;
     this.discount = discount;

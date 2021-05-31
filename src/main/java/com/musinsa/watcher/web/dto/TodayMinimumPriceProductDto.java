@@ -1,6 +1,6 @@
 package com.musinsa.watcher.web.dto;
 
-import com.musinsa.watcher.domain.price.TodayMinimumPriceProduct;
+import com.musinsa.watcher.domain.product.discount.TodayMinimumPriceProduct;
 import java.io.Serializable;
 import java.time.LocalDate;
 import lombok.Builder;
@@ -16,6 +16,7 @@ public class TodayMinimumPriceProductDto implements Serializable {
   private final LocalDate modifiedDate;
   private final int todayPrice;
   private final int avgPrice;
+  private final float percent;
 
   @Builder
   public TodayMinimumPriceProductDto(TodayMinimumPriceProduct entity) {
@@ -26,6 +27,7 @@ public class TodayMinimumPriceProductDto implements Serializable {
     this.brand = entity.getProduct().getBrand();
     this.img = entity.getProduct().getImg();
     this.modifiedDate = entity.getProduct().getModifiedDate().toLocalDate();
+    this.percent = (1- (float)todayPrice/avgPrice) * 100;
   }
 
 }

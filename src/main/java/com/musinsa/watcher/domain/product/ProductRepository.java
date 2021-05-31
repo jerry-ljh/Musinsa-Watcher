@@ -1,14 +1,11 @@
 package com.musinsa.watcher.domain.product;
 
 import com.musinsa.watcher.domain.product.slave.ProductQuerySlaveRepository;
-import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
-import com.musinsa.watcher.web.dto.Filter;
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -19,8 +16,8 @@ public class ProductRepository {
 
   private final ProductQuerySlaveRepository productQuerySlaveRepository;
 
-  public Page<ProductResponseDto> searchItems(String text, Filter filter, Pageable pageable) {
-    return productQuerySlaveRepository.searchItems(text, filter, pageable);
+  public Page<ProductResponseDto> searchItems(String text, FilterVo filterVo, Pageable pageable) {
+    return productQuerySlaveRepository.searchItems(text, filterVo, pageable);
   }
 
   public List<ProductCountByBrandDto> searchBrand(String text) {
@@ -31,22 +28,20 @@ public class ProductRepository {
     return productQuerySlaveRepository.findByProductIdWithPrice(productId);
   }
 
-  public Page<ProductResponseDto> findByCategoryAndDate(Filter filter, LocalDate date,
-      Pageable pageable) {
-    return productQuerySlaveRepository.findByCategoryAndDate(filter, date, pageable);
+  public Page<ProductResponseDto> findProductByCategoryAndDate(FilterVo filterVo, Pageable pageable) {
+    return productQuerySlaveRepository.findTodayUpdatedProductByCategory(filterVo, pageable);
   }
 
-  public Page<ProductResponseDto> findByBrand(Filter filter, Pageable pageable) {
-    return productQuerySlaveRepository.findByBrand(filter, pageable);
+  public Page<ProductResponseDto> findProductByBrand(FilterVo filterVo, Pageable pageable) {
+    return productQuerySlaveRepository.findByBrand(filterVo, pageable);
   }
 
   public LocalDateTime findLastUpdatedDate() {
     return productQuerySlaveRepository.findLastUpdatedDate();
   }
 
-  @Cacheable(value = "productCache", key = "'current date'")
   public LocalDateTime findCachedLastUpdatedDateTime() {
-    return findLastUpdatedDate();
+    return productQuerySlaveRepository.findCachedLastUpdatedDate();
   }
 
   public List<ProductCountByBrandDto> findBrandByInitial(String initial1, String initial2) {

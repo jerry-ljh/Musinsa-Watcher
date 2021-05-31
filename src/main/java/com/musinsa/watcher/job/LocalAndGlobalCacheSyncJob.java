@@ -1,5 +1,6 @@
 package com.musinsa.watcher.job;
 
+import com.musinsa.watcher.config.cache.CacheName;
 import com.musinsa.watcher.config.cache.ChainedCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Component;
 public class LocalAndGlobalCacheSyncJob {
 
   private final CacheManager cacheManager;
-  private static final String CACHE_NAME = "productCache";
-  private static final String DATE_KEY = "current date";
 
   @Scheduled(fixedRate = 5000)
   public void doSynchronize() {
-    ChainedCache cache = (ChainedCache) cacheManager.getCache(CACHE_NAME);
-    if (cache == null || cache.isSynchronized(DATE_KEY)) {
+    ChainedCache cache = (ChainedCache) cacheManager.getCache(CacheName.PRODUCT_CACHE.getName());
+    if (cache == null || cache.isSynchronized(CacheName.LAST_UPDATE_DATE_KEY.getName())) {
       return;
     }
     cache.clearLocalCache();

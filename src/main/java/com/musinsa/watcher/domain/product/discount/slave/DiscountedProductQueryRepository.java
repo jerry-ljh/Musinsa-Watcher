@@ -1,14 +1,16 @@
-package com.musinsa.watcher.domain.price.slave;
+package com.musinsa.watcher.domain.product.discount.slave;
 
-import static com.musinsa.watcher.domain.price.QTodayDiscountProduct.todayDiscountProduct;
-import static com.musinsa.watcher.domain.price.QTodayMinimumPriceProduct.todayMinimumPriceProduct;
 
-import com.musinsa.watcher.domain.price.TodayDiscountProduct;
-import com.musinsa.watcher.domain.price.TodayMinimumPriceProduct;
+import static com.musinsa.watcher.domain.product.discount.QTodayDiscountProduct.todayDiscountProduct;
+import static com.musinsa.watcher.domain.product.discount.QTodayMinimumPriceProduct.todayMinimumPriceProduct;
+
+import com.musinsa.watcher.domain.product.ProductCountByCategoryDto;
 import com.musinsa.watcher.domain.product.Category;
+import com.musinsa.watcher.domain.product.ProductRepository;
+import com.musinsa.watcher.domain.product.discount.TodayDiscountProduct;
+import com.musinsa.watcher.domain.product.discount.TodayMinimumPriceProduct;
 import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
 import com.musinsa.watcher.web.dto.TodayMinimumPriceProductDto;
-import com.musinsa.watcher.domain.price.dto.ProductCountByCategoryDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,7 +18,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -25,32 +26,33 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-@Slf4j
 @RequiredArgsConstructor
 @Repository
-public class PriceSlaveQueryRepository {
+public class DiscountedProductQueryRepository {
 
   @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
+  private final ProductRepository productRepository;
   private final ApplicationContext applicationContext;
+  private final double MINIMUM_DISCOUNT_RATE = 0.05;
+  private final int MINIMUM_SAMPLE_COUNT = 5;
 
-  private PriceSlaveQueryRepository getSpringProxy() {
+  private DiscountedProductQueryRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
   }
 
   public Page<TodayMinimumPriceProductDto> findTodayMinimumPriceProducts(Category category,
-      LocalDate localDate, Pageable pageable, String sort) {
-    List<TodayMinimumPriceProduct> results = queryFactory
-        .selectFrom(todayMinimumPriceProduct)
+      String sort, Pageable pageable) {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
+    List<TodayMinimumPriceProduct> results = queryFactory.selectFrom(todayMinimumPriceProduct)
+        .innerJoin(todayMinimumPriceProduct.product).fetchJoin()
         .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
             .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
-            .and(todayMinimumPriceProduct.count.goe(5))
+            .and(todayMinimumPriceProduct.count.goe(MINIMUM_SAMPLE_COUNT))
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
-                .loe(0.95))
+                .loe(1 - MINIMUM_DISCOUNT_RATE))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
             .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
-        .innerJoin(todayMinimumPriceProduct.product)
-        .fetchJoin()
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .orderBy(todayMinimumPriceSort(sort))
@@ -59,49 +61,49 @@ public class PriceSlaveQueryRepository {
         .stream()
         .map(TodayMinimumPriceProductDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countTodayMinimumPriceProducts(category, localDate));
+        this.getSpringProxy().countTodayMinimumPriceProducts(category));
   }
 
-  @Cacheable(value = "productCache", key = "'minimum count'+#category + #localDate")
-  public long countTodayMinimumPriceProducts(Category category, LocalDate localDate) {
-    return queryFactory
-        .selectFrom(todayMinimumPriceProduct)
+  @Cacheable(value = "productCache")
+  public long countTodayMinimumPriceProducts(Category category) {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
+    return queryFactory.selectFrom(todayMinimumPriceProduct)
+        .innerJoin(todayMinimumPriceProduct.product).fetchJoin()
         .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
             .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
-            .and(todayMinimumPriceProduct.count.goe(5))
+            .and(todayMinimumPriceProduct.count.goe(MINIMUM_SAMPLE_COUNT))
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
-                .loe(0.95))
+                .loe(1 - MINIMUM_DISCOUNT_RATE))
             .and(todayMinimumPriceProduct.product.category.eq(category.getCategory()))
             .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
-        .innerJoin(todayMinimumPriceProduct.product)
-        .fetchJoin()
         .fetchCount();
   }
 
-  public List<ProductCountByCategoryDto> countMinimumPriceProductEachCategory(LocalDate localDate) {
+  public List<ProductCountByCategoryDto> countTodayMinimumPriceProductEachCategory() {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return queryFactory.from(todayMinimumPriceProduct)
+        .innerJoin(todayMinimumPriceProduct.product)
         .where(todayMinimumPriceProduct.minPrice.eq(todayMinimumPriceProduct.todayPrice)
             .and(todayMinimumPriceProduct.avgPrice.gt(todayMinimumPriceProduct.todayPrice))
-            .and(todayMinimumPriceProduct.count.goe(5))
+            .and(todayMinimumPriceProduct.count.goe(MINIMUM_SAMPLE_COUNT))
             .and(todayMinimumPriceProduct.minPrice.divide(todayMinimumPriceProduct.avgPrice)
-                .loe(0.95))
+                .loe(1 - MINIMUM_DISCOUNT_RATE))
             .and(todayMinimumPriceProduct.modifiedDate.after(localDate.atStartOfDay())))
-        .innerJoin(todayMinimumPriceProduct.product)
         .groupBy(todayMinimumPriceProduct.product.category)
-        .select(Projections
-            .constructor(ProductCountByCategoryDto.class, todayMinimumPriceProduct.product.category,
-                todayMinimumPriceProduct.product.count().as("count")))
+        .select(Projections.constructor(ProductCountByCategoryDto.class,
+            todayMinimumPriceProduct.product.category,
+            todayMinimumPriceProduct.product.count().as("count")))
         .fetch();
   }
 
   public Page<TodayDiscountedProductDto> findTodayDiscountProducts(Category category,
-      LocalDate localDate, Pageable pageable, String sort) {
-    List<TodayDiscountProduct> results = queryFactory
-        .selectFrom(todayDiscountProduct)
+      String sort, Pageable pageable) {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
+    List<TodayDiscountProduct> results = queryFactory.selectFrom(todayDiscountProduct)
         .where(todayDiscountProduct.product.category.eq(category.getCategory())
+            .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_RATE * 100))
             .and(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())))
-        .innerJoin(todayDiscountProduct.product)
-        .fetchJoin()
+        .innerJoin(todayDiscountProduct.product).fetchJoin()
         .orderBy(todayDiscountSort(sort))
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
@@ -110,22 +112,25 @@ public class PriceSlaveQueryRepository {
         .stream()
         .map(TodayDiscountedProductDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countTodayDiscountProducts(category, localDate));
+        this.getSpringProxy().countTodayDiscountProducts(category));
   }
 
-  @Cacheable(value = "productCache", key = "'distcount count'+#category +#localDate")
-  public long countTodayDiscountProducts(Category category, LocalDate localDate) {
+  @Cacheable(value = "productCache")
+  public long countTodayDiscountProducts(Category category) {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return queryFactory.selectFrom(todayDiscountProduct)
         .where(todayDiscountProduct.product.category.eq(category.getCategory())
+            .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_RATE * 100))
             .and(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())))
-        .innerJoin(todayDiscountProduct.product)
-        .fetchJoin()
+        .innerJoin(todayDiscountProduct.product).fetchJoin()
         .fetchCount();
   }
 
-  public List<ProductCountByCategoryDto> countDiscountProductEachCategory(LocalDate localDate) {
+  public List<ProductCountByCategoryDto> countTodayDiscountProductEachCategory() {
+    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return queryFactory.from(todayDiscountProduct)
-        .where(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay()))
+        .where(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())
+            .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_RATE * 100)))
         .innerJoin(todayDiscountProduct.product)
         .groupBy(todayDiscountProduct.product.category)
         .select(Projections

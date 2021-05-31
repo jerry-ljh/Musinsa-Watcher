@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-kubernetes/configmap.yml
+kubernetes/application-real1.properties
 src/main/resources/application-real1.properties
 src/main/resources/application-real2.properties
 src/main/resources/application-dev.properties

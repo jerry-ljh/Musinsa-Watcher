@@ -1,4 +1,4 @@
-package com.musinsa.watcher.domain.price.dto;
+package com.musinsa.watcher.domain.product;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

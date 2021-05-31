@@ -1,14 +1,13 @@
-package com.musinsa.watcher.web.dto;
+package com.musinsa.watcher.config.webparameter;
 
-import com.musinsa.watcher.config.webparameter.Parameter;
 import com.musinsa.watcher.domain.product.Category;
 import java.util.Arrays;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-public class Filter {
+public class FilterVo {
 
   private final String[] brands;
   private final Category[] categories;
@@ -16,7 +15,7 @@ public class Filter {
   private final int maxPrice;
 
   @Builder
-  public Filter(String[] brands, Category[] categories, int minPrice, int maxPrice) {
+  public FilterVo(String[] brands, Category[] categories, int minPrice, int maxPrice) {
     this.brands = brands;
     this.categories = categories;
     this.minPrice = minPrice;
@@ -33,9 +32,27 @@ public class Filter {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof FilterVo)){
+      return false;
+    }
+    FilterVo input = (FilterVo) obj;
+    return this.toString().equals(input.toString());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(this.toString());
+  }
+
+  @Override
   public String toString() {
-    return Arrays.toString(brands) + "," + Arrays.toString(categories) + "," + minPrice + ","
-        + maxPrice;
+    return "FilterDto{" +
+        "brands=" + Arrays.toString(brands) +
+        ", categories=" + Arrays.toString(categories) +
+        ", minPrice=" + minPrice +
+        ", maxPrice=" + maxPrice +
+        '}';
   }
 
 }

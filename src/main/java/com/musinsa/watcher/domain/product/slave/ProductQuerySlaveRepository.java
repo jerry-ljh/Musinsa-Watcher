@@ -1,11 +1,11 @@
 package com.musinsa.watcher.domain.product.slave;
 
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.dto.Filter;
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.price.QPrice;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.QProduct;
-import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
+import com.musinsa.watcher.domain.product.ProductCountByBrandDto;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -39,8 +39,8 @@ public class ProductQuerySlaveRepository {
     return applicationContext.getBean(this.getClass());
   }
 
-  public Page<ProductResponseDto> searchItems(String text, Filter filter, Pageable pageable) {
-    BooleanBuilder builder = new BooleanFilter(filter).build();
+  public Page<ProductResponseDto> searchItems(String text, FilterVo filterVo, Pageable pageable) {
+    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     List<Product> results = queryFactory.selectFrom(QProduct.product)
         .where(builder.and(QProduct.product.brand.contains(text)
             .or(QProduct.product.productName.contains(text))))
@@ -48,16 +48,15 @@ public class ProductQuerySlaveRepository {
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
         .fetch();
-    return new PageImpl<>(results
-        .stream()
+    return new PageImpl<>(results.stream()
         .map(ProductResponseDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countSearchItems(text, filter));
+        this.getSpringProxy().countSearchItems(text, filterVo));
   }
 
-  @Cacheable(value = "productCache", key = "'search count'+#text + #filter.toString()")
-  public long countSearchItems(String text, Filter filter) {
-    BooleanBuilder builder = new BooleanFilter(filter).build();
+  @Cacheable(value = "productCache")
+  public long countSearchItems(String text, FilterVo filterVo) {
+    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     return queryFactory.selectFrom(QProduct.product)
         .where(builder.and(QProduct.product.brand.contains(text)
             .or(QProduct.product.productName.contains(text))))
@@ -71,7 +70,7 @@ public class ProductQuerySlaveRepository {
         .groupBy(QProduct.product.brand)
         .orderBy(QProduct.product.brand.asc())
         .select(Projections.constructor(ProductCountByBrandDto.class, QProduct.product.brand,
-                QProduct.product.count().as("count")))
+            QProduct.product.count().as("count")))
         .fetch();
   }
 
@@ -84,9 +83,10 @@ public class ProductQuerySlaveRepository {
         .fetchOne();
   }
 
-  public Page<ProductResponseDto> findByCategoryAndDate(Filter filter, LocalDate date,
+  public Page<ProductResponseDto> findTodayUpdatedProductByCategory(FilterVo filterVo,
       Pageable pageable) {
-    BooleanBuilder builder = new BooleanFilter(filter).date(date).build();
+    LocalDate cachedDate = this.getSpringProxy().findCachedLastUpdatedDate().toLocalDate();
+    BooleanBuilder builder = new BooleanFilter(filterVo).date(cachedDate).build();
     List<Product> results = queryFactory.selectFrom(QProduct.product)
         .where(builder)
         .orderBy(QProduct.product.rank.asc())
@@ -97,21 +97,20 @@ public class ProductQuerySlaveRepository {
         .stream()
         .map(ProductResponseDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countByCategoryAndDate(filter, date));
+        this.getSpringProxy().countTodayUpdatedProductByCategory(filterVo));
   }
 
-  @Cacheable(value = "productCache", key = "'category count'+#filter.toString()")
-  public long countByCategoryAndDate(Filter filter, LocalDate date) {
-    BooleanBuilder builder = new BooleanFilter(filter)
-        .date(date)
-        .build();
+  @Cacheable(value = "productCache")
+  public long countTodayUpdatedProductByCategory(FilterVo filterVo) {
+    LocalDate cachedDate = this.getSpringProxy().findCachedLastUpdatedDate().toLocalDate();
+    BooleanBuilder builder = new BooleanFilter(filterVo).date(cachedDate).build();
     return queryFactory.from(QProduct.product)
         .where(builder)
         .fetchCount();
   }
 
-  public Page<ProductResponseDto> findByBrand(Filter filter, Pageable pageable) {
-    BooleanBuilder builder = new BooleanFilter(filter).build();
+  public Page<ProductResponseDto> findByBrand(FilterVo filterVo, Pageable pageable) {
+    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     List<Product> results = queryFactory.selectFrom(QProduct.product)
         .where(builder)
         .orderBy(QProduct.product.modifiedDate.desc(), QProduct.product.brand.asc())
@@ -121,12 +120,12 @@ public class ProductQuerySlaveRepository {
     return new PageImpl<>(results.stream()
         .map(ProductResponseDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countByBrand(filter));
+        this.getSpringProxy().countByBrand(filterVo));
   }
 
-  @Cacheable(value = "productCache", key = "'brand count'+#builder")
-  public long countByBrand(Filter filter) {
-    BooleanBuilder builder = new BooleanFilter(filter).build();
+  @Cacheable(value = "productCache")
+  public long countByBrand(FilterVo filterVo) {
+    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     return queryFactory.from(QProduct.product)
         .where(builder)
         .fetchCount();
@@ -137,6 +136,11 @@ public class ProductQuerySlaveRepository {
         .orderBy(QProduct.product.modifiedDate.desc())
         .select(QProduct.product.modifiedDate)
         .fetchFirst();
+  }
+
+  @Cacheable(value = "productCache")
+  public LocalDateTime findCachedLastUpdatedDate() {
+    return findLastUpdatedDate();
   }
 
   public List<ProductCountByBrandDto> findBrandByInitial(String initial1, String initial2) {
@@ -158,11 +162,11 @@ public class ProductQuerySlaveRepository {
     private int maxPrice;
     private LocalDate date;
 
-    private BooleanFilter(Filter filter) {
-      this.brands = filter.getBrands();
-      this.categories = filter.getCategories();
-      this.minPrice = filter.getMinPrice();
-      this.maxPrice = filter.getMaxPrice();
+    private BooleanFilter(FilterVo filterVo) {
+      this.brands = filterVo.getBrands();
+      this.categories = filterVo.getCategories();
+      this.minPrice = filterVo.getMinPrice();
+      this.maxPrice = filterVo.getMaxPrice();
     }
 
     private BooleanFilter brand(String[] brands) {

@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class Initial {
+public class ProductCountByBrandDto {
 
-  private final String START;
-  private final String END;
+  private final String brand;
+  private final long count;
+
 }

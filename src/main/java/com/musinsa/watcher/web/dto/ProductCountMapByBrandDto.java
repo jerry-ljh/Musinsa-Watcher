@@ -1,13 +1,14 @@
 package com.musinsa.watcher.web.dto;
 
-import com.musinsa.watcher.domain.price.dto.ProductCountByBrandDto;
+import com.musinsa.watcher.domain.product.ProductCountByBrandDto;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class ProductCountMapByBrandDto {
+public class ProductCountMapByBrandDto implements Serializable {
 
   private final Map<String, Integer> brandMap;
 

@@ -2,6 +2,7 @@ package com.musinsa.watcher.job;
 
 import static org.junit.Assert.*;
 
+import com.musinsa.watcher.config.cache.CacheName;
 import java.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -25,31 +26,31 @@ public class LocalAndGlobalCacheSyncJobTest {
   @Autowired
   private LocalAndGlobalCacheSyncJob localAndGlobalCacheSyncJob;
 
+  private final String cacheName = CacheName.PRODUCT_CACHE.getName();
+  private final String cacheKey = CacheName.LAST_UPDATE_DATE_KEY.getName();
 
   @Test
   @DisplayName("글로벌 캐시와 로컬 캐시가 같으면 동기화 하지 않는다.")
   public void cacheSynchronized1() {
-    //given
     LocalDateTime localDateTime = LocalDateTime.now();
-    globalCacheManager.getCache("productCache").put("current date", localDateTime);
-    localCacheManager.getCache("productCache").put("current date", localDateTime);
-    //when
+    globalCacheManager.getCache(cacheName).put(cacheKey, localDateTime);
+    localCacheManager.getCache(cacheName).put(cacheKey, localDateTime);
+
     localAndGlobalCacheSyncJob.doSynchronize();
-    //then
-    assertEquals(globalCacheManager.getCache("productCache").get("current date").get(),
-        localCacheManager.getCache("productCache").get("current date").get());
+
+    assertEquals(globalCacheManager.getCache(cacheName).get(cacheKey).get(),
+        localCacheManager.getCache(cacheName).get(cacheKey).get());
   }
 
   @Test
   @DisplayName("글로벌 캐시와 로컬 캐시가 달라 동기화 한다.")
   public void cacheSynchronized2() {
-    //given
     LocalDateTime localDateTime = LocalDateTime.now();
-    globalCacheManager.getCache("productCache").put("current date", localDateTime.plusDays(1));
-    localCacheManager.getCache("productCache").put("current date", localDateTime);
-    //when
+    globalCacheManager.getCache(cacheName).put(cacheKey, localDateTime.plusDays(1));
+    localCacheManager.getCache(cacheName).put(cacheKey, localDateTime);
+
     localAndGlobalCacheSyncJob.doSynchronize();
-    //then
-    assertNull(localCacheManager.getCache("productCache").get("current date"));
+
+    assertNull(localCacheManager.getCache(cacheName).get(cacheKey));
   }
 }
