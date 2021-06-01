@@ -72,7 +72,7 @@
                 EventBus.$emit("goToSearch", searchText, page)
                 this
                     .$router
-                    .replace({
+                    .push({
                         name: 'ProductList',
                         query: {
                             "topic": searchText,

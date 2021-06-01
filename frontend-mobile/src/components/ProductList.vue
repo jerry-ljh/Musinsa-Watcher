@@ -35,10 +35,10 @@
                 variant="outline-dark "
                 :text="curSortText"
                 class="m-md-2">
-                <b-dropdown-item v-on:click="changeSort('percent_desc')">할인율 높은 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('percent_asc')">할인율 낮은 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price_desc')">높은 가격순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price_asc')">낮은 가격순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('percent,desc')">할인율 높은 순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('percent,asc')">할인율 낮은 순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price,desc')">높은 가격순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price,asc')">낮은 가격순</b-dropdown-item>
                 <b-dropdown-divider></b-dropdown-divider>
             </b-dropdown>
         </div>
@@ -126,9 +126,7 @@
                         class="category-nav"
                         style="text-align:left; max-height: 180px; overflow: auto;">
                         <li v-for="brand in Object.keys(brands)" v-bind:key="brand">
-                            <a href="javascript:void(0)" v-on:click="addBrand(brand)">{{brand}}
-                                <span style="color : #b2b2b2">({{brands[brand]}})</span>
-                            </a>
+                            <a href="javascript:void(0)" v-on:click="addBrand(brand)">{{brand}}</a>
                         </li>
                     </ul>
                 </b-tab>
@@ -318,10 +316,10 @@
                 curCategory: [],
                 curBrand: [],
                 curSearchTopic: '',
-                curSort: 'percent_desc',
+                curSort: 'percent,desc',
                 curSortText: '',
                 filter_category: [],
-                API: "https://www.musinsa.info/",
+                API: "https://www.musinsa.info",
                 category_dict: {
                     top: '001',
                     outer: '002',
@@ -417,13 +415,13 @@
                 return productName;
             },
             sortToText(sort) {
-                if (sort == 'price_asc') 
+                if (sort == 'price,asc') 
                     this.curSortText = '낮은 가격순';
-                else if (sort == 'price_desc') 
+                else if (sort == 'price,desc') 
                     this.curSortText = '높은 가격순';
-                else if (sort == 'percent_asc') 
+                else if (sort == 'percent,asc') 
                     this.curSortText = '할인율 낮은 순';
-                else if (sort == 'percent_desc') 
+                else if (sort == 'percent,desc') 
                     this.curSortText = '할인율 높은 순';
                 }
             ,
@@ -487,6 +485,7 @@
                 self.currentListTopic = "rank"
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
+                query["size"] = 40
                 if(query.category == null){
                     this.$emit('isLoading', false)
                     return;
@@ -514,11 +513,12 @@
             goToMinimumList(page, sort) {
                 let self = this
                 self.currentListTopic = "minimum"
-                axios.get(this.API + '/api/v1/product/minimum', 
+                axios.get(this.API + '/api/v1/product/minimum-price/today/list', 
                     {
                         params: {
                             "category": this.curCategory.toString(),
                             "page": page - 1,
+                            "size" : 40,
                             "sort": sort}
                     })
                     .then((response) => {
@@ -530,6 +530,7 @@
                                  query: { 
                                     "category": this.curCategory.toString(),
                                     "page": page,
+                                    "size" : 40,
                                     "type": 'minimum',
                                     "sort": sort
                                 }
@@ -545,10 +546,11 @@
             goToDiscountList(page, sort) {
                 let self = this
                 self.currentListTopic = "discount"
-                axios.get(this.API + '/api/v1/product/discount', {
+                axios.get(this.API + '/api/v1/product/discount/today/list', {
                         params: {
                             "category": this.curCategory.toString(),
                             "page": page - 1,
+                            "size" : 40,
                             "sort": sort
                         }
                     })
@@ -562,6 +564,7 @@
                                 query: {
                                     "category": this.curCategory.toString(),
                                     "page": page,
+                                    "size" : 40,
                                     "type": 'discount',
                                     "sort": sort
                                 }
@@ -579,6 +582,7 @@
                 let self = this
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
+                query["size"] = 40
                 this.currentListTopic = "brand"
                 if(query.brand == null){
                     this.$emit('isLoading', false)
@@ -612,9 +616,10 @@
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
                 query["topic"] = topic.trim()
+                query["size"] = 40
                 this.currentListTopic = "search"
                 this.curSearchTopic = topic;
-                axios.get(this.API + '/api/v1/search', {
+                axios.get(this.API + '/api/v1/search/product', {
                         params: query
                     })
                     .then((response) => {
@@ -643,18 +648,18 @@
                             "name": searchText
                         }
                     }).then((response) => {
-                        this.brands = response.data
+                        this.brands = response.data.brandMap
                     }).catch((error) => {
                         console.log(error);
                     });
             },
             findBrandList(typeNumber) {
-                axios.get(this.API+ '/api/v1/search/brands', {
+                axios.get(this.API+ '/api/v1/search/brand-initial', {
                         params: {
                             "type": typeNumber
                         }
                     }).then((response) => {
-                        this.brands = response.data
+                        this.brands = response.data.brandMap
                     }).catch((error) => {
                         console.log(error);
                     });
@@ -693,13 +698,13 @@
             }
             if (this.$route.query.type == 'discount') {
                 this.goToDiscountList(this.$route.query.page? this.$route.query.page : 1,
-                    this.$route.query.sort ? this.$route.query.sort : "percent_desc")
-                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent_desc");
+                    this.$route.query.sort ? this.$route.query.sort : "percent,desc")
+                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent,desc");
             }  
             if (this.$route.query.type == 'minimum') {
                 this.goToMinimumList(this.$route.query.page ? this.$route.query.page : 1,
                     this.$route.query.sort ? this.$route.query.sort : "percent_desc")
-                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent_desc");
+                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent,desc");
             }
             if (this.$route.query.type == 'search') {
                 this.curSearchTopic = this.$route.query.topic
