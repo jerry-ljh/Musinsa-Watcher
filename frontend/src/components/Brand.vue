@@ -96,7 +96,7 @@
                         }
                     })
                     .then((response) => {
-                        this.brands = response.data
+                        this.brands = response.data.brandMap
                     })
                     .catch((error) => {
                         console.log(error);
@@ -111,6 +111,7 @@
                         query: {
                             "brand": name,
                             "page": page,
+                            "size": 40,
                             "type" : 'brand'
                         }
                     })
@@ -118,13 +119,13 @@
                 },
             findBrandList(typeNumber) {
                 axios
-                    .get('https://www.musinsa.info/api/v1/search/brands', {
+                    .get('https://www.musinsa.info/api/v1/search/brand-initial', {
                         params: {
                             "type": typeNumber
                         }
                     })
                     .then((response) => {
-                        this.brands = response.data
+                        this.brands = response.data.brandMap
                     })
                     .catch((error) => {
                         console.log(error);

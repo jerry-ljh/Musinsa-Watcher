@@ -129,6 +129,7 @@
                         query: {
                             "category": category,
                             "page": page,
+                            "size": 40,
                             "type" : 'rank',
                         }
                     })
@@ -143,8 +144,9 @@
                         query: {
                             "category": category,
                             "page": page,
+                            "size": 40,
                             "type": 'discount',
-                            "sort": "percent_desc"
+                            "sort": "percent,desc"
                         }
                     })
                     .catch(() => {})
@@ -158,17 +160,18 @@
                         query: {
                             "category": category,
                             "page": page,
+                            "size": 40,
                             "type": 'minimum',
-                            "sort": "percent_desc"
+                            "sort": "percent,desc"
                         }
                     })
                     .catch(() => {})
                 },
             findDiscountList() {
                 axios
-                    .get('https://www.musinsa.info/api/v1/product/discount/list')
+                    .get('https://www.musinsa.info/api/v1/product/discount/today/count')
                     .then((response) => {
-                        this.discountCategory = response.data
+                        this.discountCategory = response.data.categoryProductMap
                     })
                     .catch((error) => {
                         console.log(error);
@@ -176,9 +179,9 @@
             },
             findMinimumList() {
                 axios
-                    .get('https://www.musinsa.info/api/v1/product/minimum/list')
+                    .get('https://www.musinsa.info/api/v1/product/minimum-price/today/count')
                     .then((response) => {
-                        this.minimumCategory = response.data
+                        this.minimumCategory = response.data.categoryProductMap
                     })
                     .catch((error) => {
                         console.log(error);
