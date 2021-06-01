@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -24,9 +23,8 @@ public class DiscountedProductController {
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/discount/today/list")
   public Page<TodayDiscountedProductDto> findDiscountedProductsPage(String category,
-      Pageable pageable, @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return discountedProductService.findDiscountedProduct(Category.getCategory(category),
-        pageable, String.join(" ", sort.split("_")));
+      Pageable pageable) {
+    return discountedProductService.findDiscountedProduct(Category.getCategory(category), pageable);
   }
 
   @Cacheable(value = "productCache")
@@ -38,9 +36,9 @@ public class DiscountedProductController {
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/minimum-price/today/list")
   public Page<TodayMinimumPriceProductDto> findMinimumPriceProductsPage(Pageable pageable,
-      String category, @RequestParam(required = false, defaultValue = DEFAULT_SORT) String sort) {
-    return discountedProductService.findMinimumPriceProduct(Category.getCategory(category),
-        pageable, String.join(" ", sort.split("_")));
+      String category) {
+    return discountedProductService
+        .findMinimumPriceProduct(Category.getCategory(category), pageable);
   }
 
   @Cacheable(value = "productCache")

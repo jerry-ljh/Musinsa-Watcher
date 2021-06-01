@@ -16,10 +16,9 @@ public class DiscountedProductService {
 
   private final DiscountedRepository discountedRepository;
 
-  public Page<TodayDiscountedProductDto> findDiscountedProduct(Category category, Pageable pageable,
-      String sort) {
-    return discountedRepository
-        .findTodayDiscountedProducts(category, pageable, sort);
+  public Page<TodayDiscountedProductDto> findDiscountedProduct(Category category,
+      Pageable pageable) {
+    return discountedRepository.findTodayDiscountedProducts(category, pageable);
   }
 
   public ProductCountMapByCategoryDto countDiscountProductEachCategory() {
@@ -28,9 +27,8 @@ public class DiscountedProductService {
   }
 
   public Page<TodayMinimumPriceProductDto> findMinimumPriceProduct(Category category,
-      Pageable pageable, String sort) {
-    return discountedRepository
-        .findTodayMinimumPriceProducts(category, pageable, sort);
+      Pageable pageable) {
+    return discountedRepository.findTodayMinimumPriceProducts(category, pageable);
   }
 
   public ProductCountMapByCategoryDto countMinimumPriceProductEachCategory() {

@@ -19,6 +19,8 @@ public class CustomKeyGenerator implements KeyGenerator {
           keyBuilder.append(";");
           keyBuilder.append(pageable.getPageSize());
           keyBuilder.append(";");
+          keyBuilder.append(pageable.getSort().toString());
+          keyBuilder.append(";");
           continue;
         }
         keyBuilder.append(argument);

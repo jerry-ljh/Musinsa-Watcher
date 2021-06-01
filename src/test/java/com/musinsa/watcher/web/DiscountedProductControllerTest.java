@@ -41,7 +41,7 @@ public class DiscountedProductControllerTest {
         .andExpect(status().isOk());
 
     verify(mockDiscountedProductService, only())
-        .findDiscountedProduct(eq(Category.getCategory("001")), any(), eq("price asc"));
+        .findDiscountedProduct(eq(Category.getCategory("001")), any());
   }
 
   @Test
@@ -53,7 +53,7 @@ public class DiscountedProductControllerTest {
         .andExpect(status().isOk());
 
     verify(mockDiscountedProductService, only())
-        .findMinimumPriceProduct(eq(Category.getCategory("001")), any(), eq("percent asc"));
+        .findMinimumPriceProduct(eq(Category.getCategory("001")), any());
   }
 }
 
