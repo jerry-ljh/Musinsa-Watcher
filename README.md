@@ -8,9 +8,6 @@
 #### [페이징 성능 개선기](https://jgrammer.tistory.com/entry/%EB%AC%B4%EC%8B%A0%EC%82%AC-%EC%8A%A4%ED%86%A0%EC%96%B4-watcher-%ED%8E%98%EC%9D%B4%EC%A7%95-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EA%B8%B0?category=948604)
 #### [3번의 CI/CD 도입기](https://jgrammer.tistory.com/entry/%EB%AC%B4%EC%8B%A0%EC%82%AC-%EC%8A%A4%ED%86%A0%EC%96%B4-watcher-CICD-%EB%8F%84%EC%9E%85%EA%B8%B0?category=948604)
 
-## Branch
-#### [Backend](https://github.com/JunHyeok96/Musinsa-Watcher/tree/backend-release)
-#### [front](https://github.com/JunHyeok96/Musinsa-Watcher/tree/front-release)
 
 ## 소개
 무신사 스토어 가격 변동 파악 웹사이트입니다.  
@@ -34,8 +31,8 @@ github action의 cron을 사용하여 크롤링 자동화를 구성하였습니�
 Backend **테스트 커버리지 80%이상**을 목표로 잡고 있습니다. jacoco를 도입하여 평균 라인 커버리지 80%, 브랜치 커버리지 80%을 넘지 못하면 빌드가 실패하도록 하여 테스트 코드를 신경쓰도록 개발했습니다.
 
 **현재 coverage**  
-line coverage : 90%   
-branch coverage : 86%
+line coverage : 83%   
+branch coverage : 82%
 
 ## Tech Stack
 <img src="https://user-images.githubusercontent.com/52908154/104377761-4c4de600-556a-11eb-98ea-2ab133e5bacc.png" width=70%>
