@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "slaveEntityManager", transactionManagerRef = "slaveTransactionManager",
     basePackages = {"com.musinsa.watcher.domain.product.slave",
+        "com.musinsa.watcher.domain.product.discount.slave",
         "com.musinsa.watcher.domain.price.slave"})
 public class SlaveDBConfig {
 

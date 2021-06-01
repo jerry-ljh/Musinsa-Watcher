@@ -109,8 +109,6 @@ dependencies {
     compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
     compile group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.3'
     testAnnotationProcessor('org.projectlombok:lombok')
-    testImplementation "org.mockito:mockito-core:3.5.9"
-    testImplementation "org.mockito:mockito-inline:3.5.9"
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

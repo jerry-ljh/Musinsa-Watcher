@@ -23,18 +23,14 @@ public class ChainedCache implements Cache {
 
   @Override
   public ValueWrapper get(Object key) {
-    ValueWrapper valueWrapper = localCache.get(key);
-    if (valueWrapper != null && valueWrapper.get() != null) {
-      return valueWrapper;
-    } else {
-      valueWrapper = new HystrixGetCommand(globalCache, key).execute();
-      if (valueWrapper != null) {
-        localCache.put(key, valueWrapper.get());
-      }
-      return valueWrapper;
+    ValueWrapper cacheValue = localCache.get(key);
+    if (!isEmpty(cacheValue)) {
+      return cacheValue;
     }
+    cacheValue = new HystrixGetCommand(globalCache, key).execute();
+    localCache.put(key, cacheValue);
+    return cacheValue;
   }
-
 
   @Override
   public ValueWrapper putIfAbsent(Object key, Object value) {
@@ -99,12 +95,15 @@ public class ChainedCache implements Cache {
         return localValue;
       }
     }.execute();
-    if (localValue == null || localValue.get() == null) {
+    if (isEmpty(localValue)) {
       return true;
-    } else if (globalValue == null || globalValue.get() == null) {
+    } else if (isEmpty(globalValue)) {
       return false;
-    } else {
-      return localValue.get().equals(globalValue.get());
     }
+    return localValue.get().equals(globalValue.get());
+  }
+
+  private boolean isEmpty(ValueWrapper valueWrapper) {
+    return valueWrapper == null;
   }
 }

@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 @NoArgsConstructor
 @Getter
@@ -49,7 +48,6 @@ public class Product implements Serializable {
   private int realPrice;
 
   @OneToMany(mappedBy = "product")
-  @BatchSize(size = 100)
   List<Price> prices = new ArrayList<>();
 
   public String convertToBigImgUrl() {
@@ -59,7 +57,7 @@ public class Product implements Serializable {
 
   @Builder
   public Product(int productId, String productName, String brand, String category, int rank,
-      String img, LocalDateTime modifiedDate, int realPrice) {
+      String img, LocalDateTime modifiedDate, int realPrice, List<Price> prices) {
     this.productId = productId;
     this.productName = productName;
     this.brand = brand;
@@ -68,6 +66,7 @@ public class Product implements Serializable {
     this.img = img;
     this.modifiedDate = modifiedDate;
     this.realPrice = realPrice;
+    this.prices = prices;
   }
 
 }

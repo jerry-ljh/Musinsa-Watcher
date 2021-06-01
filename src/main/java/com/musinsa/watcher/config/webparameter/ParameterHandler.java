@@ -1,7 +1,6 @@
 package com.musinsa.watcher.config.webparameter;
 
 import com.musinsa.watcher.domain.product.Category;
-import com.musinsa.watcher.web.dto.Filter;
 import java.util.Arrays;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -18,8 +17,8 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    boolean isParameterAnnotation = parameter.getParameterAnnotation(ParameterFilter.class) != null;
-    boolean isFilterClass = Filter.class.equals(parameter.getParameterType());
+    boolean isParameterAnnotation = parameter.getParameterAnnotation(SearchFilter.class) != null;
+    boolean isFilterClass = FilterVo.class.equals(parameter.getParameterType());
     return isParameterAnnotation && isFilterClass;
   }
 
@@ -30,14 +29,14 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
     String category = webRequest.getParameter(Parameter.CATEGORY.getParameter());
     String minPrice = webRequest.getParameter(Parameter.MIN_PRICE.getParameter());
     String maxPrice = webRequest.getParameter(Parameter.MAX_PRICE.getParameter());
-    Filter filter = Filter.builder()
+    FilterVo filterVo = FilterVo.builder()
         .brands(brand != null && !brand.isEmpty() ? brand.split(",") : null)
         .categories(splitCategory(category))
         .minPrice(minPrice != null ? Integer.parseInt(minPrice) : DEFAULT_MIN_PRICE)
         .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : DEFAULT_MAX_PRICE)
         .build();
-    filter.necessary(parameter.getParameterAnnotation(ParameterFilter.class).necessary());
-    return filter;
+    filterVo.checkValidParameter(parameter.getParameterAnnotation(SearchFilter.class).required());
+    return filterVo;
   }
 
   private Category[] splitCategory(String category) {
