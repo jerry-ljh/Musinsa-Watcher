@@ -402,14 +402,7 @@
                 window.scrollTo(0, 0)
             },
             isTodayUpdated(date) {
-                if (date == null || this.updatedAt == null) {
-                    return false
-                }
-                var lastUpdateArr = date.split('-')
-                var lastUpdate = new Date(lastUpdateArr[0], lastUpdateArr[1] - 1, lastUpdateArr[2]).toLocaleDateString()
-                var updatedAtArr = this.updatedAt.split('-')
-                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2]).toLocaleDateString()
-                return lastUpdate == updatedAt
+                return new Date(this.updatedAt).toISOString().slice(0, 10) == date
             },
             truncateProductName(productName) {
                 return productName;
