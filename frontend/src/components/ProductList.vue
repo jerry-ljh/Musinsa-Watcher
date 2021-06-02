@@ -148,21 +148,9 @@
                     </b-form-radio>
                     </b-form-group>
                 </b-tab>
-                <b-tab v-if="currentListTopic == 'brand' || currentListTopic == 'search'" title="기간" style="text-align:left">
-                    <b-form-checkbox
-                        id="checkbox-1"
-                        v-model="curDateFilter"
-                        @change="addDateFilter"
-                        :value="onlyTodayUpdatedData"
-                        name="checkbox-1"
-                        style="margin-left:30px"
-                    >
-                    오늘 업데이트된 상품
-                    </b-form-checkbox>
-                </b-tab>
             </b-tabs>
         </div>   
-        <div>
+        <div style="margin-top:15px">
             <b-form-tags v-if="curCategory.length > 0" id="tags-with-dropdown" v-model="curCategory" @input="addFilter" no-outer-focus class="mb-2">
             <template v-slot="{ tags, disabled, addTag, removeTag }">
                 <ul class="list-inline d-inline-block mb-2">
@@ -204,24 +192,6 @@
                     </ul>
                 </template>
             </b-form-tags>
-            <b-form-tags v-if="curDateFilter.length > 0" 
-                id="tags-with-dropdown" 
-                v-model="curDateFilter" 
-                @input="addDateFilter" 
-                no-outer-focus class="mb-2">
-                <template v-slot="{ tags, disabled, addTag, removeTag }">
-                    <ul class="list-inline d-inline-block mb-2">
-                        <li v-for="(tag, idx) in curDateFilter" :key="idx" class="list-inline-item">
-                            <b-form-tag
-                                @remove="removeTag(tag)"
-                                :disabled="disabled"
-                                variant="primary">
-                                {{ tag }}
-                            </b-form-tag>
-                        </li>
-                    </ul>
-                </template>
-            </b-form-tags>
         </div>
         <div style="float : left; margin-top : 8px">
             <span
@@ -249,8 +219,22 @@
                 </b-tooltip>
             </span>
         </div>
+        <div v-if="currentListTopic=='search'" style="margin-left:15px; margin-bottom :15px; font-size: 1.2em; font-weight: bold;">
+        '{{curSearchTopic}}'로 검색한 결과입니다.
+        </div>
+        <b-form-checkbox
+            id="checkbox-2"
+            v-model="onlyTodayUpdatedData"
+            @change="addDateFilter"
+            :value="!onlyTodayUpdatedData"
+            v-if="currentListTopic == 'brand' || currentListTopic == 'search'"
+            name="checkbox-1"
+            style="margin-left:15px; margin-top:1.7%; float:left "
+        > 오늘 업데이트된 상품 
+        </b-form-checkbox>
         <div
             style="text-align : right; margin-right :6%">
+            
             <b-dropdown
                 id="dropdown-1"
                 right="right"
@@ -453,6 +437,7 @@
             filterClear(){
               this.curBrand = []
               this.curCategory = []
+              this.curDateFilter = []
               this.addFilter()  
             },
             addBrand(brand){
@@ -460,13 +445,6 @@
                 this.addFilter()
             },
             addDateFilter(){
-                if(this.onlyTodayUpdatedData == true){
-                    this.onlyTodayUpdatedData = false;
-                    this.curDateFilter = []
-                }else{
-                    this.onlyTodayUpdatedData = true;
-                    this.curDateFilter = ["오늘 업데이트된 상품"]
-                }
                 this.addFilter()
             },
             addFilter(){
@@ -518,6 +496,7 @@
                 } else if (this.currentListTopic == "brand") {
                     this.goToBrand(page, this.curSort)
                 } else if (this.currentListTopic == "search") {
+    
                     this.goToSearch(this.curSearchTopic, page, this.curSort)
                 } else if (this.currentListTopic == "discount") {
                     this.goToDiscountList(page, this.curSort)

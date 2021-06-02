@@ -36,8 +36,8 @@
             <div v-if="lastPrice.coupon!=0">
                 <b-icon icon="sticky"></b-icon> 추가 쿠폰 : {{numberToPrice(lastPrice.coupon)}}원
             </div>
-            <span style="color:rgb(234 7 7)">한달 평균가(쿠폰 포함) : {{numberToPrice(getAvgPriceForMonth())}}원</span><br/>
-            <span style="color:rgb(234 7 7)">한달 최저가(쿠폰 포함) : {{numberToPrice(getMinPriceForMonth())}}원</span><br/>
+            <span v-if="getAvgPriceForMonth() !=0" style="color:rgb(234 7 7)">한달 평균가(쿠폰 포함) : {{numberToPrice(getAvgPriceForMonth())}}원<br/></span>
+            <span v-if="getMinPriceForMonth() !=0" style="color:rgb(234 7 7)">한달 최저가(쿠폰 포함) : {{numberToPrice(getMinPriceForMonth())}}원<br/></span>
             <span style="color:rgb(234 7 7)">전체 평균가(쿠폰 포함) : {{numberToPrice(avgPrice)}}원</span><br/>
             <span style="color:rgb(234 7 7)">전체 최저가(쿠폰 포함) : {{numberToPrice(minPrice)}}원</span><br/>
             <span style="color:rgb(234 7 7)" v-if="isMaximum"><strong>오늘은 역대 최고가입니다.</strong></span>
@@ -216,6 +216,9 @@
                         sum += (this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon)
                         count++
                     }   
+                if(count == 0){
+                    return 0
+                }
                 return Math.ceil(sum/count);
             },
             getMinPriceForMonth() {
@@ -235,6 +238,9 @@
                             min = realPrice
                         }
                     }   
+                if(min == 100000000){
+                    return 0
+                }
                 return min;
             },
             numberToPrice(number) {

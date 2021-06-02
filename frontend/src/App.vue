@@ -10,10 +10,7 @@
             spinner-type="null"
             @shown="onShown"
             @hidden="onHidden">
-            <div v-if="loading" style="position:fixed; top : 50%; left:42%; z-index: 1000;">
-                <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
-                <p id="cancel-label">Please wait...</p>
-            </div>
+            <b-spinner v-if="loading"  style="position:fixed; top : 50%; left:47%; z-index: 1000; width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
             <router-view
                 v-on:isLoading="isLoading"
                 :updatedAt="updatedAt"
