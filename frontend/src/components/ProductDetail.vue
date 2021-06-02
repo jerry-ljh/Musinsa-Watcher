@@ -1,7 +1,7 @@
 <template>
     <div style="margin-top:50px; margin-bottom:50px">
-        <b-container class="bv-example-row">
-            <h3 style="text-align : left; margin-top:50px;">
+        <b-container class="bv-example-row" style="padding:20px">
+            <h3 style="text-align : left; margin-top: 15px">
                 <a :href="'/product/list?brand='+product.brand" style="color : #000000"><strong>{{product.brand}}</strong></a>
             </h3>
             <div style="text-align : left">
@@ -12,63 +12,36 @@
                 <span style="font-size : 20px;">{{product.productName}}</span>
             </div>
             <div style="text-align : left">
-                <a
-                    style="color: #007bff;"
-                    :href="'https://store.musinsa.com/app/goods/' + product.productId"
-                    target="_blank">상품 링크</a>
-                <span>
-                    /
-                </span>
-                <a
-                    style="color: #007bff;"
-                    :href="product.brandUrl"
-                    target="_blank">브랜드 링크</a>
+                <a :href="'https://store.musinsa.com/app/goods/' + product.productId" target="_blank">상품 링크</a> /
+                <a :href="product.brandUrl" target="_blank">브랜드 링크</a>
             </div>
             <div style=" text-align : center">
-            <img v-bind:src="product.bigImg" style="max-width: 500px;"/>
+                <img v-bind:src="product.bigImg" style="max-width : 500px; width: 100%;"/>
             </div>
             <div style="margin-bottom: 10px">
-                <b-icon icon="trophy"></b-icon>
-                Ranking :
-                {{lastPrice.rank}}위
-                <small class="text-muted" style="color :#b2b2b2;">
-                    *
-                    {{lastPrice.createdDate}}일 기준</small>
+                <b-icon icon="trophy"></b-icon>Ranking : {{lastPrice.rank}}위
+                <small class="text-muted" style="color :#b2b2b2;">* {{lastPrice.createdDate}}일 기준</small>
             </div>
             <div style=" margin-bottom: 10px">
                 <h3 style="text-decoration: line-through; color :#b2b2b2 ">
-                    <span v-if="lastPrice.delPrice!=0">
-                        {{numberToPrice(lastPrice.delPrice)}}원
-                    </span>
-                    <span v-if="lastPrice.delPrice==0">
-                        {{numberToPrice(lastPrice.price)}}원
-                    </span>
+                    <span v-if="lastPrice.delPrice!=0"> {{numberToPrice(lastPrice.delPrice)}}원 </span>
+                    <span v-if="lastPrice.delPrice==0"> {{numberToPrice(lastPrice.price)}}원 </span>
                 </h3>
             </div>
             <div style=" margin-bottom: 10px">
-                <h3>
-                    {{numberToPrice(lastPrice.price)}}원
-                </h3>
+                <h3> {{numberToPrice(lastPrice.price)}}원</h3>
             </div>
             <div v-if="lastPrice.coupon==0" style="color :#b2b2b2;">
-                <b-icon icon="sticky"></b-icon>
-                추가 쿠폰 없음</div>
+                <b-icon icon="sticky"></b-icon> 추가 쿠폰 없음</div>
             <div v-if="lastPrice.coupon!=0">
-                <b-icon icon="sticky"></b-icon>
-                추가 쿠폰 :
-                {{numberToPrice(lastPrice.coupon)}}원</div>
-            <span style="color:rgb(234 7 7)">최근 한달 평균가(쿠폰 포함) :
-                {{numberToPrice(getAvgPriceForMonth())}}원</span><br/>
-            <span style="color:rgb(234 7 7)">과거 평균가(쿠폰 포함) :
-                {{numberToPrice(avgPrice)}}원</span><br/>
-            <span style="color:rgb(234 7 7)">과거 최저가(쿠폰 포함) :
-                {{numberToPrice(minPrice)}}원</span><br/>
-            <span style="color:rgb(234 7 7)" v-if="order==100  && isTodayUpdated()">
-                <strong>오늘은 역대 최고가입니다.</strong>
-            </span>
-            <span style="color:rgb(234 7 7)" v-if="order==0  && isTodayUpdated()">
-                <strong>오늘은 역대 가장 낮은 가격입니다.</strong>
-            </span><br/>
+                <b-icon icon="sticky"></b-icon> 추가 쿠폰 : {{numberToPrice(lastPrice.coupon)}}원
+            </div>
+            <span style="color:rgb(234 7 7)">한달 평균가(쿠폰 포함) : {{numberToPrice(getAvgPriceForMonth())}}원</span><br/>
+            <span style="color:rgb(234 7 7)">한달 최저가(쿠폰 포함) : {{numberToPrice(getMinPriceForMonth())}}원</span><br/>
+            <span style="color:rgb(234 7 7)">전체 평균가(쿠폰 포함) : {{numberToPrice(avgPrice)}}원</span><br/>
+            <span style="color:rgb(234 7 7)">전체 최저가(쿠폰 포함) : {{numberToPrice(minPrice)}}원</span><br/>
+            <span style="color:rgb(234 7 7)" v-if="isMaximum"><strong>오늘은 역대 최고가입니다.</strong></span>
+            <span style="color:rgb(234 7 7)" v-if="isMinimum"><strong>오늘은 역대 가장 낮은 가격입니다.</strong></span><br/>
             <div>
                 <b-form-rating
                     id="rating-inline"
@@ -76,7 +49,8 @@
                     :value="lastPrice.rating/20"
                     :readonly="true"
                     :show-value="true"
-                    :no-border="true"></b-form-rating>
+                    :no-border="true">
+                </b-form-rating>
                 <small >({{lastPrice.ratingCount}}개의 평가)</small>
             </div>
             <b-form-select v-model="selected" :options="date_selector" @change="generatePriceData(selected)"></b-form-select>
@@ -92,7 +66,6 @@
 <script>
     import LineChart from './LineChart'
     import axios from 'axios'
-    import EventBus from '../utils/event-bus';
 
     export default {
         components: {
@@ -113,6 +86,8 @@
                 lastPrice: Object,
                 avgPrice : 0,
                 minPrice : 0,
+                isMinimum : false,
+                isMaximum : false,
                 dateList: [],
                 priceList: [],
                 realPriceList: [],
@@ -126,7 +101,6 @@
                         data: []
                     }
                 ],
-                order: 0,
                 datacollection: {},
                 options: {},
                 numToCategory: {
@@ -227,11 +201,14 @@
                 this.$refs.chart.renderChart(this.datacollection, this.options)
             },
             getAvgPriceForMonth() {
+                if(this.updatedAt == ''){
+                    return;
+                }
                 var sum = 0;
                 var count = 0;
                 var end = this.prices.length
                 var updatedAtArr = this.updatedAt.split('-')
-                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2] - 30)
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2].slice(0,2) - 30)
                     for (var i = 0; i < end; i++) {
                         if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
                             continue;
@@ -240,6 +217,25 @@
                         count++
                     }   
                 return Math.ceil(sum/count);
+            },
+            getMinPriceForMonth() {
+                if(this.updatedAt == ''){
+                    return;
+                }
+                var min = 100000000;
+                var end = this.prices.length
+                var updatedAtArr = this.updatedAt.split('-')
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2].slice(0,2) - 30)
+                    for (var i = 0; i < end; i++) {
+                        if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
+                            continue;
+                        }
+                        var realPrice = this.prices[end - 1 - i].price + this.prices[end - 1 - i].coupon
+                        if(min > realPrice){
+                            min = realPrice
+                        }
+                    }   
+                return min;
             },
             numberToPrice(number) {
                 if (number == null) {
@@ -264,24 +260,38 @@
                 var avg = sum / (list.length - 1);
                 return Math.ceil(avg)
             },
-            computeOrder(list) {
-                if (list.length == 1) {
-                    return 100;
-                }
-                var count = 0;
-                var max = 0;
-                for (var i = 0; i < list.length - 1; i++) {
-                    max = max <= list[i] ? list[i] : max;
-                    if (list[0] > list[i]) {
-                        count += 1
+            isMinimumPrice(list) {
+                var todayPrice = list[0]
+                var isUniformPrice = true;
+                var min = todayPrice;
+                for (var i = 0; i < list.length; i++) {
+                    if(min > list[i]){
+                        return false;
+                    }
+                    if(list[i] != todayPrice){
+                        isUniformPrice = false;
                     }
                 }
-                if (max == list[0]) {
-                    return 100;
+                return isUniformPrice == false;
+            },
+            isMaximumPrice(list) {
+                var todayPrice = list[0]
+                var max = todayPrice;
+                var isUniformPrice = true;
+                for (var i = 0; i < list.length; i++) {
+                    if(max < list[i]){
+                        return false;
+                    }
+                    if(list[i] != todayPrice){
+                        isUniformPrice = false;
+                    }
                 }
-                return Math.ceil(count / (list.length - 1) * 100)
+                return isUniformPrice == false;
             },
             isTodayUpdated() {
+                if(this.updatedAt == ''){
+                    return new Date().toISOString().slice(0, 10) == this.lastPrice.createdDate
+                }          
                 return new Date(this.updatedAt).toISOString().slice(0, 10) == this.lastPrice.createdDate
             },
         },
@@ -305,7 +315,9 @@
                     }    
                     self.avgPrice = self.computeAvg(realPriceList)
                     self.minPrice = self.computeMin(realPriceList)
-                    self.order = self.computeOrder(realPriceList);
+                    self.isMinimum = self.isMinimumPrice(realPriceList);
+                    self.isMaximum = self.isMaximumPrice(realPriceList);
+                      
                 })
                 .catch(function (error) {
                     console.log(error);

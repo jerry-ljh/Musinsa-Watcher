@@ -76,7 +76,6 @@
 
 <script>
     import axios from 'axios'
-    import EventBus from "../utils/event-bus"
     export default {
         data() {
             return {

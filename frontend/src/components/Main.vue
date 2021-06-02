@@ -10,7 +10,7 @@
                         <img
                             width="300"
                             height="169"
-                            src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/rank.png"
+                            src="https://image.musinsa.com/mfile_s01/2021/04/07/4efdd2f969559e8b1c92e99f32ded48e173859.jpg"
                             alt="무신사 일간 랭킹"/>
                     </div>
                 </article>
@@ -20,32 +20,32 @@
                         <img
                             width="300"
                             height="169"
-                            src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/brand.png"
+                            src="https://image.musinsa.com/mfile_s01/2021/05/26/4efdd2f969559e8b1c92e99f32ded48e114450.jpg"
                             alt="브랜드 조회"/>
                     </div>
                 </article>
                 <article @click="route('discount')" id="3691" class="location-listing">
                     <span class="location-title">
-                        오늘 깜짝 할인
+                        오늘 할인 상품
                     </span>
                     <div class="location-image">
                         <img
                             width="300"
                             height="169"
-                            src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/discount.png"
-                            alt="오늘 깜짝 할인"/>
+                            src="https://image.musinsa.com/mfile_s01/2021/04/28/4efdd2f969559e8b1c92e99f32ded48e084122.jpg"
+                            alt="오늘 할인 상품"/>
                     </div>
                 </article>
                 <article @click="route('minimum')" id="3694" class="location-listing">
                     <span class="location-title">
-                        오늘 역대 최저가
+                        오늘 최저가 상품
                     </span>
                     <div class="location-image">
                         <img
                             width="300"
                             height="169"
-                            src="https://musinsa-watcher.s3.ap-northeast-2.amazonaws.com/minimum.png"
-                            alt="오늘 역대 최저가"/>
+                            src="https://image.musinsa.com/mfile_s01/2021/05/12/4efdd2f969559e8b1c92e99f32ded48e122525.jpg"
+                            alt="오늘 최저가 상품"/>
                     </div>
                 </article>
             </div>
@@ -100,7 +100,7 @@
     }
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
         grid-gap: 1em;
     }
 

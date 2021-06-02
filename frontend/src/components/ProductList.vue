@@ -21,7 +21,7 @@
                                 v-model="curCategory"
                                 @change="addFilter"
                                 :options="categoryOptions2"
-                                name="flavour-1"
+                                name="flavour-2"
                                 stacked>
                                 </b-form-checkbox-group>
                             </b-col>
@@ -31,7 +31,7 @@
                                 v-model="curCategory"
                                 @change="addFilter"
                                 :options="categoryOptions3"
-                                name="flavour-1"
+                                name="flavour-3"
                                 stacked>
                                 </b-form-checkbox-group>
                             </b-col>
@@ -47,7 +47,7 @@
                         v-on:keyup.enter="searchBrand(searchText)"
                         @update="searchBrand(searchText)"
                         v-model="searchText"></b-form-input>
-                    </b-navbar>
+                                </b-navbar>
                     <table style="width:100%;text-align:center; margin-bottom:20px">
                         <tr >
                             <td class="brand" v-on:click="findBrandList(1)">
@@ -110,33 +110,55 @@
                     </ul>
                 </b-tab>
                 <b-tab title="가격" style="text-align:left">
-                    <b-form-radio-group style="margin-left:20px">
-                        <b-form-radio 
-                            v-model="price_selected" 
-                            @change="addFilter" 
-                            :value=curPriceRange.A>2만원 이하
-                        </b-form-radio>
-                        <b-form-radio 
-                            v-model="price_selected" 
-                            @change="addFilter" 
-                            :value=curPriceRange.B>2만원 ~ 4만원
-                        </b-form-radio>
-                        <b-form-radio
-                            v-model="price_selected" 
-                            @change="addFilter" 
-                            :value=curPriceRange.C>4만원 ~ 6만원
-                        </b-form-radio>
-                        <b-form-radio
-                            v-model="price_selected" 
-                            @change="addFilter" 
-                            :value=curPriceRange.D>6만원 ~ 7만원
-                        </b-form-radio>
-                        <b-form-radio
-                            v-model="price_selected" 
-                            @change="addFilter" 
-                            :value=curPriceRange.E>7만원 이상
-                        </b-form-radio>
-                    </b-form-radio-group>
+                    <b-form-group label="" v-slot="{ ariaDescribedby }">
+                    <b-form-radio style="float:left; margin-left:30px" 
+                        v-model="price_selected" 
+                        @change="addFilter" 
+                        :aria-describedby="ariaDescribedby" 
+                        name="some-radios" 
+                        :value=curPriceRange.A>2만원 이하
+                    </b-form-radio>
+                    <b-form-radio style="float:left; margin-left:30px" 
+                        v-model="price_selected" 
+                        @change="addFilter" 
+                        :aria-describedby="ariaDescribedby" 
+                        name="some-radios" 
+                        :value=curPriceRange.B>2 ~ 4만원
+                    </b-form-radio>
+                    <b-form-radio style="float:left; margin-left:30px" 
+                        v-model="price_selected" 
+                        @change="addFilter" 
+                        :aria-describedby="ariaDescribedby"
+                        name="some-radios" 
+                        :value=curPriceRange.C>4 ~ 6만원
+                    </b-form-radio>
+                    <b-form-radio style="float:left; margin-left:30px" 
+                        v-model="price_selected" 
+                        @change="addFilter" 
+                        :aria-describedby="ariaDescribedby" 
+                        name="some-radios" 
+                        :value=curPriceRange.D>6 ~ 7만원
+                    </b-form-radio>
+                    <b-form-radio style="float:left; margin-left:30px" 
+                        v-model="price_selected" 
+                        @change="addFilter" 
+                        :aria-describedby="ariaDescribedby" 
+                        name="some-radios" 
+                        :value=curPriceRange.E>7만원 이상
+                    </b-form-radio>
+                    </b-form-group>
+                </b-tab>
+                <b-tab v-if="currentListTopic == 'brand' || currentListTopic == 'search'" title="기간" style="text-align:left">
+                    <b-form-checkbox
+                        id="checkbox-1"
+                        v-model="curDateFilter"
+                        @change="addDateFilter"
+                        :value="onlyTodayUpdatedData"
+                        name="checkbox-1"
+                        style="margin-left:30px"
+                    >
+                    오늘 업데이트된 상품
+                    </b-form-checkbox>
                 </b-tab>
             </b-tabs>
         </div>   
@@ -182,30 +204,48 @@
                     </ul>
                 </template>
             </b-form-tags>
+            <b-form-tags v-if="curDateFilter.length > 0" 
+                id="tags-with-dropdown" 
+                v-model="curDateFilter" 
+                @input="addDateFilter" 
+                no-outer-focus class="mb-2">
+                <template v-slot="{ tags, disabled, addTag, removeTag }">
+                    <ul class="list-inline d-inline-block mb-2">
+                        <li v-for="(tag, idx) in curDateFilter" :key="idx" class="list-inline-item">
+                            <b-form-tag
+                                @remove="removeTag(tag)"
+                                :disabled="disabled"
+                                variant="primary">
+                                {{ tag }}
+                            </b-form-tag>
+                        </li>
+                    </ul>
+                </template>
+            </b-form-tags>
         </div>
         <div style="float : left; margin-top : 8px">
             <span
                 v-if="currentListTopic == 'minimum'"
                 style="color :#b2b2b2; margin-left:20px">
-                오늘 역대 최저가
+                오늘 최저가 상품
                 <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'minimum'"
                     target="question"
                     triggers="hover">
-                    오늘 역대 최저가는 과거 평균 가격과 오늘 가격를 비교합니다.
+                    오늘 최저가 상품은 최근 한달을 기준 가장 낮은 가격을 보인 상품을 조회합니다. 할인율은 최근 한달 평균가와 오늘 가격을 비교합니다. 
                 </b-tooltip>
             </span>
             <span
                 v-if="currentListTopic == 'discount'"
                 style="color :#b2b2b2; margin-left:20px">
-                오늘 깜짝 할인
+                오늘 할인 상품
                 <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
                 <b-tooltip
                     v-if="currentListTopic == 'discount'"
                     target="question"
                     triggers="hover">
-                    오늘 깜짝 할인은 어제 가격과 오늘 가격을 비교합니다.
+                    오늘 할인 상품은 어제 가격보다 낮은 상품을 조회합니다.
                 </b-tooltip>
             </span>
         </div>
@@ -226,7 +266,7 @@
         </div>
         <div v-if="products.length>0">
             <b-card-group
-                deck="deck"
+                deck
                 style="margin : 5px; text-align:center!important;"
                 v-for="(productDeck, idx) in itemListToCardDeck(products)"
                 v-bind:key="idx">
@@ -240,13 +280,13 @@
 
                     <h6
                         style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="product.discount !=null">{{Math.ceil(product.percent)}}% OFF</h6>
+                        v-if="product.discount !=null && product!=Object">{{Math.ceil(product.percent)}}% OFF</h6>
                     <h6
                         style="color : rgb(234 7 7); position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="currentListTopic == 'minimum' && product.todayPrice != null">{{Math.ceil((product.avgPrice - product.todayPrice) * 100/product.avgPrice)}}% OFF</h6>
+                        v-if="currentListTopic == 'minimum' && product.todayPrice != null && product!=Object">{{Math.ceil((product.avgPrice - product.todayPrice) * 100/product.avgPrice)}}% OFF</h6>
                     <h6
                         style="position: absolute; top: 10px; left: 10px; background-color:#FFF; background-color: rgba( 255, 255, 255, 0.5 );"
-                        v-if="product.discount ==null && currentListTopic == 'rank'">
+                        v-if="product.discount ==null && currentListTopic == 'rank' && product!=Object">
                         {{product.rank}}위
                     </h6>
                     <b-card-text>
@@ -258,19 +298,19 @@
                             <span style="font-size : 13px;">{{product.productName}}</span>
                         </div>
 
-                        <div v-if="product.discount !=null">
+                        <div v-if="product.discount !=null && product!=Object">
                             <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.discount + product.price)}}원</span><br/>
                             <span style="color:#ae0000">
                                 <strong>{{numberToPrice(product.price)}}원</strong>
                             </span>
                         </div>
-                        <div v-if="currentListTopic == 'minimum' && product.todayPrice != null">
+                        <div v-if="currentListTopic == 'minimum' && product.todayPrice != null && product!=Object">
                             <span style="text-decoration: line-through; color :#b2b2b2; margin-right:5px">{{numberToPrice(product.avgPrice)}}원</span><br/>
                             <span style="color:#ae0000">
                                 <strong>{{numberToPrice(product.todayPrice)}}원</strong>
                             </span>
                         </div>
-                        <div v-if="currentListTopic != 'minimum' && currentListTopic != 'discount'">
+                        <div v-if="currentListTopic != 'minimum' && currentListTopic != 'discount' && product!=Object">
                             <span v-if="isTodayUpdated(product.modifiedDate)" style="color:#ae0000">
                                 <strong>{{numberToPrice(product.realPrice)}}원</strong>
                             </span>
@@ -278,10 +318,9 @@
                                 <strong>{{numberToPrice(product.realPrice)}}원</strong>
                             </span>
                         </div>
-                        <span style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}}
+                        <span v-if="product!=Object" style="font-size: 0.7em; color:#b2b2b2">{{product.modifiedDate}}
                             updated</span>
                     </b-card-text>
-
                 </b-card>
             </b-card-group>
             <div class="mt-3">
@@ -304,8 +343,12 @@
 <script>
     import axios from 'axios'
     import EventBus from '../utils/event-bus';
+    import Brand from './Brand'
 
     export default {
+        components: {
+            Brand
+        },
         data() {
             return {
                 limit: 10,
@@ -313,7 +356,7 @@
                 currentPage: 1,
                 columnCount: 4,
                 rows: 0,
-                perpage: 25,
+                perpage: 40,
                 searchText : "",
                 currentListTopic: "",
                 products: [],
@@ -321,6 +364,8 @@
                 curCategory: [],
                 curBrand: [],
                 curSearchTopic: '',
+                curDateFilter : [],
+                onlyTodayUpdatedData: false,
                 curSort: 'percent,desc',
                 curSortText: '',
                 filter_category: [],
@@ -349,7 +394,7 @@
                     '020': 'Onepiece',
                     '008': 'Socks/Legwear'
                 },
-                category_options: [
+                categoryOptions: [
                 { text: 'Top', value: '001' },
                 { text: 'Outer', value: '002' },
                 { text: 'Pants', value: '003' },
@@ -365,17 +410,17 @@
                 { text: 'Top', value: '001' },
                 { text: 'Outer', value: '002' },
                 { text: 'Pants', value: '003' },
-                { text: 'Bag', value: '004'},
+                { text: 'Socks', value: '008' },
                 ], 
                 categoryOptions2: [
+                { text: 'Onepiece', value: '020' },
                 { text: 'Sneakers', value: '018' },
                 { text: 'Shoes', value: '005' },
-                { text: 'Headwear', value: '007' },
                 ], 
                 categoryOptions3: [
+                { text: 'Headwear', value: '007' },
                 { text: 'Skirt', value: '022' },
-                { text: 'Onepiece', value: '020' },
-                { text: 'Socks', value: '008' },
+                { text: 'Bag', value: '004'},
                 ],
                 price_type : {
                     "A" : [0, 20000],
@@ -400,6 +445,7 @@
                 },
                 price_selected : [],
                 selected : [],
+
             }
         },
         props: ['updatedAt'],
@@ -413,19 +459,24 @@
                 this.curBrand.push(brand);
                 this.addFilter()
             },
+            addDateFilter(){
+                if(this.onlyTodayUpdatedData == true){
+                    this.onlyTodayUpdatedData = false;
+                    this.curDateFilter = []
+                }else{
+                    this.onlyTodayUpdatedData = true;
+                    this.curDateFilter = ["오늘 업데이트된 상품"]
+                }
+                this.addFilter()
+            },
             addFilter(){
                 this.newPage(1)
             },
             goToDetail(product) {
-                this
-                    .$router
-                    .push({
-                        name: 'Product',
-                        query: {
-                            "id": product.productId
-                        },
-                        params: product
-                    })
+                if(product == Object){
+                    return
+                }
+                this.$router.push({name: 'Product', query: { "id": product.productId }, params: product})
                 window.scrollTo(0, 0)
             },
             isTodayUpdated(date) {
@@ -484,7 +535,14 @@
             itemListToCardDeck(list) {
                 var productDeck = []
                 for (var i = 0; i < this.perpage / this.columnCount; i++) {
-                    productDeck.push(list.slice(i * this.columnCount, (i + 1) * this.columnCount))
+                    var tempList = list.slice(i * this.columnCount, (i + 1) * this.columnCount)
+                    const length = tempList.length
+                    if(length%this.columnCount != 0){
+                        for(var j = 0; j < this.columnCount - length; j++){
+                            tempList.push(Object)
+                        }
+                    }
+                    productDeck.push(tempList)
                 }
                 return productDeck
             },
@@ -499,7 +557,7 @@
                 if(this.price_type[this.price_selected] != null){
                     query["minprice"] = this.price_type[this.price_selected][0]
                     query["maxprice"] = this.price_type[this.price_selected][1]
-                }
+                } 
                 query["size"] = 40
                 return query
             },
@@ -589,6 +647,7 @@
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
                 query["sort"] = sort
+                query["onlyTodayUpdatedData"] = this.onlyTodayUpdatedData
                 this.currentListTopic = "brand"
                 axios
                     .get(this.API + '/api/v1/product/brand', {
@@ -619,6 +678,7 @@
                 query["topic"] = topic.trim()
                 query["page"] = Math.max(page - 1, 0)
                 query["sort"] = sort
+                query["onlyTodayUpdatedData"] = this.onlyTodayUpdatedData
                 this.currentListTopic = "search"
                 this.curSearchTopic = topic;
                 axios.get(this.API + '/api/v1/search/product', {
@@ -700,7 +760,7 @@
             }  
             if (this.$route.query.type == 'minimum') {
                 this.goToMinimumList(this.$route.query.page ? this.$route.query.page : 1,
-                    this.$route.query.sort ? this.$route.query.sort : "percent,desc")
+                    this.$route.query.sort ? this.$route.query.sort : "percent_desc")
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "percent,desc" 
             }
             if (this.$route.query.type == 'search') {
