@@ -52,7 +52,7 @@ public class ProductQuerySlaveRepository {
     List<Product> results = queryFactory.selectFrom(product)
         .where(getBooleanFilter(filterVo)
             .and(product.brand.contains(text).or(product.productName.contains(text))))
-        .orderBy(product.modifiedDate.desc(), sortOrDefault(pageable, product.productName.asc()))
+        .orderBy(sortOrDefault(pageable, product.modifiedDate.desc()))
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
         .fetch();
@@ -119,8 +119,7 @@ public class ProductQuerySlaveRepository {
   public Page<ProductResponseDto> findByBrand(FilterVo filterVo, Pageable pageable) {
     List<Product> results = queryFactory.selectFrom(product)
         .where(getBooleanFilter(filterVo))
-        .orderBy(convertToLocalDateFormat(product.modifiedDate).desc(),
-            sortOrDefault(pageable, product.brand.asc()))
+        .orderBy(sortOrDefault(pageable, product.modifiedDate.desc()))
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
         .fetch();
@@ -179,6 +178,8 @@ public class ProductQuerySlaveRepository {
         .setCategories(product.category, filterVo.getCategories())
         .setMaxPrice(product.realPrice, filterVo.getMaxPrice())
         .setMinPrice(product.realPrice, filterVo.getMinPrice())
+        .setOnlyTodayUpdatedData(product.modifiedDate, filterVo.getOnlyTodayUpdatedData(),
+            findCachedLastUpdatedDate())
         .build().getBooleanBuilder();
   }
 

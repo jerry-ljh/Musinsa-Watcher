@@ -1,8 +1,10 @@
 package com.musinsa.watcher.domain.product;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class SearchFilter {
@@ -50,6 +52,14 @@ public class SearchFilter {
     public Builder setMinPrice(NumberPath<Integer> path, Integer minPrice) {
       if (minPrice != null) {
         this.booleanBuilder.and(path.goe(minPrice));
+      }
+      return this;
+    }
+
+    public Builder setOnlyTodayUpdatedData(DateTimePath<LocalDateTime> path,
+        Boolean onlyTodayUpdatedData, LocalDateTime localDateTime) {
+      if (onlyTodayUpdatedData !=null && onlyTodayUpdatedData) {
+        this.booleanBuilder.and(path.after(localDateTime.toLocalDate().atStartOfDay()));
       }
       return this;
     }

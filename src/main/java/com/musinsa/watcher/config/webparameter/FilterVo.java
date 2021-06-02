@@ -18,13 +18,17 @@ public class FilterVo {
   private final Integer minPrice;
   @Nullable
   private final Integer maxPrice;
+  @Nullable
+  private final Boolean onlyTodayUpdatedData;
 
   @Builder
-  public FilterVo(String[] brands, Category[] categories, Integer minPrice, Integer maxPrice) {
+  public FilterVo(String[] brands, Category[] categories, Integer minPrice, Integer maxPrice,
+      Boolean onlyTodayUpdatedData) {
     this.brands = brands;
     this.categories = categories;
     this.minPrice = minPrice;
     this.maxPrice = maxPrice;
+    this.onlyTodayUpdatedData = onlyTodayUpdatedData;
   }
 
   @Override
@@ -43,12 +47,12 @@ public class FilterVo {
 
   @Override
   public String toString() {
-    return "FilterDto{" +
+    return "FilterVo{" +
         "brands=" + Arrays.toString(brands) +
         ", categories=" + Arrays.toString(categories) +
         ", minPrice=" + minPrice +
         ", maxPrice=" + maxPrice +
+        ", onlyTodayUpdatedData=" + onlyTodayUpdatedData +
         '}';
   }
-
 }
