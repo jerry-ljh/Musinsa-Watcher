@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.DiscountedProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ public class DiscountedProductControllerTest {
         .andExpect(status().isOk());
 
     verify(mockDiscountedProductService, only())
-        .findDiscountedProduct(eq(Category.getCategory("001")), any());
+        .findDiscountedProduct(eq(getFilter(Category.getCategory("001"))), any());
   }
 
   @Test
@@ -53,7 +54,11 @@ public class DiscountedProductControllerTest {
         .andExpect(status().isOk());
 
     verify(mockDiscountedProductService, only())
-        .findMinimumPriceProduct(eq(Category.getCategory("001")), any());
+        .findMinimumPriceProduct(eq(getFilter(Category.getCategory("001"))), any());
+  }
+
+  private FilterVo getFilter(Category category) {
+    return FilterVo.builder().categories(new Category[]{category}).build();
   }
 }
 

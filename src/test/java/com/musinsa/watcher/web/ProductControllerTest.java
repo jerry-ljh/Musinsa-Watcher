@@ -45,21 +45,6 @@ public class ProductControllerTest {
     verify(mockProductService, only()).findProductsPageByBrand(any(), any());
   }
 
-  @Test(expected = Exception.class)
-  @DisplayName("브랜드 상품 리스트를 조회할 때 brand 파라미터가 없으면 예외가 발생한다.")
-  public void throwValidParameterException1() throws Exception {
-    mvc.perform(get(API + "brand"))
-        .andExpect(status().isOk());
-  }
-
-  @Test(expected = Exception.class)
-  @DisplayName("브랜드 상품 리스트를 조회할 때 brand 파라미터가 있어도 값이 없다면 예외가 발생한다.")
-  public void throwValidParameterException2() throws Exception {
-    mvc.perform(get(API + "brand")
-        .param("brand", ""))
-        .andExpect(status().isOk());
-  }
-
   @Test
   @DisplayName("카테고리 상품 리스트 조회한다.")
   public void findProductByCategory() throws Exception {
@@ -69,21 +54,6 @@ public class ProductControllerTest {
           .andExpect(status().isOk());
     }
     verify(mockProductService, times(Category.values().length)).findProductsPageByCategory(any(), any());
-  }
-
-  @Test(expected = Exception.class)
-  @DisplayName("카테고리 상품 리스트를 조회할 때 카테고리 파라미터가 없으면 오류가 발생한다.")
-  public void throwValidParameterException3() throws Exception {
-    mvc.perform(get(API + "list"))
-        .andExpect(status().isOk());
-  }
-
-  @Test(expected = Exception.class)
-  @DisplayName("카테고리 상품 리스트를 조회할 때 카테고리 파라미터가 있어도 값이 없다면 오류가 발생한다.")
-  public void throwValidParameterException4() throws Exception {
-    mvc.perform(get(API + "list")
-        .param("category", ""))
-        .andExpect(status().isOk());
   }
 
   @Test

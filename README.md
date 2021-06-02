@@ -32,7 +32,7 @@ Backend **테스트 커버리지 80%이상**을 목표로 잡고 있습니다. j
 
 **현재 coverage**  
 line coverage : 83%   
-branch coverage : 82%
+branch coverage : 80%
 
 ## Tech Stack
 <img src="https://user-images.githubusercontent.com/52908154/104377761-4c4de600-556a-11eb-98ea-2ab133e5bacc.png" width=70%>

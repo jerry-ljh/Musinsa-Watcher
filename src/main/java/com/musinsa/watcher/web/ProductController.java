@@ -25,14 +25,14 @@ public class ProductController {
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/brand")
   public Page<ProductResponseDto> findProductsPageByBrand(Pageable pageable,
-      @SearchFilter(required = Parameter.BRAND) FilterVo filterVo) {
+      @SearchFilter FilterVo filterVo) {
     return productService.findProductsPageByBrand(filterVo, pageable);
   }
 
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/list")
   public Page<ProductResponseDto> findProductsPageByCategory(
-      @SearchFilter(required = Parameter.CATEGORY) FilterVo filterVo, Pageable pageable) {
+      @SearchFilter FilterVo filterVo, Pageable pageable) {
     return productService.findProductsPageByCategory(filterVo, pageable);
   }
 
