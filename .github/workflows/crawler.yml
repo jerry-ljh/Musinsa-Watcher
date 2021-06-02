@@ -46,7 +46,7 @@ jobs:
 
       - name: clear cache
         run: |
-          curl https://www.musinsa.info/api/v1/product/last-modified
+          curl -X DELETE https://www.musinsa.info/api/v1/product/cache
 
       - name: action-slack
         uses: 8398a7/action-slack@v3
