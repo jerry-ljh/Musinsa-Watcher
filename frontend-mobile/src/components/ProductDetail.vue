@@ -1,7 +1,7 @@
 <template>
     <div style="margin-top:50px; margin-bottom:50px">
-        <b-container class="bv-example-row">
-            <h3 style="text-align : left">
+        <b-container class="bv-example-row" style="padding:20px">
+            <h3 style="text-align : left; margin-top: 15px">
                 <a :href="'/product/list?brand='+product.brand" style="color : #000000"><strong>{{product.brand}}</strong></a>
             </h3>
             <div style="text-align : left">
@@ -24,7 +24,9 @@
                     :href="product.brandUrl"
                     target="_blank">브랜드 링크</a>
             </div>
-            <img v-bind:src="product.bigImg" style="width: 100%;"/>
+            <div style=" text-align : center">
+                <img v-bind:src="product.bigImg" style="max-width : 500px; width: 100%;"/>
+            </div>
             <div style="margin-bottom: 10px">
                 <b-icon icon="trophy"></b-icon>
                 Ranking :
@@ -148,7 +150,7 @@
                 this.realPriceList= []
                 var end = this.prices.length
                 var updatedAtArr = this.updatedAt.split('-')
-                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2] - range)
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2].slice(0,2) - range)
                     for (var i = 0; i < end; i++) {
                         if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
                             continue;

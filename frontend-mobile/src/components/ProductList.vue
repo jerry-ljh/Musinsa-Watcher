@@ -4,17 +4,38 @@
             <b-tabs content-class="mt-3">
                 <b-tab title="카테고리">
                     <b-container class="bv-example-row">
-                    <b-row>
-                        <b-col><b-form-checkbox-group
-                        id="checkbox-group-1"
-                        v-model="curCategory"
-                        @change="addFilter"
-                        :options="category_options"
-                        name="flavour-1"
-                    >
-                    </b-form-checkbox-group>
-                    </b-col>
-                    </b-row>
+                        <b-row>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-1"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions1"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-2"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions2"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-3"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions3"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                        </b-row>
                     </b-container>
                 </b-tab>
                 <b-tab title="브랜드">
@@ -343,7 +364,7 @@
                     '020': 'Onepiece',
                     '008': 'Socks/Legwear'
                 },
-                category_options: [
+                categoryOptions: [
                 { text: 'Top', value: '001' },
                 { text: 'Outer', value: '002' },
                 { text: 'Pants', value: '003' },
@@ -355,6 +376,22 @@
                 { text: 'Onepiece', value: '020' },
                 { text: 'Socks', value: '008' },
                 ], 
+                categoryOptions1: [
+                { text: 'Top', value: '001' },
+                { text: 'Outer', value: '002' },
+                { text: 'Pants', value: '003' },
+                { text: 'Bag', value: '004'},
+                ], 
+                categoryOptions2: [
+                { text: 'Sneakers', value: '018' },
+                { text: 'Shoes', value: '005' },
+                { text: 'Headwear', value: '007' },
+                ], 
+                categoryOptions3: [
+                { text: 'Skirt', value: '022' },
+                { text: 'Onepiece', value: '020' },
+                { text: 'Socks', value: '008' },
+                ],
                 price_type : {
                     "A" : [0, 20000],
                     "B" : [20000, 40000],
