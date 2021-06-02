@@ -5,6 +5,7 @@ public enum Parameter {
   CATEGORY("category"),
   MIN_PRICE("minprice"),
   MAX_PRICE("maxprice"),
+  ONLY_TODAY_UPDATED_DATA("onlyTodayUpdatedData"),
   PAGE_SIZE("pagesize"),
   PAGE_NUM("page"),
   SORT("sort"),

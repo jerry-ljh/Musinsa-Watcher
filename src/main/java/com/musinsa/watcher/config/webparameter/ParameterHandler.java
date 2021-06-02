@@ -26,11 +26,15 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
     String category = webRequest.getParameter(Parameter.CATEGORY.getParameter());
     String minPrice = webRequest.getParameter(Parameter.MIN_PRICE.getParameter());
     String maxPrice = webRequest.getParameter(Parameter.MAX_PRICE.getParameter());
+    String onlyTodayUpdatedData = webRequest
+        .getParameter(Parameter.ONLY_TODAY_UPDATED_DATA.getParameter());
     FilterVo filterVo = FilterVo.builder()
         .brands(getBrands(brand))
         .categories(getCategories(category))
         .minPrice(minPrice != null ? Integer.parseInt(minPrice) : null)
         .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : null)
+        .onlyTodayUpdatedData(
+            onlyTodayUpdatedData != null ? Boolean.valueOf(onlyTodayUpdatedData) : null)
         .build();
     return filterVo;
   }
