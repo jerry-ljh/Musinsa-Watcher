@@ -54,7 +54,9 @@ public class SearchControllerTest {
     String topic = "셔츠";
 
     mvc.perform(get(API + "product")
-        .param("topic", topic))
+        .param("topic", topic)
+        .param("brand", "")
+        .param("category", ""))
         .andExpect(status().isOk());
 
     verify(mockProductService, only()).searchProduct(eq(topic), any(), any());

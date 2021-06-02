@@ -39,7 +39,8 @@ public class ProductControllerTest {
     String brandName = "good brand";
 
     mvc.perform(get(API + "brand")
-        .param("brand", brandName))
+        .param("brand", brandName)
+        .param("onlyTodayUpdatedData", "true"))
         .andExpect(status().isOk());
 
     verify(mockProductService, only()).findProductsPageByBrand(any(), any());
@@ -50,7 +51,9 @@ public class ProductControllerTest {
   public void findProductByCategory() throws Exception {
     for (Category category : Category.values()) {
       mvc.perform(get(API + "list")
-          .param("category", category.getCategory()))
+          .param("category", category.getCategory())
+          .param("minprice", "0")
+          .param("maxprice", "10000"))
           .andExpect(status().isOk());
     }
     verify(mockProductService, times(Category.values().length)).findProductsPageByCategory(any(), any());
