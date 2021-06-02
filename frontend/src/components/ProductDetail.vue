@@ -150,7 +150,7 @@
                 this.realPriceList= []
                 var end = this.prices.length
                 var updatedAtArr = this.updatedAt.split('-')
-                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2] - range)
+                var updatedAt = new Date(updatedAtArr[0], updatedAtArr[1] - 1, updatedAtArr[2].slice(0,2) - range)
                     for (var i = 0; i < end; i++) {
                         if(updatedAt.getTime() > new Date(this.prices[end-1-i].createdDate).getTime()){
                             continue;

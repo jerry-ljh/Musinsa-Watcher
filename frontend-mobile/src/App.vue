@@ -1,5 +1,9 @@
 <template>
-    <div>
+    <div style="margin: 0 auto; max-width:1200px; width:100%;">
+        <div>
+            <navigation
+                v-on:isLoading="isLoading"
+                style="max-width:1200px; width:100%; position : fixed; top:0px; z-index:10;"></navigation>
         <b-overlay
             :show="loading"
             :no-fade=true
@@ -10,15 +14,13 @@
                 <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
                 <p id="cancel-label">Please wait...</p>
             </div>
-            <navigation
-                v-on:isLoading="isLoading"
-                style="width: 100%; position : fixed; top:0px; z-index:10"></navigation>
             <router-view
                 v-on:isLoading="isLoading"
                 :updatedAt="updatedAt"
-                style="width:100%; margin-top:75px"></router-view>
+                style="margin-top:20px; border: 1px solid #b2b2b260; margin-top : 75px"></router-view>
             <div style="text-align:center; color :#b2b2b2; margin-top : 20px; margin-bottom:20px">contact : gurwns5580@gmail.com</div>
         </b-overlay>
+        </div>
     </div>
 </template>
 

@@ -1,58 +1,42 @@
 <template>
     <div>
-        <div style="float : left; margin-top : 8px">
-            <span
-                v-if="currentListTopic == 'minimum'"
-                style="color :#b2b2b2; margin-left:20px">
-                오늘 역대 최저가
-                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
-                <b-tooltip
-                    v-if="currentListTopic == 'minimum'"
-                    target="question"
-                    triggers="hover">
-                    오늘 역대 최저가는 과거 평균 가격과 오늘 가격를 비교합니다.
-                </b-tooltip>
-            </span>
-            <span
-                v-if="currentListTopic == 'discount'"
-                style="color :#b2b2b2; margin-left:20px">
-                오늘 깜짝 할인
-                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
-                <b-tooltip
-                    v-if="currentListTopic == 'discount'"
-                    target="question"
-                    triggers="hover">
-                    오늘 깜짝 할인은 어제 가격과 오늘 가격을 비교합니다.
-                </b-tooltip>
-            </span>
-        </div>
-        <div
-            style="text-align : right; margin-right :6%"
-            v-if="currentListTopic == 'minimum' || currentListTopic == 'discount'">
-            <b-dropdown
-                id="dropdown-1"
-                right="right"
-                variant="outline-dark "
-                :text="curSortText"
-                class="m-md-2">
-                <b-dropdown-item v-on:click="changeSort('percent,desc')">할인율 높은 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('percent,asc')">할인율 낮은 순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price,desc')">높은 가격순</b-dropdown-item>
-                <b-dropdown-item v-on:click="changeSort('price,asc')">낮은 가격순</b-dropdown-item>
-                <b-dropdown-divider></b-dropdown-divider>
-            </b-dropdown>
-        </div>
-        <div style="padding-bottom: 10px; border-bottom: 10px solid #b2b2b260;" v-if="currentListTopic != 'minimum' && currentListTopic != 'discount'">
+        <div style="padding-bottom: 10px; border-bottom: 10px solid #b2b2b260;">
             <b-tabs content-class="mt-3">
                 <b-tab title="카테고리">
-                    <b-form-checkbox-group
-                        id="checkbox-group-1"
-                        v-model="curCategory"
-                        @change="addFilter"
-                        :options="category_options"
-                        name="flavour-1"
-                        style="margin-left:20px"
-                    ></b-form-checkbox-group>
+                    <b-container class="bv-example-row">
+                        <b-row>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-1"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions1"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-2"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions2"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                            <b-col>
+                                <b-form-checkbox-group
+                                id="checkbox-group-3"
+                                v-model="curCategory"
+                                @change="addFilter"
+                                :options="categoryOptions3"
+                                name="flavour-1"
+                                stacked>
+                                </b-form-checkbox-group>
+                            </b-col>
+                        </b-row>
+                    </b-container>
                 </b-tab>
                 <b-tab title="브랜드">
                     <b-navbar style="background-color:#FFFFFF; width:100%">
@@ -156,7 +140,7 @@
                 </b-tab>
             </b-tabs>
         </div>   
-        <div v-if="currentListTopic != 'minimum' && currentListTopic != 'discount'">
+        <div>
             <b-form-tags v-if="curCategory.length > 0" id="tags-with-dropdown" v-model="curCategory" @input="addFilter" no-outer-focus class="mb-2">
             <template v-slot="{ tags, disabled, addTag, removeTag }">
                 <ul class="list-inline d-inline-block mb-2">
@@ -199,6 +183,47 @@
                 </template>
             </b-form-tags>
         </div>
+        <div style="float : left; margin-top : 8px">
+            <span
+                v-if="currentListTopic == 'minimum'"
+                style="color :#b2b2b2; margin-left:20px">
+                오늘 역대 최저가
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                <b-tooltip
+                    v-if="currentListTopic == 'minimum'"
+                    target="question"
+                    triggers="hover">
+                    오늘 역대 최저가는 과거 평균 가격과 오늘 가격를 비교합니다.
+                </b-tooltip>
+            </span>
+            <span
+                v-if="currentListTopic == 'discount'"
+                style="color :#b2b2b2; margin-left:20px">
+                오늘 깜짝 할인
+                <b-icon icon="question-octagon" variant="primary" id="question"></b-icon>
+                <b-tooltip
+                    v-if="currentListTopic == 'discount'"
+                    target="question"
+                    triggers="hover">
+                    오늘 깜짝 할인은 어제 가격과 오늘 가격을 비교합니다.
+                </b-tooltip>
+            </span>
+        </div>
+        <div
+            style="text-align : right; margin-right :6%">
+            <b-dropdown
+                id="dropdown-1"
+                right="right"
+                variant="outline-dark "
+                :text="curSortText"
+                class="m-md-2">
+                <b-dropdown-item v-on:click="changeSort('rank,asc')">인기 높은순</b-dropdown-item>
+                <b-dropdown-item v-if="currentListTopic == 'discount' || currentListTopic == 'minimum'" v-on:click="changeSort('percent,desc')">할인율 높은순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price,desc')">높은 가격순</b-dropdown-item>
+                <b-dropdown-item v-on:click="changeSort('price,asc')">낮은 가격순</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+            </b-dropdown>
+        </div>
         <div v-if="products.length>0">
             <b-card-group
                 deck="deck"
@@ -230,7 +255,7 @@
                         </h6>
                         <div
                             style="text-align : left; height : 48px; overflow:hidden; margin-bottom : 10px">
-                            <span style="font-size : 13px;">{{truncateProductName(product.productName)}}</span>
+                            <span style="font-size : 13px;">{{product.productName}}</span>
                         </div>
 
                         <div v-if="product.discount !=null">
@@ -336,6 +361,22 @@
                 { text: 'Onepiece', value: '020' },
                 { text: 'Socks', value: '008' },
                 ], 
+                categoryOptions1: [
+                { text: 'Top', value: '001' },
+                { text: 'Outer', value: '002' },
+                { text: 'Pants', value: '003' },
+                { text: 'Bag', value: '004'},
+                ], 
+                categoryOptions2: [
+                { text: 'Sneakers', value: '018' },
+                { text: 'Shoes', value: '005' },
+                { text: 'Headwear', value: '007' },
+                ], 
+                categoryOptions3: [
+                { text: 'Skirt', value: '022' },
+                { text: 'Onepiece', value: '020' },
+                { text: 'Socks', value: '008' },
+                ],
                 price_type : {
                     "A" : [0, 20000],
                     "B" : [20000, 40000],
@@ -366,7 +407,6 @@
             filterClear(){
               this.curBrand = []
               this.curCategory = []
-              this.price_selected = ""
               this.addFilter()  
             },
             addBrand(brand){
@@ -391,20 +431,16 @@
             isTodayUpdated(date) {
                 return new Date(this.updatedAt).toISOString().slice(0, 10) == date
             },
-            truncateProductName(productName) {
-                return productName;
-            },
             sortToText(sort) {
                 if (sort == 'price,asc') 
                     this.curSortText = '낮은 가격순';
                 else if (sort == 'price,desc') 
                     this.curSortText = '높은 가격순';
-                else if (sort == 'percent,asc') 
-                    this.curSortText = '할인율 낮은 순';
-                else if (sort == 'percent,desc') 
-                    this.curSortText = '할인율 높은 순';
-                }
-            ,
+                else if (sort == 'percent,desc')
+                    this.curSortText = '할인율 높은순';
+                else if (sort == 'rank,asc')
+                    this.curSortText = '인기 높은순';
+            },
             changeSort(sort) {
                 this.sortToText(sort)
                 this.$emit('isLoading', true)
@@ -413,6 +449,12 @@
                     this.goToDiscountList(1, this.curSort)
                 } else if (this.currentListTopic == "minimum") {
                     this.goToMinimumList(1, this.curSort);
+                } else if (this.currentListTopic == "rank") {
+                    this.goToRank(1, this.curSort);
+                } else if (this.currentListTopic == "brand") {
+                    this.goToBrand(1, this.curSort);
+                } else if (this.currentListTopic == "search") {
+                    this.goToSearch(this.curSearchTopic, 1, this.curSort);
                 }
                 this.bufferPage = 1
             },
@@ -421,11 +463,11 @@
                     return
                 this.$emit('isLoading', true)
                 if (this.currentListTopic == "rank") {
-                    this.goToRank(page)
+                    this.goToRank(page, this.curSort)
                 } else if (this.currentListTopic == "brand") {
-                    this.goToBrand(page)
+                    this.goToBrand(page, this.curSort)
                 } else if (this.currentListTopic == "search") {
-                    this.goToSearch(this.curSearchTopic, page)
+                    this.goToSearch(this.curSearchTopic, page, this.curSort)
                 } else if (this.currentListTopic == "discount") {
                     this.goToDiscountList(page, this.curSort)
                 } else if (this.currentListTopic == "minimum") {
@@ -458,18 +500,15 @@
                     query["minprice"] = this.price_type[this.price_selected][0]
                     query["maxprice"] = this.price_type[this.price_selected][1]
                 }
+                query["size"] = 40
                 return query
             },
-            goToRank(page) {
+            goToRank(page, sort) {
                 let self = this
                 self.currentListTopic = "rank"
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
-                query["size"] = 40
-                if(query.category == null){
-                    this.$emit('isLoading', false)
-                    return;
-                }
+                query["sort"] = sort
                 axios.get(this.API + '/api/v1/product/list', 
                     {
                         params: query
@@ -493,27 +532,21 @@
             goToMinimumList(page, sort) {
                 let self = this
                 self.currentListTopic = "minimum"
+                var query = this.filter()
+                query["page"] = Math.max(page - 1, 0)
+                query["sort"] = sort
                 axios.get(this.API + '/api/v1/product/minimum-price/today/list', 
                     {
-                        params: {
-                            "category": this.curCategory.toString(),
-                            "page": page - 1,
-                            "size" : 40,
-                            "sort": sort}
+                        params: query
                     })
                     .then((response) => {
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
+                        query["type"] = 'minimum'
                         this.$router.replace({name: 'ProductList',
-                                 query: { 
-                                    "category": this.curCategory.toString(),
-                                    "page": page,
-                                    "size" : 40,
-                                    "type": 'minimum',
-                                    "sort": sort
-                                }
+                                 query: query
                             }).catch(() => {});
                         this.$emit('isLoading', false)
                         window.scrollTo(0, 0);
@@ -526,28 +559,21 @@
             goToDiscountList(page, sort) {
                 let self = this
                 self.currentListTopic = "discount"
+                var query = this.filter()
+                query["page"] = Math.max(page - 1, 0)
+                query["sort"] = sort
                 axios.get(this.API + '/api/v1/product/discount/today/list', {
-                        params: {
-                            "category": this.curCategory.toString(),
-                            "page": page - 1,
-                            "size" : 40,
-                            "sort": sort
-                        }
+                        params: query
                     })
                     .then((response) => {
                         self.products = response.data.content
                         self.currentPage = response.data.pageable.pageNumber + 1
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
+                        query["type"] = 'discount'
                         this.$router.replace({
                                 name: 'ProductList',
-                                query: {
-                                    "category": this.curCategory.toString(),
-                                    "page": page,
-                                    "size" : 40,
-                                    "type": 'discount',
-                                    "sort": sort
-                                }
+                                query: query
                             }).catch(() => {});
                         this.$emit('isLoading', false)
                         window.scrollTo(0, 0);
@@ -558,16 +584,12 @@
                         console.log(error);
                     });
             },
-            goToBrand(page) {
+            goToBrand(page, sort) {
                 let self = this
                 var query = this.filter()
                 query["page"] = Math.max(page - 1, 0)
-                query["size"] = 40
+                query["sort"] = sort
                 this.currentListTopic = "brand"
-                if(query.brand == null){
-                    this.$emit('isLoading', false)
-                    return;
-                }
                 axios
                     .get(this.API + '/api/v1/product/brand', {
                         params: query
@@ -591,12 +613,12 @@
                         console.log(error);
                     });
             },
-            goToSearch(topic, page) {
+            goToSearch(topic, page, sort) {
                 if (topic.trim().length == 0) return;
                 var query = this.filter()
-                query["page"] = Math.max(page - 1, 0)
-                query["size"] = 40
                 query["topic"] = topic.trim()
+                query["page"] = Math.max(page - 1, 0)
+                query["sort"] = sort
                 this.currentListTopic = "search"
                 this.curSearchTopic = topic;
                 axios.get(this.API + '/api/v1/search/product', {
@@ -667,32 +689,30 @@
             })
             this.curCategory = this.$route.query.category != null ? this.$route.query.category.split(",") : []
             this.curBrand = this.$route.query.brand != null ? this.$route.query.brand.split(",") :[]
-            if(this.$route.query.minprice != null &&  this.$route.query.maxprice != null){
-                this.price_selected = ["custom"]
-                this.price_type[this.price_selected] = [this.$route.query.minprice, this.$route.query.maxprice]
-                this.price_type_to_text[this.price_selected] = this.numberToPrice(this.$route.query.minprice) 
-                + "원 - " + this.numberToPrice(this.$route.query.maxprice) +"원"
-            }
             if (this.$route.query.type == 'rank') {
                 this.goToRank(this.$route.query.page ? this.$route.query.page : 1)
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
             if (this.$route.query.type == 'discount') {
                 this.goToDiscountList(this.$route.query.page? this.$route.query.page : 1,
                     this.$route.query.sort ? this.$route.query.sort : "percent,desc")
-                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent,desc");
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "percent,desc" 
             }  
             if (this.$route.query.type == 'minimum') {
                 this.goToMinimumList(this.$route.query.page ? this.$route.query.page : 1,
                     this.$route.query.sort ? this.$route.query.sort : "percent,desc")
-                this.sortToText(this.$route.query.sort ? this.$route.query.sort : "percent,desc");
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "percent,desc" 
             }
             if (this.$route.query.type == 'search') {
                 this.curSearchTopic = this.$route.query.topic
                 this.goToSearch(this.$route.query.topic, this.$route.query.page ? this.$route.query.page : 1)
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
-            if (this.$route.query.brand != null) {
+            if (this.$route.query.type == 'brand') {
                 this.goToBrand(this.$route.query.page ? this.$route.query.page : 1)
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
+            this.sortToText(this.curSort);
         },
         destroyed() {
             EventBus.$off("goToRank")
