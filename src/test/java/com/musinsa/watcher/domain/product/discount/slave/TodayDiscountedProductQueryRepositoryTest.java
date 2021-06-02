@@ -2,6 +2,7 @@ package com.musinsa.watcher.domain.product.discount.slave;
 
 import static org.junit.Assert.*;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.discount.TodayDiscountProduct;
@@ -61,7 +62,7 @@ public class TodayDiscountedProductQueryRepositoryTest {
     setTodayDiscountProductWithDiscountAndPercent(productId, 1000, 30);
 
     Page<TodayDiscountedProductDto> results = todayDiscountedProductQueryRepository
-        .findTodayDiscountProducts(Category.TOP, PageRequest.of(0, 20, Sort.by("price")));
+        .findTodayDiscountProducts(getFilter(Category.TOP), PageRequest.of(0, 20, Sort.by("price")));
 
     assertEquals(results.getTotalElements(), 1);
   }
@@ -72,7 +73,7 @@ public class TodayDiscountedProductQueryRepositoryTest {
     saveProduct(productId, Category.TOP);
 
     Page<TodayDiscountedProductDto> results = todayDiscountedProductQueryRepository
-        .findTodayDiscountProducts(Category.TOP, PageRequest.of(0, 20));
+        .findTodayDiscountProducts(getFilter(Category.TOP), PageRequest.of(0, 20));
 
     assertEquals(results.getTotalElements(), 0);
   }
@@ -85,7 +86,8 @@ public class TodayDiscountedProductQueryRepositoryTest {
     setTodayDiscountProductWithDiscountAndPercent(productId, 1000, discountRatio);
 
     Page<TodayDiscountedProductDto> results = todayDiscountedProductQueryRepository
-        .findTodayDiscountProducts(Category.TOP, PageRequest.of(0, 20, Sort.by("percent")));
+        .findTodayDiscountProducts(getFilter(Category.TOP),
+            PageRequest.of(0, 20, Sort.by("percent")));
 
     assertEquals(results.getTotalElements(), 0);
   }
@@ -96,7 +98,8 @@ public class TodayDiscountedProductQueryRepositoryTest {
     saveProduct(productId, Category.TOP);
     setTodayDiscountProductWithDiscountAndPercent(productId, 1000, 30);
 
-    long results = todayDiscountedProductQueryRepository.countTodayDiscountProducts(Category.TOP);
+    long results = todayDiscountedProductQueryRepository
+        .countTodayDiscountProducts(getFilter(Category.TOP));
 
     assertEquals(results, 1);
   }
@@ -127,7 +130,11 @@ public class TodayDiscountedProductQueryRepositoryTest {
     assertEquals(resultMap.get(Category.HEADWEAR.getCategory()).intValue(), 0);
   }
 
-  public void saveProduct(int productId, Category category) {
+  private FilterVo getFilter(Category category) {
+    return FilterVo.builder().categories(new Category[]{category}).build();
+  }
+
+  private void saveProduct(int productId, Category category) {
     productSlaveRepository.save(Product.builder()
         .productId(productId)
         .category(category.getCategory())
@@ -135,7 +142,7 @@ public class TodayDiscountedProductQueryRepositoryTest {
         .build());
   }
 
-  public void setTodayDiscountProductWithDiscountAndPercent(int productId, int discount,
+  private void setTodayDiscountProductWithDiscountAndPercent(int productId, int discount,
       double percent) {
     todayDiscountProductRepository.save(TodayDiscountProduct.builder()
         .product(productSlaveRepository.getOne((long) productId))
@@ -145,7 +152,7 @@ public class TodayDiscountedProductQueryRepositoryTest {
         .build());
   }
 
-  public void setTodayDiscountProductWithCategory(int productId, Category category) {
+  private void setTodayDiscountProductWithCategory(int productId, Category category) {
     Product product = Product.builder()
         .productId(productId)
         .category(category.getCategory())

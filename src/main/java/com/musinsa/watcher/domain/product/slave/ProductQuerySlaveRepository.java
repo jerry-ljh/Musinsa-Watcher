@@ -2,12 +2,14 @@ package com.musinsa.watcher.domain.product.slave;
 
 import static com.musinsa.watcher.domain.product.QProduct.product;
 import static com.musinsa.watcher.domain.price.QPrice.price1;
+import static com.musinsa.watcher.domain.product.discount.QTodayMinimumPriceProduct.todayMinimumPriceProduct;
 
 import com.musinsa.watcher.SortUtils;
-import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.config.webparameter.FilterVo;
+import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductCountByBrandDto;
+import com.musinsa.watcher.domain.product.SearchFilter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
@@ -46,10 +48,9 @@ public class ProductQuerySlaveRepository {
   }
 
   public Page<ProductResponseDto> searchItems(String text, FilterVo filterVo, Pageable pageable) {
-    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     List<Product> results = queryFactory.selectFrom(product)
-        .where(builder.and(product.brand.contains(text)
-            .or(product.productName.contains(text))))
+        .where(getBooleanFilter(filterVo)
+            .and(product.brand.contains(text).or(product.productName.contains(text))))
         .orderBy(product.modifiedDate.desc(), sortOrDefault(pageable, product.productName.asc()))
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
@@ -62,10 +63,9 @@ public class ProductQuerySlaveRepository {
 
   @Cacheable(value = "productCache")
   public long countSearchItems(String text, FilterVo filterVo) {
-    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     return queryFactory.selectFrom(product)
-        .where(builder.and(product.brand.contains(text)
-            .or(product.productName.contains(text))))
+        .where(getBooleanFilter(filterVo)
+            .and(product.brand.contains(text).or(product.productName.contains(text))))
         .fetchCount();
   }
 
@@ -92,9 +92,9 @@ public class ProductQuerySlaveRepository {
   public Page<ProductResponseDto> findTodayUpdatedProductByCategory(FilterVo filterVo,
       Pageable pageable) {
     LocalDate cachedDate = this.getSpringProxy().findCachedLastUpdatedDate().toLocalDate();
-    BooleanBuilder builder = new BooleanFilter(filterVo).date(cachedDate).build();
     List<Product> results = queryFactory.selectFrom(product)
-        .where(builder)
+        .where(getBooleanFilter(filterVo)
+            .and(product.modifiedDate.after(cachedDate.atStartOfDay())))
         .orderBy(sortOrDefault(pageable, product.rank.asc()))
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
@@ -109,16 +109,15 @@ public class ProductQuerySlaveRepository {
   @Cacheable(value = "productCache")
   public long countTodayUpdatedProductByCategory(FilterVo filterVo) {
     LocalDate cachedDate = this.getSpringProxy().findCachedLastUpdatedDate().toLocalDate();
-    BooleanBuilder builder = new BooleanFilter(filterVo).date(cachedDate).build();
     return queryFactory.from(product)
-        .where(builder)
+        .where(getBooleanFilter(filterVo)
+            .and(product.modifiedDate.after(cachedDate.atStartOfDay())))
         .fetchCount();
   }
 
   public Page<ProductResponseDto> findByBrand(FilterVo filterVo, Pageable pageable) {
-    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     List<Product> results = queryFactory.selectFrom(product)
-        .where(builder)
+        .where(getBooleanFilter(filterVo))
         .orderBy(convertToLocalDateFormat(product.modifiedDate).desc(),
             sortOrDefault(pageable, product.brand.asc()))
         .limit(pageable.getPageSize())
@@ -132,9 +131,8 @@ public class ProductQuerySlaveRepository {
 
   @Cacheable(value = "productCache")
   public long countByBrand(FilterVo filterVo) {
-    BooleanBuilder builder = new BooleanFilter(filterVo).build();
     return queryFactory.from(product)
-        .where(builder)
+        .where(getBooleanFilter(filterVo))
         .fetchCount();
   }
 
@@ -171,65 +169,16 @@ public class ProductQuerySlaveRepository {
   }
 
   private DateTemplate<LocalDate> convertToLocalDateFormat(Expression expression) {
-    return Expressions.dateTemplate(LocalDate.class, "{0}", expression);
+    return Expressions.dateTemplate(LocalDate.class, "  {0}", expression);
   }
 
-  private static class BooleanFilter {
-
-    private String[] brands;
-    private Category[] categories;
-    private int minPrice;
-    private int maxPrice;
-    private LocalDate date;
-
-    private BooleanFilter(FilterVo filterVo) {
-      this.brands = filterVo.getBrands();
-      this.categories = filterVo.getCategories();
-      this.minPrice = filterVo.getMinPrice();
-      this.maxPrice = filterVo.getMaxPrice();
-    }
-
-    private BooleanFilter brand(String[] brands) {
-      this.brands = brands;
-      return this;
-    }
-
-    private BooleanFilter category(Category[] categories) {
-      this.categories = categories;
-      return this;
-    }
-
-    private BooleanFilter minPrice(int minPrice) {
-      this.minPrice = minPrice;
-      return this;
-    }
-
-    private BooleanFilter maxPrice(int maxPrice) {
-      this.maxPrice = maxPrice;
-      return this;
-    }
-
-    private BooleanFilter date(LocalDate date) {
-      this.date = date;
-      return this;
-    }
-
-    private BooleanBuilder build() {
-      BooleanBuilder filter = new BooleanBuilder();
-
-      if (brands != null && brands.length > 0) {
-        filter.and(product.brand.in(brands));
-      }
-      if (categories != null && categories.length > 0) {
-        filter.and(product.category
-            .in(Arrays.stream(categories).map(Category::getCategory).toArray(String[]::new)));
-      }
-      if (date != null) {
-        filter.and(product.modifiedDate.after(date.atStartOfDay()));
-      }
-      filter.and(product.realPrice.goe(minPrice));
-      filter.and(product.realPrice.loe(maxPrice));
-      return filter;
-    }
+  private BooleanBuilder getBooleanFilter(FilterVo filterVo) {
+    return new SearchFilter.Builder()
+        .setBrands(product.brand, filterVo.getBrands())
+        .setCategories(product.category, filterVo.getCategories())
+        .setMaxPrice(product.realPrice, filterVo.getMaxPrice())
+        .setMinPrice(product.realPrice, filterVo.getMinPrice())
+        .build().getBooleanBuilder();
   }
+
 }

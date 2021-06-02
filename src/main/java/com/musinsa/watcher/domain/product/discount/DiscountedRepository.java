@@ -1,5 +1,6 @@
 package com.musinsa.watcher.domain.product.discount;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.ProductCountByCategoryDto;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.discount.slave.TodayDiscountedProductQueryRepository;
@@ -19,20 +20,18 @@ public class DiscountedRepository {
   private final TodayDiscountedProductQueryRepository todayDiscountedProductQueryRepository;
   private final TodayMinimumProductQueryRepository todayMinimumProductQueryRepository;
 
-  public Page<TodayMinimumPriceProductDto> findTodayMinimumPriceProducts(Category category,
+  public Page<TodayMinimumPriceProductDto> findTodayMinimumPriceProducts(FilterVo filterVo,
       Pageable pageable) {
-    return todayMinimumProductQueryRepository
-        .findTodayMinimumPriceProducts(category, pageable);
+    return todayMinimumProductQueryRepository.findTodayMinimumPriceProducts(filterVo, pageable);
   }
 
   public List<ProductCountByCategoryDto> countMinimumPriceProductEachCategory() {
     return todayMinimumProductQueryRepository.countTodayMinimumPriceProductEachCategory();
   }
 
-  public Page<TodayDiscountedProductDto> findTodayDiscountedProducts(Category category,
+  public Page<TodayDiscountedProductDto> findTodayDiscountedProducts(FilterVo filterVo,
       Pageable pageable) {
-    return todayDiscountedProductQueryRepository
-        .findTodayDiscountProducts(category, pageable);
+    return todayDiscountedProductQueryRepository.findTodayDiscountProducts(filterVo, pageable);
   }
 
   public List<ProductCountByCategoryDto> countDiscountProductEachCategory() {

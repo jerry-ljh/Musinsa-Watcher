@@ -2,6 +2,7 @@ package com.musinsa.watcher.domain.product.discount.slave;
 
 import static org.junit.Assert.assertEquals;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductCountByCategoryDto;
@@ -64,7 +65,8 @@ public class TodayMinimumProductQueryRepositoryTest {
     setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(productId, avgPrice, todayPrice, count);
 
     Page<TodayMinimumPriceProductDto> results = todayMinimumProductQueryRepository
-        .findTodayMinimumPriceProducts(Category.TOP, PageRequest.of(0, 20, Sort.by("percent")));
+        .findTodayMinimumPriceProducts(getFilter(Category.TOP),
+            PageRequest.of(0, 20, Sort.by("percent")));
 
     assertEquals(results.getTotalElements(), 1);
   }
@@ -79,7 +81,8 @@ public class TodayMinimumProductQueryRepositoryTest {
     setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(productId, avgPrice, todayPrice, count);
 
     Page<TodayMinimumPriceProductDto> results = todayMinimumProductQueryRepository
-        .findTodayMinimumPriceProducts(Category.TOP, PageRequest.of(0, 20, Sort.by("price")));
+        .findTodayMinimumPriceProducts(getFilter(Category.TOP),
+            PageRequest.of(0, 20, Sort.by("price")));
 
     assertEquals(results.getTotalElements(), 0);
   }
@@ -94,7 +97,7 @@ public class TodayMinimumProductQueryRepositoryTest {
     setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(productId, avgPrice, todayPrice, count);
 
     Page<TodayMinimumPriceProductDto> results = todayMinimumProductQueryRepository
-        .findTodayMinimumPriceProducts(Category.TOP, PageRequest.of(0, 20));
+        .findTodayMinimumPriceProducts(getFilter(Category.TOP), PageRequest.of(0, 20));
 
     assertEquals(results.getTotalElements(), 0);
   }
@@ -105,7 +108,7 @@ public class TodayMinimumProductQueryRepositoryTest {
     saveProduct(productId, Category.TOP);
 
     Page<TodayMinimumPriceProductDto> results = todayMinimumProductQueryRepository
-        .findTodayMinimumPriceProducts(Category.TOP, PageRequest.of(0, 20));
+        .findTodayMinimumPriceProducts(getFilter(Category.TOP), PageRequest.of(0, 20));
 
     assertEquals(results.getTotalElements(), 0);
   }
@@ -119,7 +122,8 @@ public class TodayMinimumProductQueryRepositoryTest {
     saveProduct(productId, Category.TOP);
     setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(productId, avgPrice, todayPrice, count);
 
-    long results = todayMinimumProductQueryRepository.countTodayMinimumPriceProducts(Category.TOP);
+    long results = todayMinimumProductQueryRepository
+        .countTodayMinimumPriceProducts(getFilter(Category.TOP));
 
     assertEquals(results, 1);
   }
@@ -149,7 +153,11 @@ public class TodayMinimumProductQueryRepositoryTest {
     assertEquals(resultMap.get(Category.HEADWEAR.getCategory()).intValue(), 2);
   }
 
-  public void saveProduct(int productId, Category category) {
+  private FilterVo getFilter(Category category) {
+    return FilterVo.builder().categories(new Category[]{category}).build();
+  }
+
+  private void saveProduct(int productId, Category category) {
     productSlaveRepository.save(Product.builder()
         .productId(productId)
         .category(category.getCategory())
@@ -157,7 +165,7 @@ public class TodayMinimumProductQueryRepositoryTest {
         .build());
   }
 
-  public void setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(int productId, int avgPrice,
+  private void setTodayMinimumPriceWithAvgPriceAndMinPriceAndCount(int productId, int avgPrice,
       int todayPrice, int count) {
     todayMinimumPriceRepository.save(TodayMinimumPriceProduct.builder()
         .product(productSlaveRepository.getOne((long) productId))
@@ -169,7 +177,7 @@ public class TodayMinimumProductQueryRepositoryTest {
         .build());
   }
 
-  public void setTodayMinimumPriceProductWithCategory(int productId, Category category) {
+  private void setTodayMinimumPriceProductWithCategory(int productId, Category category) {
     Product product = productSlaveRepository.save(Product.builder()
         .productId(productId)
         .category(category.getCategory())

@@ -12,9 +12,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class ParameterHandler implements HandlerMethodArgumentResolver {
 
-  private final int DEFAULT_MIN_PRICE = 0;
-  private final int DEFAULT_MAX_PRICE = 100_000_000;
-
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     boolean isParameterAnnotation = parameter.getParameterAnnotation(SearchFilter.class) != null;
@@ -30,20 +27,27 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
     String minPrice = webRequest.getParameter(Parameter.MIN_PRICE.getParameter());
     String maxPrice = webRequest.getParameter(Parameter.MAX_PRICE.getParameter());
     FilterVo filterVo = FilterVo.builder()
-        .brands(brand != null && !brand.isEmpty() ? brand.split(",") : null)
-        .categories(splitCategory(category))
-        .minPrice(minPrice != null ? Integer.parseInt(minPrice) : DEFAULT_MIN_PRICE)
-        .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : DEFAULT_MAX_PRICE)
+        .brands(getBrands(brand))
+        .categories(getCategories(category))
+        .minPrice(minPrice != null ? Integer.parseInt(minPrice) : null)
+        .maxPrice(maxPrice != null ? Integer.parseInt(maxPrice) : null)
         .build();
-    filterVo.checkValidParameter(parameter.getParameterAnnotation(SearchFilter.class).required());
     return filterVo;
   }
 
-  private Category[] splitCategory(String category) {
-    if (category == null) {
+  private String[] getBrands(String brands) {
+    if (brands == null || brands.isEmpty()) {
       return null;
     }
-    String[] categories = category.split(",");
-    return Arrays.stream(categories).map(Category::getCategory).toArray(Category[]::new);
+    String[] brandArray = brands.split(",");
+    return Arrays.stream(brandArray).map(String::trim).toArray(String[]::new);
+  }
+
+  private Category[] getCategories(String categories) {
+    if (categories == null || categories.isEmpty()) {
+      return null;
+    }
+    String[] categoryArr = categories.split(",");
+    return Arrays.stream(categoryArr).map(Category::getCategory).toArray(Category[]::new);
   }
 }

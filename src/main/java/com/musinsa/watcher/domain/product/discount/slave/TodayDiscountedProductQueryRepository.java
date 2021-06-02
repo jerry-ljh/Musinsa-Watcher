@@ -4,11 +4,12 @@ package com.musinsa.watcher.domain.product.discount.slave;
 import static com.musinsa.watcher.domain.product.discount.QTodayDiscountProduct.todayDiscountProduct;
 
 import com.musinsa.watcher.SortUtils;
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.ProductCountByCategoryDto;
-import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.ProductRepository;
 import com.musinsa.watcher.domain.product.discount.TodayDiscountProduct;
 import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -40,13 +41,13 @@ public class TodayDiscountedProductQueryRepository {
     return applicationContext.getBean(this.getClass());
   }
 
-  public Page<TodayDiscountedProductDto> findTodayDiscountProducts(Category category,
+  public Page<TodayDiscountedProductDto> findTodayDiscountProducts(FilterVo filterVo,
       Pageable pageable) {
-    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
+    LocalDate cachedDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     List<TodayDiscountProduct> results = queryFactory.selectFrom(todayDiscountProduct)
-        .where(todayDiscountProduct.product.category.eq(category.getCategory())
+        .where(getBooleanFilter(filterVo)
             .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_PERCENT))
-            .and(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())))
+            .and(todayDiscountProduct.modifiedDate.after(cachedDate.atStartOfDay())))
         .innerJoin(todayDiscountProduct.product).fetchJoin()
         .orderBy(sort(pageable))
         .offset(pageable.getOffset())
@@ -56,14 +57,14 @@ public class TodayDiscountedProductQueryRepository {
         .stream()
         .map(TodayDiscountedProductDto::new)
         .collect(Collectors.toList()), pageable,
-        this.getSpringProxy().countTodayDiscountProducts(category));
+        this.getSpringProxy().countTodayDiscountProducts(filterVo));
   }
 
   @Cacheable(value = "productCache")
-  public long countTodayDiscountProducts(Category category) {
+  public long countTodayDiscountProducts(FilterVo filterVo) {
     LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return queryFactory.selectFrom(todayDiscountProduct)
-        .where(todayDiscountProduct.product.category.eq(category.getCategory())
+        .where(getBooleanFilter(filterVo)
             .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_PERCENT))
             .and(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())))
         .innerJoin(todayDiscountProduct.product).fetchJoin()
@@ -71,9 +72,9 @@ public class TodayDiscountedProductQueryRepository {
   }
 
   public List<ProductCountByCategoryDto> countTodayDiscountProductEachCategory() {
-    LocalDate localDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
+    LocalDate cachedDate = productRepository.findCachedLastUpdatedDateTime().toLocalDate();
     return queryFactory.from(todayDiscountProduct)
-        .where(todayDiscountProduct.modifiedDate.after(localDate.atStartOfDay())
+        .where(todayDiscountProduct.modifiedDate.after(cachedDate.atStartOfDay())
             .and(todayDiscountProduct.percent.goe(MINIMUM_DISCOUNT_PERCENT)))
         .innerJoin(todayDiscountProduct.product)
         .groupBy(todayDiscountProduct.product.category)
@@ -90,5 +91,14 @@ public class TodayDiscountedProductQueryRepository {
       return SortUtils.getOrderSpecifier(order, TodayDiscountProduct.class);
     }
     return SortUtils.getOrderSpecifier(Order.DESC, todayDiscountProduct.percent);
+  }
+
+  private BooleanBuilder getBooleanFilter(FilterVo filterVo) {
+    return new com.musinsa.watcher.domain.product.SearchFilter.Builder()
+        .setBrands(todayDiscountProduct.product.brand, filterVo.getBrands())
+        .setCategories(todayDiscountProduct.product.category, filterVo.getCategories())
+        .setMaxPrice(todayDiscountProduct.product.realPrice, filterVo.getMaxPrice())
+        .setMinPrice(todayDiscountProduct.product.realPrice, filterVo.getMinPrice())
+        .build().getBooleanBuilder();
   }
 }

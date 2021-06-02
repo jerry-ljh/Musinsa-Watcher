@@ -1,5 +1,7 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
+import com.musinsa.watcher.config.webparameter.SearchFilter;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.DiscountedProductService;
 import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
@@ -22,9 +24,9 @@ public class DiscountedProductController {
 
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/discount/today/list")
-  public Page<TodayDiscountedProductDto> findDiscountedProductsPage(String category,
+  public Page<TodayDiscountedProductDto> findDiscountedProductsPage(@SearchFilter FilterVo filterVo,
       Pageable pageable) {
-    return discountedProductService.findDiscountedProduct(Category.getCategory(category), pageable);
+    return discountedProductService.findDiscountedProduct(filterVo, pageable);
   }
 
   @Cacheable(value = "productCache")
@@ -35,10 +37,10 @@ public class DiscountedProductController {
 
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/minimum-price/today/list")
-  public Page<TodayMinimumPriceProductDto> findMinimumPriceProductsPage(Pageable pageable,
-      String category) {
+  public Page<TodayMinimumPriceProductDto> findMinimumPriceProductsPage(
+      @SearchFilter FilterVo filterVo, Pageable pageable) {
     return discountedProductService
-        .findMinimumPriceProduct(Category.getCategory(category), pageable);
+        .findMinimumPriceProduct(filterVo, pageable);
   }
 
   @Cacheable(value = "productCache")

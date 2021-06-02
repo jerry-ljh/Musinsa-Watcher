@@ -3,37 +3,33 @@ package com.musinsa.watcher.config.webparameter;
 import com.musinsa.watcher.domain.product.Category;
 import java.util.Arrays;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class FilterVo {
 
+  @Nullable
   private final String[] brands;
+  @Nullable
   private final Category[] categories;
-  private final int minPrice;
-  private final int maxPrice;
+  @Nullable
+  private final Integer minPrice;
+  @Nullable
+  private final Integer maxPrice;
 
   @Builder
-  public FilterVo(String[] brands, Category[] categories, int minPrice, int maxPrice) {
+  public FilterVo(String[] brands, Category[] categories, Integer minPrice, Integer maxPrice) {
     this.brands = brands;
     this.categories = categories;
     this.minPrice = minPrice;
     this.maxPrice = maxPrice;
   }
 
-  public void checkValidParameter(Parameter parameter) {
-    if (parameter.equals(Parameter.BRAND) && this.brands == null) {
-      throw new RuntimeException("브랜드 정보가 입력되지 않았습니다.");
-    }
-    if (parameter.equals(Parameter.CATEGORY) && this.categories == null) {
-      throw new RuntimeException("카테고리 정보가 입력되지 않았습니다.");
-    }
-  }
-
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof FilterVo)){
+    if (!(obj instanceof FilterVo)) {
       return false;
     }
     FilterVo input = (FilterVo) obj;
