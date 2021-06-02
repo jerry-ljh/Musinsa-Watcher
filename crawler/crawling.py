@@ -61,7 +61,7 @@ for i in category:
         (select p1.product_id, min(p2.real_price) as min_price , avg(p2.real_price) as avg_price, p1.real_price as today_price, count(*) as count, p1.modified_date as created_date, p1.modified_date as modified_date
         from product p1
         inner join price p2 on p1.product_id = p2.product_id
-        where p1.category =%s and p1.modified_date > curdate()
+        where p1.category =%s and p1.modified_date > curdate() and p2.created_date > curdate() - interval 30 day
         group by p1.product_id having count > 5 order by null) temp
         on duplicate key update min_price = temp.min_price, avg_price =  temp.avg_price , today_price =temp.today_price, count =  temp.count, modified_date = temp.modified_date"""
     cursor.execute(today_minimum_price_product_batch, i)
