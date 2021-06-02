@@ -1,11 +1,11 @@
 package com.musinsa.watcher.web;
 
-import com.musinsa.watcher.config.webparameter.Parameter;
 import com.musinsa.watcher.config.webparameter.SearchFilter;
 import com.musinsa.watcher.service.ProductService;
 import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.musinsa.watcher.web.dto.ProductWithPriceResponseDto;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,10 +42,9 @@ public class ProductController {
     return productService.findProductWithPrice(id);
   }
 
-  @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/cache/last-modified")
-  public String findCachedLastProductUpdatedDate() {
-    return productService.getCachedLastUpdatedDateTime().toString();
+  public LocalDateTime findCachedLastProductUpdatedDate() {
+    return productService.getCachedLastUpdatedDateTime();
   }
 
 }
