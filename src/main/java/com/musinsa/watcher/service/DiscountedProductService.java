@@ -1,7 +1,6 @@
 package com.musinsa.watcher.service;
 
 import com.musinsa.watcher.config.webparameter.FilterVo;
-import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.discount.DiscountedRepository;
 import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
 import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
