@@ -99,7 +99,8 @@ public class ChainedCacheTest {
 
     ValueWrapper result = chainedCache.get(anyString());
 
-    verify(localCache, times(1)).put(any(), eq(result));
+    assertEquals(result, globalCacheValue);
+    verify(localCache, times(1)).put(any(), any());
   }
 
   @Test

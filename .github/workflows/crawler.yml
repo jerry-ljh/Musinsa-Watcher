@@ -34,16 +34,6 @@ jobs:
         run: |
           python3 ./crawler/crawling.py
 
-      - name: batch
-        env:
-          AWS_RDS_DB: ${{secrets.AWS_RDS_DB}}
-          AWS_RDS_HOST: ${{secrets.AWS_RDS_HOST}}
-          AWS_RDS_PASSWD: ${{secrets.AWS_RDS_PASSWD}}
-          AWS_RDS_PORT: ${{secrets.AWS_RDS_PORT}}
-          AWS_RDS_USER: ${{secrets.AWS_RDS_USER}}
-        run: |
-          python3 ./crawler/batch.py
-
       - name: clear cache
         run: |
           curl -X DELETE https://www.musinsa.info/api/v1/product/cache
