@@ -77,7 +77,8 @@
                         query: {
                             "topic": searchText,
                             "type" : 'search',
-                            "page": page
+                            "page": page,
+                            "sort": 'rank,asc'
                         }
                     })
                     .catch(() => {});

@@ -226,7 +226,8 @@
             id="checkbox-2"
             v-model="onlyTodayUpdatedData"
             @change="addDateFilter"
-            :value="!onlyTodayUpdatedData"
+            value=true
+            unchecked-value=false
             v-if="currentListTopic == 'brand' || currentListTopic == 'search'"
             name="checkbox-1"
             style="margin-left:15px; margin-top:1.7%; float:left "
@@ -350,7 +351,7 @@
                 curSearchTopic: '',
                 curDateFilter : [],
                 onlyTodayUpdatedData: false,
-                curSort: 'percent,desc',
+                curSort: '',
                 curSortText: '',
                 filter_category: [],
                 API: "https://www.musinsa.info",
@@ -437,8 +438,8 @@
             filterClear(){
               this.curBrand = []
               this.curCategory = []
-              this.curDateFilter = []
-              this.addFilter()  
+              this.onlyTodayUpdatedData = false
+              this.curSort = ''
             },
             addBrand(brand){
                 this.curBrand.push(brand);
@@ -582,6 +583,7 @@
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
                         query["type"] = 'minimum'
+                        query["page"] = self.currentPage
                         this.$router.replace({name: 'ProductList',
                                  query: query
                             }).catch(() => {});
@@ -608,6 +610,7 @@
                         self.rows = response.data.totalElements
                         self.perpage = response.data.pageable.pageSize
                         query["type"] = 'discount'
+                        query["page"] = self.currentPage
                         this.$router.replace({
                                 name: 'ProductList',
                                 query: query
@@ -716,10 +719,12 @@
                 this.sortToText(sort)
             })
             EventBus.$on("goToBrand", (name, page, updated, category) => {
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
                 this.goToBrand(name, page, updated, category)
             })
             EventBus.$on("goToSearch", (searchText, page) => {
                 this.filterClear()
+                this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
                 this.goToSearch(searchText, page)
             })
             EventBus.$on("goToMinimumList", (category, page, sort) => {
@@ -728,30 +733,33 @@
             })
             this.curCategory = this.$route.query.category != null ? this.$route.query.category.split(",") : []
             this.curBrand = this.$route.query.brand != null ? this.$route.query.brand.split(",") :[]
+            this.currentPage = this.$route.query.page != null ? this.$route.query.page : 1
+            this.currentListTopic = this.$route.query.type
+            if(this.$route.query.minprice != null &&  this.$route.query.maxprice != null){
+                this.price_selected = ["custom"]
+                this.price_type[this.price_selected] = [this.$route.query.minprice, this.$route.query.maxprice]
+                this.price_type_to_text[this.price_selected] = this.numberToPrice(this.$route.query.minprice) 
+                + "원 - " + this.numberToPrice(this.$route.query.maxprice) +"원"
+            }
             if (this.$route.query.type == 'rank') {
-                this.goToRank(this.$route.query.page ? this.$route.query.page : 1)
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
             if (this.$route.query.type == 'discount') {
-                this.goToDiscountList(this.$route.query.page? this.$route.query.page : 1,
-                    this.$route.query.sort ? this.$route.query.sort : "percent,desc")
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "percent,desc" 
             }  
             if (this.$route.query.type == 'minimum') {
-                this.goToMinimumList(this.$route.query.page ? this.$route.query.page : 1,
-                    this.$route.query.sort ? this.$route.query.sort : "percent_desc")
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "percent,desc" 
             }
             if (this.$route.query.type == 'search') {
                 this.curSearchTopic = this.$route.query.topic
-                this.goToSearch(this.$route.query.topic, this.$route.query.page ? this.$route.query.page : 1)
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
             if (this.$route.query.type == 'brand') {
-                this.goToBrand(this.$route.query.page ? this.$route.query.page : 1)
                 this.curSort = this.$route.query.sort ? this.$route.query.sort : "rank,asc"
             }
             this.sortToText(this.curSort);
+            this.onlyTodayUpdatedData = this.$route.query.onlyTodayUpdatedData !=null ? this.$route.query.onlyTodayUpdatedData : false
+            this.newPage(this.currentPage)
         },
         destroyed() {
             EventBus.$off("goToRank")
