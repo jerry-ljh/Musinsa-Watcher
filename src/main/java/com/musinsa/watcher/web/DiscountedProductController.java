@@ -2,7 +2,6 @@ package com.musinsa.watcher.web;
 
 import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.config.webparameter.SearchFilter;
-import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.DiscountedProductService;
 import com.musinsa.watcher.web.dto.TodayDiscountedProductDto;
 import com.musinsa.watcher.web.dto.ProductCountMapByCategoryDto;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiscountedProductController {
 
   private final DiscountedProductService discountedProductService;
-
-  private final String DEFAULT_SORT = "percent desc";
 
   @Cacheable(value = "productCache")
   @GetMapping("/api/v1/product/discount/today/list")
