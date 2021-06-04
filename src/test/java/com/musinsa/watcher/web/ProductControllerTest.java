@@ -1,5 +1,6 @@
 package com.musinsa.watcher.web;
 
+import com.musinsa.watcher.config.webparameter.FilterVo;
 import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +48,20 @@ public class ProductControllerTest {
   }
 
   @Test
+  @DisplayName("여러 브랜드를 동시에 조회한다.")
+  public void findProductByBrands() throws Exception {
+    FilterVo filterVo = FilterVo.builder()
+        .brands(new String[]{"나이키", "아디다스", "언더아머"})
+        .build();
+
+    mvc.perform(get(API + "brand")
+        .param("brand", "나이키, 아디다스, 언더아머"))
+        .andExpect(status().isOk());
+
+    verify(mockProductService, only()).findProductsPageByBrand(eq(filterVo), any());
+  }
+
+  @Test
   @DisplayName("카테고리 상품 리스트 조회한다.")
   public void findProductByCategory() throws Exception {
     for (Category category : Category.values()) {
@@ -56,7 +71,22 @@ public class ProductControllerTest {
           .param("maxprice", "10000"))
           .andExpect(status().isOk());
     }
-    verify(mockProductService, times(Category.values().length)).findProductsPageByCategory(any(), any());
+    verify(mockProductService, times(Category.values().length))
+        .findProductsPageByCategory(any(), any());
+  }
+
+  @Test
+  @DisplayName("여러 카테고리를 동시에 조회한다.")
+  public void findProductByCategorys() throws Exception {
+    FilterVo filterVo = FilterVo.builder()
+        .categories(new Category[]{Category.TOP, Category.OUTER, Category.PANTS})
+        .build();
+
+    mvc.perform(get(API + "list")
+        .param("category", "001, 002, 003"))
+        .andExpect(status().isOk());
+
+    verify(mockProductService, only()).findProductsPageByCategory(eq(filterVo), any());
   }
 
   @Test
