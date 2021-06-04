@@ -52,6 +52,7 @@ public class ParameterHandler implements HandlerMethodArgumentResolver {
       return null;
     }
     String[] categoryArr = categories.split(",");
-    return Arrays.stream(categoryArr).map(Category::getCategory).toArray(Category[]::new);
+    return Arrays.stream(categoryArr).map(i -> Category.getCategory(i.trim()))
+        .toArray(Category[]::new);
   }
 }
