@@ -22,7 +22,7 @@ public class LocalAndGlobalCacheSyncJob {
       return;
     }
     cache.clearLocalCache();
-    log.debug("clear local cache for sync");
+    log.info("clear local cache for sync");
   }
 
 }

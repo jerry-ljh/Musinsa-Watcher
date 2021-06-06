@@ -1,6 +1,5 @@
 package com.musinsa.watcher.domain.product.discount.slave;
 
-
 import static com.musinsa.watcher.domain.product.discount.QTodayMinimumPriceProduct.todayMinimumPriceProduct;
 
 import com.musinsa.watcher.SortUtils;

@@ -47,16 +47,6 @@ public class CacheManagementServiceTest {
   }
 
   @Test
-  @DisplayName("캐시가 존재하지 않는다면 캐시를 초기화하지 않는다.")
-  public void doNotClearWithEmptyCache() {
-    Cache cache = getEmptyCache();
-
-    cacheManagementService.clearCacheIfOld();
-
-    verify(cache, never()).clear();
-  }
-
-  @Test
   @DisplayName("데이터 업데이트되지 않았다면 캐시를 초기화하지 않는다.")
   public void doNotClearCache() {
     Cache cache = getLastUpdateDateCache();
@@ -71,12 +61,6 @@ public class CacheManagementServiceTest {
     Cache cache = mock(Cache.class);
     when(cacheManager.getCache(anyString())).thenReturn(cache);
     when(cache.get(any())).thenReturn(mock(ValueWrapper.class));
-    return cache;
-  }
-
-  private Cache getEmptyCache() {
-    Cache cache = mock(Cache.class);
-    when(cacheManager.getCache(anyString())).thenReturn(cache);
     return cache;
   }
 
