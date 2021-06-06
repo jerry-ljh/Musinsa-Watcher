@@ -45,7 +45,6 @@ public class MasterDBConfig {
     Map<String, Object> props = new HashMap<>();
     props.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
     props.put("hibernate.hbm2ddl.auto", env.getProperty("spring.master.hibernate.hbm2ddl.auto"));
-
     return builder
         .dataSource(dataSource)
         .packages("com.musinsa.watcher.domain")

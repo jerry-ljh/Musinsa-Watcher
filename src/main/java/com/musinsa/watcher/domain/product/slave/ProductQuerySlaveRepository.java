@@ -2,26 +2,21 @@ package com.musinsa.watcher.domain.product.slave;
 
 import static com.musinsa.watcher.domain.product.QProduct.product;
 import static com.musinsa.watcher.domain.price.QPrice.price1;
-import static com.musinsa.watcher.domain.product.discount.QTodayMinimumPriceProduct.todayMinimumPriceProduct;
 
 import com.musinsa.watcher.SortUtils;
 import com.musinsa.watcher.config.cache.CacheName;
 import com.musinsa.watcher.config.webparameter.FilterVo;
-import com.musinsa.watcher.domain.product.Category;
 import com.musinsa.watcher.domain.product.Product;
 import com.musinsa.watcher.domain.product.ProductCountByBrandDto;
 import com.musinsa.watcher.domain.product.SearchFilter;
 import com.musinsa.watcher.web.dto.ProductResponseDto;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +38,7 @@ public class ProductQuerySlaveRepository {
   @Qualifier("slaveJPAQueryFactory")
   private final JPAQueryFactory queryFactory;
   private final ApplicationContext applicationContext;
+  public static final String UPDATE_DATE_CACHE_KEY = CacheName.LAST_UPDATE_DATE_KEY.getName();
 
   private ProductQuerySlaveRepository getSpringProxy() {
     return applicationContext.getBean(this.getClass());
@@ -143,7 +139,7 @@ public class ProductQuerySlaveRepository {
         .fetchFirst();
   }
 
-  @Cacheable(value = "productCache")
+  @Cacheable(value = "productCache", key = "#root.target.UPDATE_DATE_CACHE_KEY")
   public LocalDateTime findCachedLastUpdatedDate() {
     return findLastUpdatedDate();
   }
@@ -166,10 +162,6 @@ public class ProductQuerySlaveRepository {
       return SortUtils.getOrderSpecifier(order, Product.class);
     }
     return defaultSort;
-  }
-
-  private DateTemplate<LocalDate> convertToLocalDateFormat(Expression expression) {
-    return Expressions.dateTemplate(LocalDate.class, "  {0}", expression);
   }
 
   private BooleanBuilder getBooleanFilter(FilterVo filterVo) {
