@@ -1,9 +1,6 @@
 package com.musinsa.watcher.config.cache.hystrix;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixCommandProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
@@ -17,15 +14,7 @@ public class HystrixPutIfAbsentCommand extends HystrixCommand<ValueWrapper> {
   private final Object value;
 
   public HystrixPutIfAbsentCommand(Cache localCache, Cache globalCache, Object key, Object value) {
-    super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("cacheGroupKey"))
-        .andCommandKey(HystrixCommandKey.Factory.asKey("cache-putIfAbsent"))
-        .andCommandPropertiesDefaults(
-            HystrixCommandProperties.defaultSetter()
-                .withExecutionTimeoutInMilliseconds(1000)
-                .withCircuitBreakerErrorThresholdPercentage(50)
-                .withCircuitBreakerRequestVolumeThreshold(10)
-                .withCircuitBreakerSleepWindowInMilliseconds(30000)
-                .withMetricsRollingStatisticalWindowInMilliseconds(10000)));
+    super(HystrixKey.getKey("putIfAbsent"));
     this.globalCache = globalCache;
     this.localCache = localCache;
     this.key = key;
