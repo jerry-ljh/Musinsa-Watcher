@@ -7,18 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.lang.NonNull;
 
 public class ChainedCacheManager implements CacheManager {
 
   private final List<CacheManager> cacheManagers;
   private final Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
-  public ChainedCacheManager(@NonNull CacheManager... cacheManagers) {
-    if (cacheManagers.length < 1) {
-      throw new IllegalArgumentException();
-    }
-    this.cacheManagers = List.of(cacheManagers);
+  public ChainedCacheManager(CacheManager localCacheManger, CacheManager globalCacheManager) {
+    this.cacheManagers = List.of(localCacheManger, globalCacheManager);
   }
 
   @Override
@@ -33,8 +29,7 @@ public class ChainedCacheManager implements CacheManager {
 
   @Override
   public Collection<String> getCacheNames() {
-    return cacheManagers.stream()
-        .flatMap(manager -> manager.getCacheNames().stream())
+    return cacheManagers.stream().flatMap(manager -> manager.getCacheNames().stream())
         .collect(Collectors.toSet());
   }
 }

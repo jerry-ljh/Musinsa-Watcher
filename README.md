@@ -31,7 +31,7 @@ github action의 cron을 사용하여 크롤링 자동화를 구성하였습니�
 Backend **테스트 커버리지 80%이상**을 목표로 잡고 있습니다. jacoco를 도입하여 평균 라인 커버리지 80%, 브랜치 커버리지 80%을 넘지 못하면 빌드가 실패하도록 하여 테스트 코드를 신경쓰도록 개발했습니다.
 
 **현재 coverage**  
-line coverage : 85%   
+line coverage : 84%   
 branch coverage : 84%
 
 ## Tech Stack

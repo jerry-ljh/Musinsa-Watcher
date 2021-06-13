@@ -28,7 +28,7 @@ public class CacheConfig extends CachingConfigurerSupport {
   }
 
   @Bean
-  public CacheManager localCacheManager(EhCacheManagerFactoryBean ehCacheManagerFactoryBean) {
+  public CacheManager localCacheManager() {
     EhCacheCacheManager ehCacheCacheManager = new EhCacheCacheManager();
     ehCacheCacheManager.setCacheManager(ehCacheManagerFactoryBean.getObject());
     return ehCacheCacheManager;
@@ -47,7 +47,6 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Primary
   @Override
   public CacheManager cacheManager() {
-    return new ChainedCacheManager(localCacheManager(ehCacheManagerFactoryBean),
-        globalCacheManager());
+    return new ChainedCacheManager(localCacheManager(), globalCacheManager());
   }
 }

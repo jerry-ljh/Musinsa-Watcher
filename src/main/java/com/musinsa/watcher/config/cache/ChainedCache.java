@@ -3,6 +3,7 @@ package com.musinsa.watcher.config.cache;
 import com.musinsa.watcher.config.cache.hystrix.HystrixClearCommand;
 import com.musinsa.watcher.config.cache.hystrix.HystrixEvictCommand;
 import com.musinsa.watcher.config.cache.hystrix.HystrixGetCommand;
+import com.musinsa.watcher.config.cache.hystrix.HystrixGetNameCommand;
 import com.musinsa.watcher.config.cache.hystrix.HystrixPutCommand;
 import com.musinsa.watcher.config.cache.hystrix.HystrixPutIfAbsentCommand;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ChainedCache implements Cache {
       return cacheValue;
     }
     cacheValue = new HystrixGetCommand(globalCache, key).execute();
-    if(!isEmpty(cacheValue)){
+    if (!isEmpty(cacheValue)) {
       localCache.put(key, cacheValue.get());
     }
     return cacheValue;
@@ -50,26 +51,6 @@ public class ChainedCache implements Cache {
   }
 
   @Override
-  public String getName() {
-    return localCache.getName();
-  }
-
-  @Override
-  public Object getNativeCache() {
-    return localCache.getNativeCache();
-  }
-
-  @Override
-  public <T> T get(Object key, Class<T> type) {
-    return localCache.get(key, type);
-  }
-
-  @Override
-  public <T> T get(Object key, Callable<T> valueLoader) {
-    return localCache.get(key, valueLoader);
-  }
-
-  @Override
   public void put(Object key, Object value) {
     new HystrixPutCommand(localCache, globalCache, key, value).execute();
   }
@@ -82,6 +63,29 @@ public class ChainedCache implements Cache {
   @Override
   public void clear() {
     new HystrixClearCommand(localCache, globalCache).execute();
+  }
+
+  @Override
+  public String getName() {
+    if (!localCache.getName().isEmpty()) {
+      return localCache.getName();
+    }
+    return new HystrixGetNameCommand(globalCache).execute();
+  }
+
+  @Override
+  public Object getNativeCache() {
+    throw new RuntimeException("지원하지 않는 연산입니다.");
+  }
+
+  @Override
+  public <T> T get(Object key, Class<T> type) {
+    throw new RuntimeException("지원하지 않는 연산입니다.");
+  }
+
+  @Override
+  public <T> T get(Object key, Callable<T> valueLoader) {
+    throw new RuntimeException("지원하지 않는 연산입니다.");
   }
 
   public void clearLocalCache() {
