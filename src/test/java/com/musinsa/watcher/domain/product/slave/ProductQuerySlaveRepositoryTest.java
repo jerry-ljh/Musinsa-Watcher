@@ -135,7 +135,6 @@ public class ProductQuerySlaveRepositoryTest {
             .categories(new Category[]{Category.SKIRTS})
             .build(), PageRequest.of(0, 10));
 
-    assertEquals(productList.getContent().size(), 3);
     productList.forEach(i -> assertEquals(i.getCategory(), Category.SKIRTS.getCategory()));
   }
 
