@@ -1,8 +1,5 @@
 # MUSINSA WATCHER!
 
-
-### :house:[HomePage](https://www.musinsa.info)
-
 ## :pencil:Writing
 #### [캐시 서버에 장애가 생긴다면?](https://jgrammer.tistory.com/entry/%EB%AC%B4%EC%8B%A0%EC%82%AC-watcher-%EC%BA%90%EC%8B%9C-%EC%84%9C%EB%B2%84%EC%97%90-%EC%9E%A5%EC%95%A0%EA%B0%80-%EC%83%9D%EA%B8%B4%EB%8B%A4%EB%A9%B4)
 #### [페이징 성능 개선기](https://jgrammer.tistory.com/entry/%EB%AC%B4%EC%8B%A0%EC%82%AC-%EC%8A%A4%ED%86%A0%EC%96%B4-watcher-%ED%8E%98%EC%9D%B4%EC%A7%95-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EA%B8%B0?category=948604)
